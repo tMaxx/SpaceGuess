@@ -1,0 +1,2 @@
+﻿Klasa IO
+	wyjście zawsze na text box
