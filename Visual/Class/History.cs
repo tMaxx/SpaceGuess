@@ -29,7 +29,7 @@ namespace Visual.Class
             if (pos >= 0)
             {
                 try { while (true) lv.Items.RemoveAt(pos); }
-                catch (ArgumentOutOfRangeException e) { /*noop*/ }
+                catch (ArgumentOutOfRangeException) { /*noop*/ }
 
                 this.pe = new PrologEngine();
 
