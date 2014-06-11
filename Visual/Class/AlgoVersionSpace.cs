@@ -10,12 +10,14 @@ namespace Visual.Class
     class AlgoVersionSpace
     {
         private static History hist = null;
-        //private ListView spaceGen = null;
-        //private ListView spaceSpec = null;
+        private static ListView spaceGen = null;
+        private static ListView spaceSpec = null;
 
-        public static void init()
+        public static void init(ref ListView general, ref ListView specific)
         {
             hist = new History(ref SpaceGuessForm.self.lvExamplesHist);
+            spaceGen = general;
+            spaceSpec = specific;
         }
 
         public static void processRawInput(string cmd)

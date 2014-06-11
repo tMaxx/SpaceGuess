@@ -28,24 +28,24 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.tbVSDirectQuery = new System.Windows.Forms.TextBox();
-            this.bSendVSDirectQuery = new System.Windows.Forms.Button();
+            this.tbVSRawQuery = new System.Windows.Forms.TextBox();
+            this.bSendVSRawQuery = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.tbVSPrologOut = new System.Windows.Forms.TextBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.lVSLastCmdStatus = new System.Windows.Forms.Label();
-            this.lvSpecSpace = new System.Windows.Forms.ListView();
+            this.lvVSSpecSpace = new System.Windows.Forms.ListView();
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.lvGenSpace = new System.Windows.Forms.ListView();
+            this.lvVSGenSpace = new System.Windows.Forms.ListView();
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.lVSExpTerm = new System.Windows.Forms.Label();
             this.lHelp1 = new System.Windows.Forms.Label();
             this.lvExamplesHist = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.bVSSendTermInput = new System.Windows.Forms.Button();
-            this.tVSTermInput = new System.Windows.Forms.TextBox();
+            this.bVSSendQuery = new System.Windows.Forms.Button();
+            this.tVSQuery = new System.Windows.Forms.TextBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tbVSStatusOut = new System.Windows.Forms.TextBox();
             this.tabControl1.SuspendLayout();
@@ -53,22 +53,22 @@
             this.tabPage2.SuspendLayout();
             this.SuspendLayout();
             // 
-            // tbVSDirectQuery
+            // tbVSRawQuery
             // 
-            this.tbVSDirectQuery.Location = new System.Drawing.Point(6, 362);
-            this.tbVSDirectQuery.Name = "tbVSDirectQuery";
-            this.tbVSDirectQuery.Size = new System.Drawing.Size(205, 20);
-            this.tbVSDirectQuery.TabIndex = 0;
+            this.tbVSRawQuery.Location = new System.Drawing.Point(6, 362);
+            this.tbVSRawQuery.Name = "tbVSRawQuery";
+            this.tbVSRawQuery.Size = new System.Drawing.Size(205, 20);
+            this.tbVSRawQuery.TabIndex = 0;
             // 
-            // bSendVSDirectQuery
+            // bSendVSRawQuery
             // 
-            this.bSendVSDirectQuery.Location = new System.Drawing.Point(217, 362);
-            this.bSendVSDirectQuery.Name = "bSendVSDirectQuery";
-            this.bSendVSDirectQuery.Size = new System.Drawing.Size(97, 20);
-            this.bSendVSDirectQuery.TabIndex = 1;
-            this.bSendVSDirectQuery.Text = "Send query";
-            this.bSendVSDirectQuery.UseVisualStyleBackColor = true;
-            this.bSendVSDirectQuery.Click += new System.EventHandler(this.bSendVSDirectQuery_Click);
+            this.bSendVSRawQuery.Location = new System.Drawing.Point(217, 362);
+            this.bSendVSRawQuery.Name = "bSendVSRawQuery";
+            this.bSendVSRawQuery.Size = new System.Drawing.Size(97, 20);
+            this.bSendVSRawQuery.TabIndex = 1;
+            this.bSendVSRawQuery.Text = "Send query";
+            this.bSendVSRawQuery.UseVisualStyleBackColor = true;
+            this.bSendVSRawQuery.Click += new System.EventHandler(this.bSendVSDirectQuery_Click);
             // 
             // openFileDialog1
             // 
@@ -97,13 +97,13 @@
             // tabPage1
             // 
             this.tabPage1.Controls.Add(this.lVSLastCmdStatus);
-            this.tabPage1.Controls.Add(this.lvSpecSpace);
-            this.tabPage1.Controls.Add(this.lvGenSpace);
+            this.tabPage1.Controls.Add(this.lvVSSpecSpace);
+            this.tabPage1.Controls.Add(this.lvVSGenSpace);
             this.tabPage1.Controls.Add(this.lVSExpTerm);
             this.tabPage1.Controls.Add(this.lHelp1);
             this.tabPage1.Controls.Add(this.lvExamplesHist);
-            this.tabPage1.Controls.Add(this.bVSSendTermInput);
-            this.tabPage1.Controls.Add(this.tVSTermInput);
+            this.tabPage1.Controls.Add(this.bVSSendQuery);
+            this.tabPage1.Controls.Add(this.tVSQuery);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
@@ -121,38 +121,38 @@
             this.lVSLastCmdStatus.TabIndex = 9;
             this.lVSLastCmdStatus.Text = "<status wywołania>";
             // 
-            // lvSpecSpace
+            // lvVSSpecSpace
             // 
-            this.lvSpecSpace.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.lvVSSpecSpace.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader3});
-            this.lvSpecSpace.FullRowSelect = true;
-            this.lvSpecSpace.GridLines = true;
-            this.lvSpecSpace.Location = new System.Drawing.Point(381, 6);
-            this.lvSpecSpace.MultiSelect = false;
-            this.lvSpecSpace.Name = "lvSpecSpace";
-            this.lvSpecSpace.Size = new System.Drawing.Size(154, 191);
-            this.lvSpecSpace.TabIndex = 8;
-            this.lvSpecSpace.UseCompatibleStateImageBehavior = false;
-            this.lvSpecSpace.View = System.Windows.Forms.View.Details;
+            this.lvVSSpecSpace.FullRowSelect = true;
+            this.lvVSSpecSpace.GridLines = true;
+            this.lvVSSpecSpace.Location = new System.Drawing.Point(381, 6);
+            this.lvVSSpecSpace.MultiSelect = false;
+            this.lvVSSpecSpace.Name = "lvVSSpecSpace";
+            this.lvVSSpecSpace.Size = new System.Drawing.Size(154, 191);
+            this.lvVSSpecSpace.TabIndex = 8;
+            this.lvVSSpecSpace.UseCompatibleStateImageBehavior = false;
+            this.lvVSSpecSpace.View = System.Windows.Forms.View.Details;
             // 
             // columnHeader3
             // 
             this.columnHeader3.Text = "Specific space";
             this.columnHeader3.Width = 138;
             // 
-            // lvGenSpace
+            // lvVSGenSpace
             // 
-            this.lvGenSpace.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.lvVSGenSpace.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader2});
-            this.lvGenSpace.FullRowSelect = true;
-            this.lvGenSpace.GridLines = true;
-            this.lvGenSpace.Location = new System.Drawing.Point(221, 6);
-            this.lvGenSpace.MultiSelect = false;
-            this.lvGenSpace.Name = "lvGenSpace";
-            this.lvGenSpace.Size = new System.Drawing.Size(154, 191);
-            this.lvGenSpace.TabIndex = 7;
-            this.lvGenSpace.UseCompatibleStateImageBehavior = false;
-            this.lvGenSpace.View = System.Windows.Forms.View.Details;
+            this.lvVSGenSpace.FullRowSelect = true;
+            this.lvVSGenSpace.GridLines = true;
+            this.lvVSGenSpace.Location = new System.Drawing.Point(221, 6);
+            this.lvVSGenSpace.MultiSelect = false;
+            this.lvVSGenSpace.Name = "lvVSGenSpace";
+            this.lvVSGenSpace.Size = new System.Drawing.Size(154, 191);
+            this.lvVSGenSpace.TabIndex = 7;
+            this.lvVSGenSpace.UseCompatibleStateImageBehavior = false;
+            this.lvVSGenSpace.View = System.Windows.Forms.View.Details;
             // 
             // columnHeader2
             // 
@@ -197,28 +197,28 @@
             this.columnHeader1.Text = "Examples history";
             this.columnHeader1.Width = 131;
             // 
-            // bVSSendTermInput
+            // bVSSendQuery
             // 
-            this.bVSSendTermInput.Location = new System.Drawing.Point(175, 300);
-            this.bVSSendTermInput.Name = "bVSSendTermInput";
-            this.bVSSendTermInput.Size = new System.Drawing.Size(166, 34);
-            this.bVSSendTermInput.TabIndex = 1;
-            this.bVSSendTermInput.Text = "Wyślij";
-            this.bVSSendTermInput.UseVisualStyleBackColor = true;
+            this.bVSSendQuery.Location = new System.Drawing.Point(175, 300);
+            this.bVSSendQuery.Name = "bVSSendQuery";
+            this.bVSSendQuery.Size = new System.Drawing.Size(166, 34);
+            this.bVSSendQuery.TabIndex = 1;
+            this.bVSSendQuery.Text = "Wyślij";
+            this.bVSSendQuery.UseVisualStyleBackColor = true;
             // 
-            // tVSTermInput
+            // tVSQuery
             // 
-            this.tVSTermInput.Location = new System.Drawing.Point(175, 274);
-            this.tVSTermInput.Name = "tVSTermInput";
-            this.tVSTermInput.Size = new System.Drawing.Size(167, 20);
-            this.tVSTermInput.TabIndex = 0;
+            this.tVSQuery.Location = new System.Drawing.Point(175, 274);
+            this.tVSQuery.Name = "tVSQuery";
+            this.tVSQuery.Size = new System.Drawing.Size(167, 20);
+            this.tVSQuery.TabIndex = 0;
             // 
             // tabPage2
             // 
             this.tabPage2.Controls.Add(this.tbVSStatusOut);
             this.tabPage2.Controls.Add(this.tbVSPrologOut);
-            this.tabPage2.Controls.Add(this.bSendVSDirectQuery);
-            this.tabPage2.Controls.Add(this.tbVSDirectQuery);
+            this.tabPage2.Controls.Add(this.bSendVSRawQuery);
+            this.tabPage2.Controls.Add(this.tbVSRawQuery);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
@@ -256,7 +256,7 @@
 
         #endregion
 
-        private System.Windows.Forms.Button bSendVSDirectQuery;
+        private System.Windows.Forms.Button bSendVSRawQuery;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.TabControl tabControl1;
@@ -267,12 +267,12 @@
         private System.Windows.Forms.Label lHelp1;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         public System.Windows.Forms.ListView lvExamplesHist;
-        public System.Windows.Forms.ListView lvSpecSpace;
-        public System.Windows.Forms.ListView lvGenSpace;
-        public System.Windows.Forms.TextBox tbVSDirectQuery;
+        public System.Windows.Forms.ListView lvVSSpecSpace;
+        public System.Windows.Forms.ListView lvVSGenSpace;
+        public System.Windows.Forms.TextBox tbVSRawQuery;
         public System.Windows.Forms.TextBox tbVSPrologOut;
-        public System.Windows.Forms.Button bVSSendTermInput;
-        public System.Windows.Forms.TextBox tVSTermInput;
+        public System.Windows.Forms.Button bVSSendQuery;
+        public System.Windows.Forms.TextBox tVSQuery;
         public System.Windows.Forms.Label lVSLastCmdStatus;
         public System.Windows.Forms.Label lVSExpTerm;
         public System.Windows.Forms.TextBox tbVSStatusOut;

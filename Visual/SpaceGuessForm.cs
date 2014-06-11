@@ -32,13 +32,14 @@ namespace Visual
             this.lVSLastCmdStatus.Text = "none";
 
             //init algos
-            AlgoVersionSpace.init();
+            AlgoVersionSpace.init(ref self.lvVSGenSpace, ref self.lvVSSpecSpace);
+            //AlgoExplanationLearning.init(ref 
         }
 
         private void bSendVSDirectQuery_Click(object sender, EventArgs e)
         {
             //text, tytuł, buttony, ikona, ...
-            MessageBox.Show(this.tbVSDirectQuery.Text);
+            MessageBox.Show(this.tbVSRawQuery.Text);
         }
     }
 }
