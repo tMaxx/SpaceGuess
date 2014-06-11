@@ -25,17 +25,7 @@ namespace Visual.Class
         {
 
         }
-
-        protected void next()
-        {
-            if (this.curItem < this.engHistory.Count - 1)
-            {
-                //do sth with elements after
-            }
-
-            var last = this.engHistory[this.curItem];
-        }
-
+        
         //public SolutionSet execQuery(string input)
         //{
 
