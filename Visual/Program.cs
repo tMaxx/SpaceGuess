@@ -16,11 +16,7 @@ namespace Visual
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-<<<<<<< HEAD
             Application.Run(new SpaceGuessForm());
-=======
-            Application.Run(new Form1());
->>>>>>> c62e4699b03eec5a490ab87496920573c92573ce
         }
     }
 }

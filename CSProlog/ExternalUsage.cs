@@ -351,7 +351,7 @@ namespace Prolog
       {
         if (sourceFileName != null) Consult (sourceFileName);
 
-        Query = solutions.Query = query + (query.EndsWith (".") ? null : "."); // append a dot if necessary
+        Query = solutions.Query = query + (query.EndsWith (".") ? "" : "."); // append a dot if necessary
         int i = 0;
         bool found = false;
         bool varFound = false;

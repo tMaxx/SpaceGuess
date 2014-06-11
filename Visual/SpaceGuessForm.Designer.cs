@@ -256,26 +256,26 @@
 
         #endregion
 
-        private System.Windows.Forms.TextBox tbVSDirectQuery;
         private System.Windows.Forms.Button bSendVSDirectQuery;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
-        private System.Windows.Forms.TextBox tbVSPrologOut;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
-        private System.Windows.Forms.Button bVSSendTermInput;
-        private System.Windows.Forms.TextBox tVSTermInput;
-        private System.Windows.Forms.Label lVSLastCmdStatus;
-        private System.Windows.Forms.ListView lvSpecSpace;
         private System.Windows.Forms.ColumnHeader columnHeader3;
-        private System.Windows.Forms.ListView lvGenSpace;
         private System.Windows.Forms.ColumnHeader columnHeader2;
-        private System.Windows.Forms.Label lVSExpTerm;
         private System.Windows.Forms.Label lHelp1;
-        private System.Windows.Forms.ListView lvExamplesHist;
         private System.Windows.Forms.ColumnHeader columnHeader1;
-        private System.Windows.Forms.TextBox tbVSStatusOut;
+        public System.Windows.Forms.ListView lvExamplesHist;
+        public System.Windows.Forms.ListView lvSpecSpace;
+        public System.Windows.Forms.ListView lvGenSpace;
+        public System.Windows.Forms.TextBox tbVSDirectQuery;
+        public System.Windows.Forms.TextBox tbVSPrologOut;
+        public System.Windows.Forms.Button bVSSendTermInput;
+        public System.Windows.Forms.TextBox tVSTermInput;
+        public System.Windows.Forms.Label lVSLastCmdStatus;
+        public System.Windows.Forms.Label lVSExpTerm;
+        public System.Windows.Forms.TextBox tbVSStatusOut;
     }
 }
 
