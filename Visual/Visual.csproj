@@ -81,13 +81,13 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Roadmap.txt" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\CSProlog\CSProlog.csproj">
       <Project>{721e06ef-2be2-44bf-a0b7-bbe163a29f26}</Project>
       <Name>CSProlog</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Roadmap.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

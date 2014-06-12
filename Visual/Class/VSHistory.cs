@@ -25,7 +25,7 @@ namespace Visual.Class
 
     class VSHistory
     {
-        protected PrologEngine pe;
+        public PrologEngine pe;
         protected List<VSHistoryItem> items;
 
         //constructor
@@ -33,6 +33,11 @@ namespace Visual.Class
         {
             this.pe = new PrologEngine();
             this.items = new List<VSHistoryItem>();
+        }
+
+        public void persist()
+        {
+            this.pe.PersistCommandHistory();
         }
 
         public SolutionSet rawQuery(string cmd)
@@ -57,9 +62,11 @@ namespace Visual.Class
                     if ((atpos--) < 0)
                         break;
                     this.pe.GetAllSolutions(null, lvi.lvi.Text);
+                    this.persist();
                 }
             }
             SolutionSet ss = this.pe.GetAllSolutions(null, cmd);
+            this.persist();
 
             hi.ss = ss;
 
