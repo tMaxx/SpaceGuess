@@ -1,6 +1,6 @@
 /*-----------------------------------------------------------------------------------------
 
-  C#Prolog -- Copyright (C) 2007-2013 John Pool -- j.pool@ision.nl
+  C#Prolog -- Copyright (C) 2007-2014 John Pool -- j.pool@ision.nl
 
   This library is free software; you can redistribute it and/or modify it under the terms of
   the GNU General Public License as published by the Free Software Foundation; either version
@@ -111,6 +111,7 @@ namespace Prolog
         varNo = varNoMax++;
         verNo = 0;
         unifyCount = 0;
+        termType = TermType.UnboundVar;
       }
 
       public Variable (int i)
@@ -118,6 +119,7 @@ namespace Prolog
         varNo = i;
         verNo = 0;
         unifyCount = 0;
+        termType = TermType.UnboundVar;
       }
 
       public override BaseTerm ChainEnd () { return (IsUnified) ? uLink.ChainEnd () : this; }
@@ -131,7 +133,6 @@ namespace Prolog
       }
 
       public override bool IsUnified { get { return (uLink != null); } }
-      protected override TermType Rank { get { return TermType.UnboundVar; } } // for term sorting only
       protected override int CompareValue (BaseTerm t) { return varNo.CompareTo (((Variable)t).varNo); }
 
       public override bool Unify (BaseTerm t, VarStack varStack)
@@ -181,11 +182,14 @@ namespace Prolog
       public NamedVariable (string name)
       {
         this.name = name;
+        termType = TermType.NamedVar;
       }
 
-      public NamedVariable () { }
+      public NamedVariable () 
+      { 
+        termType = TermType.NamedVar; 
+      }
 
-      protected override TermType Rank { get { return TermType.NamedVar; } } // for term sorting only
       protected override int CompareValue (BaseTerm t) { return name.CompareTo (((NamedVariable)t).name); }
     }
 
@@ -272,7 +276,6 @@ namespace Prolog
         termType = TermType.SqlCommand;
       }
 
-      protected override TermType Rank { get { return TermType.SqlCommand; } } // for term sorting only
       protected override int CompareValue (BaseTerm t)
       {
         return FunctorToString.CompareTo (t.FunctorToString);
@@ -537,7 +540,6 @@ namespace Prolog
         args = that.args;
       }
 
-      protected override TermType Rank { get { return TermType.Compound; } }
 
       protected override int CompareValue (BaseTerm t)
       {
@@ -822,8 +824,6 @@ namespace Prolog
       }
 
 
-      protected override TermType Rank { get { return TermType.String; } }
-
       public override string ToWriteString (int level)
       {
         return '"' + FunctorToString.Replace (@"\", @"\\").Replace (@"""", @"\""") + '"';
@@ -834,7 +834,10 @@ namespace Prolog
     #region NumericalTerm
     public class NumericalTerm : ValueTerm
     {
-      protected override TermType Rank { get { return TermType.Number; } }
+      public NumericalTerm ()
+      {
+        termType = TermType.Number;
+      }
     }
     #endregion NumericalTerm
 
@@ -844,10 +847,11 @@ namespace Prolog
       decimal value;
       public decimal Value { get { return value; } }
       public double ValueD { get { return (double)value; } }
-      public override string FunctorToString { get { return value.ToString (Utils.CIC); } }
+      public override string FunctorToString { get { return value.ToString (CIC); } }
       public static DecimalTerm ZERO;
       public static DecimalTerm ONE;
       public static DecimalTerm MINUS_ONE;
+      const double EPS = 1.0e-6; // arbitrary, cosmetic
 
       public DecimalTerm () // required for ComplexTerm
       {
@@ -892,14 +896,13 @@ namespace Prolog
         if (t is Variable) return t.Unify (this, varStack);
 
         NextUnifyCount ();
-        const double eps = 1.0e-6; // arbitrary, cosmetic
 
         if (t is DecimalTerm)
           return (value == ((DecimalTerm)t).value);
 
         if (t is ComplexTerm)
-          return (Math.Abs (((ComplexTerm)t).Im) < eps &&
-                  Math.Abs (ValueD - ((ComplexTerm)t).Re) < eps);
+          return (Math.Abs (((ComplexTerm)t).Im) < EPS &&
+                  Math.Abs (ValueD - ((ComplexTerm)t).Re) < EPS);
 
         return false;
       }
@@ -972,7 +975,9 @@ namespace Prolog
 
       public override string ToWriteString (int level)
       {
-        return (value.ToString ("0.######", Utils.CIC));
+        if (value == Math.Truncate (value)) return value.ToString ();
+
+        return (value.ToString (Math.Abs (value) < (decimal)EPS ? "e" : "0.######", CIC));
       }
     }
     #endregion
@@ -986,7 +991,6 @@ namespace Prolog
         termType = TermType.DateTime;
       }
 
-      protected override TermType Rank { get { return TermType.DateTime; } }
       protected override int CompareValue (BaseTerm t)
       { return (To<DateTime> ().CompareTo (t.To<DateTime> ())); }
 
@@ -1006,7 +1010,6 @@ namespace Prolog
         termType = TermType.TimeSpan;
       }
 
-      protected override TermType Rank { get { return TermType.TimeSpan; } }
       protected override int CompareValue (BaseTerm t)
       { return (To<TimeSpan> ().CompareTo (t.To<TimeSpan> ())); }
 
@@ -1028,7 +1031,6 @@ namespace Prolog
         termType = TermType.Bool;
       }
 
-      protected override TermType Rank { get { return TermType.Bool; } }
       protected override int CompareValue (BaseTerm t)
       { return (To<bool> ().CompareTo (t.To<bool> ())); }
 
@@ -1043,7 +1045,6 @@ namespace Prolog
     public class FileTerm : BaseTerm
     {
       // in order to be able to close all open streams after command termination:
-      static List<FileTerm> possiblyOpenStreams;
       public static AtomTerm END_OF_FILE;
       protected PrologEngine engine;
       protected string fileName;
@@ -1051,27 +1052,11 @@ namespace Prolog
 
       static FileTerm ()
       {
-        possiblyOpenStreams = new List<FileTerm> ();
         END_OF_FILE = new AtomTerm ("end_of_file");
       }
 
       public virtual void Close ()
       {
-      }
-
-      protected void AddStream (FileTerm t)
-      {
-        possiblyOpenStreams.Add (t);
-      }
-
-      protected void RemoveStream (FileTerm t)
-      {
-        possiblyOpenStreams.Remove (t);
-      }
-
-      public static void PostQueryTidyUp () // called at end of command execution
-      { // use of 'foreach' gives exception (modified collection)
-        for (int i = 0; i < possiblyOpenStreams.Count; i++) possiblyOpenStreams [i].Close ();
       }
     }
 
@@ -1079,6 +1064,8 @@ namespace Prolog
     public class FileReaderTerm : FileTerm
     {
       TextReader tr = null;
+      FileStream fs;
+
       PrologParser p = null;
       public override bool IsOpen { get { return (tr != null); } }
       public bool Eof { get { return (tr == null || tr.Peek () == -1); } }
@@ -1102,9 +1089,12 @@ namespace Prolog
       {
         try
         {
-          if (tr == null) tr = new StreamReader (fileName);
+          if (tr == null)
+          {
+            fs = new FileStream (fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
+            tr = new StreamReader (fs);
+          }
 
-          AddStream (this);
           p = new PrologParser (engine);
           p.SetInputStream (tr);
           p.InitParse ();
@@ -1143,21 +1133,15 @@ namespace Prolog
         if (p != null) p.ExitParse ();
 
         if (tr != null)
-        {
           tr.Close ();
-          RemoveStream (this);
-        }
       }
-
-      //public FileReader Value { get { return objectFunctor as FileReader; } }
-
-      protected override TermType Rank { get { return TermType.FileReader; } }
     }
 
 
     public class FileWriterTerm : FileTerm
     {
       TextWriter tw = null;
+      FileStream fs;
       public override bool IsOpen { get { return (tw != null); } }
 
       public FileWriterTerm (PrologEngine engine, string fileName)
@@ -1167,10 +1151,10 @@ namespace Prolog
         termType = TermType.FileWriter;
       }
 
-      public FileWriterTerm (TextWriter tr)
+      public FileWriterTerm (TextWriter tw)
       {
         functor = this.fileName = "<standard output>";
-        this.tw = tr;
+        this.tw = tw;
         termType = TermType.FileWriter;
       }
 
@@ -1178,9 +1162,11 @@ namespace Prolog
       {
         try
         {
-          if (tw == null) tw = new StreamWriter (fileName);
-
-          AddStream (this);
+          if (tw == null)
+          {
+            fs = new FileStream (fileName, FileMode.Create, FileAccess.Write);
+            tw = new StreamWriter (fs);
+          }
         }
         catch (Exception e)
         {
@@ -1218,14 +1204,8 @@ namespace Prolog
       public override void Close ()
       {
         if (tw != null)
-        {
           tw.Close ();
-          RemoveStream (this);
-        }
       }
-
-
-      protected override TermType Rank { get { return TermType.FileWriter; } }
     }
     #endregion FileTerm
     #endregion ValueTerm
@@ -1327,7 +1307,7 @@ namespace Prolog
       public ListTerm (BaseTerm t0, BaseTerm t1)
         : base (PrologParser.DOT, t0.ChainEnd (), t1.ChainEnd ()) { }
 
-      public ListTerm (BaseTerm [] a)
+      public ListTerm (BaseTerm [] a) // for ListPattern; *not* intended for creating a list from an array !!
         : base (PrologParser.DOT, a) { }
 
       public ListTerm (string charCodeString)
@@ -1440,6 +1420,22 @@ namespace Prolog
 
           return (!(t.IsEmptyList || t is Variable));
         }
+      }
+
+
+      public BaseTerm [] ToTermArray ()
+      {
+        int length = 0;
+            
+        foreach (BaseTerm t in this) length++;
+
+        BaseTerm [] result = new BaseTerm [length];
+
+        length = 0;
+
+        foreach (BaseTerm t in this) result [length++] = t;
+
+        return result;
       }
 
 
@@ -1576,7 +1572,7 @@ namespace Prolog
 
       public override string ToWriteString (int level)
       {
-        // insert an extra space in case of non-standard last brackets
+        // insert an extra space in case of non-standard list brackets
         string altListSpace = (isAltList ? " " : null);
 
         if (IsEmptyList)
@@ -1673,33 +1669,33 @@ namespace Prolog
           What is a "Proper" List?
 
           Several of the predicate descriptions below indicate that a particular predicate
-          only works when a particular argument "is a proper last".
+          only works when a particular argument "is a proper list".
 
-          A proper last is either the Atom [] or else it is of the form [_|L] where L is a
-          proper last.
+          A proper list is either the Atom [] or else it is of the form [_|L] where L is a
+          proper list.
 
-          X is a partial last if and only if var(X) or X is [_|L] where L is a partial last.
-          A term is a last if it is either a proper last or a partial last; that is, [_|foo]
-          is not normally considered to be a last because its tail is neither a variable nor [].
+          X is a partial list if and only if var(X) or X is [_|L] where L is a partial list.
+          A term is a list if it is either a proper list or a partial list; that is, [_|foo]
+          is not normally considered to be a list because its tail is neither a variable nor [].
 
-          Note that the predicate last(X) defined in library(lists) really tests whether
-          X is a proper last. The name is retained for compatibility with earlier releases
+          Note that the predicate list(X) defined in library(lists) really tests whether
+          X is a proper list. The name is retained for compatibility with earlier releases
           of the library. Similarly, is_set(X) and is_ordset(X) test whether X is a proper
-          last that possesses the additional properties defining sets and ordered sets.
+          list that possesses the additional properties defining sets and ordered sets.
 
-          The point of the definition of a proper last is that a recursive procedure working
-          its way down a proper last can be certain of terminating. Let us take the case of
-          last/2 as an example. last(X, L) ought to be true when append(_, [X], L) is true.
+          The point of the definition of a proper list is that a recursive procedure working
+          its way down a proper list can be certain of terminating. Let us take the case of
+          list/2 as an example. list(X, L) ought to be true when append(_, [X], L) is true.
           The obvious way of doing this is
 
-               last(Last, [Last]).
-               last(Last, [_|End]) :-
-                       last(Last, End).
+               list(List, [List]).
+               list(List, [_|End]) :-
+                       list(List, End).
 
-          If called with the second argument a proper last, this definition can be sure of
+          If called with the second argument a proper list, this definition can be sure of
           terminating (though it will leave an extra choice point behind). However, if you Call
 
-               | ?- last(X, L), properLength(L, 0).
+               | ?- list(X, L), properLength(L, 0).
 
           where L is a variable, it will backtrack forever, trying ever longer lists.
           Therefore, users should be sure that only proper lists are used in those argument

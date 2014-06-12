@@ -1,6 +1,6 @@
 /*-----------------------------------------------------------------------------------------
 
-  C#Prolog -- Copyright (C) 2007-2013 John Pool -- j.pool@ision.nl
+  C#Prolog -- Copyright (C) 2007-2014 John Pool -- j.pool@ision.nl
 
   This library is free software; you can redistribute it and/or modify it under the terms of
   the GNU General Public License as published by the Free Software Foundation; either version
@@ -90,7 +90,7 @@ namespace Prolog
       {
         this.ta = ta;
         this.name = ta.Name;
-        this.subscripts = subscripts.ArgumentsToArrayList ();
+        this.subscripts = subscripts.ToTermList ();
 
         if (this.subscripts.Count != ta.Rank)
           IO.Error ("Wrong number of subscripts for '{0}': expected {1}, got {2}",

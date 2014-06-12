@@ -1,7 +1,6 @@
-//#define fullyTagged // i.e. use ELEMENT and TEXT (see below) to encapsulate elements and texts
 /*-----------------------------------------------------------------------------------------
 
-  C#Prolog -- Copyright (C) 2007-2013 John Pool -- j.pool@ision.nl
+  C#Prolog -- Copyright (C) 2007-2014 John Pool -- j.pool@ision.nl
 
   This library is free software; you can redistribute it and/or modify it under the terms of
   the GNU General Public License as published by the Free Software Foundation; either version
@@ -34,13 +33,29 @@ namespace Prolog
     const string XMLDOCUMENT  = "'xmldocument$'";
     const NumberStyles styleAllowDecPnt = NumberStyles.AllowDecimalPoint;
     const NumberStyles styleAllowFloat = NumberStyles.Float;
-#if fullyTagged
-    const string ELEMENT      = "'element$'";
-    const string TEXT         = "'text$'";
-#endif
 
     public class Node
     {
+      class NodePath : Stack<string>
+      {
+        public override string ToString ()
+        {
+          StringBuilder sb = new StringBuilder ();
+          bool first = true;
+
+          for (int i = ToArray ().Length-1; i >= 0; i--)
+          {
+            if (first) first = false; else sb.Append ("->");
+
+            sb.Append (ToArray () [i]);
+          }
+          
+          string result = sb.ToString ().Trim ();
+
+          return (result.Length == 0) ? null : result;
+        }
+      }
+
       XmlNodeType type;
       string name;
       string text; // contains prefix in case of element
@@ -87,10 +102,12 @@ namespace Prolog
         XmlTextReader xrd = null;
         StreamReader sr = null;
         Encoding encoding = GetEncodingFromString ("UTF-8");
+        WhitespaceHandling whitespace = WhitespaceHandling.None;
+        bool normalization = false;
+        bool comment = true;
         Node result;
         string settingValue = null;
 
-        // get settings -- currently, only 'encoding' is recognized
         if (settings != null)
           foreach (BaseTerm setting in (ListTerm)settings) // traverse ...
           {
@@ -99,13 +116,60 @@ namespace Prolog
             if (setting.Arity == 1)
               settingValue = setting.Arg (0).FunctorToString;
             else
-              IO.Error ("Illegal setting in xml_term/3: '{0}'", setting);
+              IO.Error ("xml_term/3: Unknown setting '{0}'", setting);
 
             switch (settingName)
             {
               // Expected string or file encoding. Superseded by explicit encoding attribute setting found in xml
+              case "comment":
+                switch (settingValue)
+                {
+                  case "on":
+                  case "true":
+                    comment = true;
+                    break;
+                  case "off":
+                  case "false":
+                    comment = false;
+                    break;
+                  default:
+                    IO.Error ("xml_term/3: Unknown 'comment' value setting '{0}'", settingValue);
+                    break;
+                }
+                break;
               case "encoding":
                 encoding = GetEncodingFromString (settingValue); // default is UTF-8
+                break;
+              case "whitespace": // whitespace handling
+                switch (settingValue)
+                {
+                  case "all":
+                    whitespace = WhitespaceHandling.All;
+                    break;
+                  case "significant":
+                    whitespace = WhitespaceHandling.Significant;
+                    break;
+                  case "none":
+                    whitespace = WhitespaceHandling.None;
+                    break;
+                  default:
+                    IO.Error ("xml_term/3: Unknown 'whitespace' value setting '{0}'", settingValue);
+                    break;
+                }
+                break;
+              case "normalisation":
+                switch (settingValue)
+                {
+                  case "false":
+                    normalization = false;
+                    break;
+                  case "true":
+                    normalization = true;
+                    break;
+                  default:
+                    IO.Error ("xml_term/3: Unknown 'normalization' value setting '{0}'", settingValue);
+                    break;
+                }
                 break;
               default:
                 IO.Error ("Unknown setting in xml_term/3: '{0}'", setting);
@@ -114,7 +178,7 @@ namespace Prolog
           }
 
         try
-        {
+        {          
           if (inFile)
           {
             sr = new StreamReader (s, encoding);
@@ -123,13 +187,15 @@ namespace Prolog
           else
             xrd = new XmlTextReader (new StringReader (s));
 
-          //xrd.ProhibitDtd = true; // new in the .NET Framework version 2.0
+          //xrd.ProhibitDtd = true;
           xrd.Namespaces = false;
+          xrd.Normalization = normalization;
+          xrd.WhitespaceHandling = whitespace;
           result = new Node ();
           result.TagName = "<root>";
           result.type = XmlNodeType.Element;
 
-          result.ToNode (xrd, 0); // first, create an intermediate representation (a Node) containing the XML structure
+          result.ToNode (xrd, 0, comment); // first, create an intermediate representation (a Node) containing the XML structure
         }
         catch (Exception e)
         {
@@ -148,7 +214,7 @@ namespace Prolog
       }
 
 
-      public void ToNode (XmlTextReader reader, int level)
+      public void ToNode (XmlTextReader reader, int level, bool comment)
       {
         Node child; // essentially: in the loop, add new nodes to this.childNodes
 
@@ -174,7 +240,7 @@ namespace Prolog
                 continue;
               }
 
-              child.ToNode (reader, level + 1);
+              child.ToNode (reader, level + 1, comment);
               childNodes.Insert (0, child);
 
               break;
@@ -184,8 +250,12 @@ namespace Prolog
             case XmlNodeType.EndElement:
               return;
             case XmlNodeType.Comment:
+              if (comment) goto case XmlNodeType.Text;
+              break;
             case XmlNodeType.Text:
             case XmlNodeType.CDATA:
+            case XmlNodeType.SignificantWhitespace:
+            case XmlNodeType.Whitespace:
               child = new Node ();
               child.type = reader.NodeType;
               child.Text = reader.Value;
@@ -210,8 +280,6 @@ namespace Prolog
             case XmlNodeType.EntityReference:
             case XmlNodeType.None:
             case XmlNodeType.Notation:
-            case XmlNodeType.SignificantWhitespace:
-            case XmlNodeType.Whitespace:
               // ignore
               break;
             default:
@@ -284,11 +352,7 @@ namespace Prolog
       static BaseTerm ToTermEx (Node root)
       {
         BaseTerm [] args = new BaseTerm [3];
-#if fullyTagged
-        args [0] = new AtomTerm (root.TagName.ToAtom ());
-#else
         string tagName = root.TagName.ToAtom ();
-#endif
         args [1] = ListTerm.EMPTYLIST;
         Decimal d;
 
@@ -296,7 +360,7 @@ namespace Prolog
         {
           BaseTerm pair;
 
-          if (Decimal.TryParse (kv.Value, styleAllowDecPnt, Utils.CIC, out d))
+          if (Decimal.TryParse (kv.Value, styleAllowDecPnt, CIC, out d))
             pair =  new OperatorTerm (EqualOpDescr, new AtomTerm (kv.Key), new DecimalTerm (d));
           else
             pair =  new OperatorTerm (EqualOpDescr, new AtomTerm (kv.Key), new StringTerm (kv.Value));
@@ -321,16 +385,16 @@ namespace Prolog
                 e = new CompoundTerm (COMMENT, new StringTerm (n.text.Trim ().EscapeDoubleQuotes ()));
                 break;
               case XmlNodeType.Text:
-                if (Decimal.TryParse (n.text, styleAllowDecPnt, Utils.CIC, out d))
-#if fullyTagged
-                  e = new CompoundTerm (TEXT, new DecimalTerm (d));
-                else
-                  e = new CompoundTerm (TEXT, new StringTerm (n.text.Trim ().EscapeDoubleQuotes ()));
-#else
+                if (Decimal.TryParse (n.text, styleAllowDecPnt, CIC, out d))
                   e = new DecimalTerm (d);
+                else if (n.text.HasAtomFormat ())
+                  e = new AtomTerm (n.text);
                 else
-                  e = new StringTerm (n.text.Trim ().EscapeDoubleQuotes ());
-#endif
+                  e = new StringTerm (n.text.EscapeDoubleQuotes ());
+                break;
+              case XmlNodeType.SignificantWhitespace:
+              case XmlNodeType.Whitespace:
+                e = new StringTerm (n.text);
                 break;
               case XmlNodeType.CDATA:
                 e = new CompoundTerm (CDATA, new StringTerm (n.text.Trim ().EscapeDoubleQuotes ()));
@@ -339,27 +403,23 @@ namespace Prolog
                 e = new CompoundTerm ("processing_instruction", new AtomTerm (n.name.ToAtom ()),
                               new StringTerm (n.text.Trim ().EscapeDoubleQuotes ()));
                 break;
-              case XmlNodeType.SignificantWhitespace:
-              case XmlNodeType.Whitespace:
-                break;
               default:
                 break;
             }
+
             if (e != null) args [2] = new ListTerm (e, args [2]);
           }
         }
 
-#if fullyTagged
-        return new CompoundTerm (ELEMENT, args);
-#else
-        return new CompoundTerm (tagName, args [1], args [2]);
-#endif
+        if (args [1].IsEmptyList)
+          return new CompoundTerm (tagName, args [2]);
+        else
+          return new CompoundTerm (tagName, args [1], args [2]);
       }
-
 
       // Conversion of a Prolog BaseTerm to an XML-structure (in a string or in a file)
       public static void TermToXml (BaseTerm settings, BaseTerm xmlTerm, ref string fileNameOrXmlString)
-      // xmlTerm = xmldocument( [<xmlprolog>?], element (...), [<misc>?])
+      // xmlTerm = 'xmldocument$'( [<xmlprolog>?], element (...), [<misc>?])
       {
         // get settings
         bool isXChars = true;
@@ -368,6 +428,7 @@ namespace Prolog
         bool isIndent = true;
         Encoding encoding = null;
         string settingValue = null; // value of setting
+        NodePath nodePath = new NodePath ();
 
         if (settings != null)
           foreach (BaseTerm setting in (ListTerm)settings) // traverse settings
@@ -408,32 +469,37 @@ namespace Prolog
 
         try
         {
-          BaseTerm t0 = xmlTerm.Arg (0);
-
-          if (fileNameOrXmlString == null) // return flat XmlString
+          if (fileNameOrXmlString == null) // return flat XmlString. Encoding etc. not possible
           {
             xwr = new XmlTextWriter (sw);
             xwr.Formatting = Formatting.None;
+            xwr.QuoteChar = '\'';
           }
           else // write to file
           {
             // get the encoding from the term
             if (encoding == null)
-              encoding = GetEncodingFromTerm (t0, Encoding.UTF8); // if not provided use Encoding.UTF8
+              encoding = GetEncodingFromTerm (xmlTerm.Arg (0), Encoding.UTF8); // if not provided use Encoding.UTF8
 
             xwr = new XmlTextWriter (fileNameOrXmlString, encoding);
             xwr.Formatting = isIndent ? Formatting.Indented : Formatting.None;
             xwr.Indentation = 2;
             xwr.IndentChar = ' '; // default
+            xwr.QuoteChar = '\'';
             xwr.Namespaces = true;
-            ContentTermToXml (xwr, t0);
           }
 
-          ElementTermToXml (xwr, xmlTerm.Arg (1)); // top-level element
+          if (xmlTerm.FunctorToString == XMLDOCUMENT)
+            xmlTerm = xmlTerm.Arg (1);
+
+          ElementTermToXml (xwr, xmlTerm, nodePath); // top-level element
         }
-        catch (Exception e)
+        catch (Exception x)
         {
-          IO.Error ("Unable to convert term to XML:\r\n{0}\r\n\r\nMessage was:\r\n{1}", xmlTerm, e.Message);
+          string s = nodePath.ToString ();
+
+          IO.Error ("Unable to convert term to XML:\r\n{0}{1}\r\n\r\nMessage was:\r\n{1}{2}", xmlTerm, x.Message,
+                    (s == null) ? null : string.Format ("\r\n\r\nNode path was {0}", s));
         }
         finally
         {
@@ -445,35 +511,97 @@ namespace Prolog
       }
 
 
-      static void ContentTermToXml (XmlTextWriter xwr, BaseTerm list) // process an element content, i.e. a t
+      static void ElementTermToXml (XmlTextWriter xwr, BaseTerm e, NodePath nodePath) // process an element( <tag>, <attributes>, <content>)
       {
-        while (!list.IsEmptyList) // traverse ...
+        // open tag
+        try
         {
-          BaseTerm e = list.Arg (0);
-          string type = e.FunctorToString;
+          if (e.Arity == 0)
+            IO.Error ("ElementTermToXml -- unexpected zero-arity argument '{0}' ", e);
+          if (e.Arity == 1 && e.FunctorToString == XMLDECL)
+            xwr.WriteStartDocument ();
+          else if (e.Arity <= 2)
+          {
+            string tag;
+            tag = e.FunctorToString.Dequoted ();
+            nodePath.Push (tag);
+            xwr.WriteStartElement (tag);
 
-#if !fullyTagged
-          if (e is StringTerm)
-            xwr.WriteString (((StringTerm)e).Value);
-          else if (e is DecimalTerm)
-            xwr.WriteString (((DecimalTerm)e).FunctorToString);
-          else if (e is CompoundTerm)
-            ElementTermToXml (xwr, e);
+            if (e.Arity == 2) // process attributes
+            {
+              // attributes
+              BaseTerm le = e.Arg (0); // term with attribute-value pairs
+
+              if (!le.IsProperList)
+                IO.Error ("Attribute-value pairs argument '{0}' is not a list", le);
+
+              while (!le.IsEmptyList)
+              {
+                if (le.Arity == 0)
+                  IO.Error ("Wrong format for list of attribute-value pairs: {0}", le);
+
+                BaseTerm av = le.Arg (0); // BaseTerm: attr = value
+
+                if (av.Arity < 2)
+                  IO.Error ("Wrong format for attribute-value pair: {0}", av);
+
+                xwr.WriteAttributeString (
+                  av.Arg (0).FunctorToString.Dequoted (),
+                  av.Arg (1).FunctorToString.Dequoted ());
+                le = le.Arg (1);
+              }
+            }
+
+            // content
+            ContentTermToXml (xwr, e.Arg (e.Arity - 1), nodePath);
+            xwr.WriteEndElement ();
+          }
           else
-#endif
+            IO.Error ("Unexpected element encountered:\r\n{0}", e);
+
+          nodePath.Pop ();
+        }
+        catch (Exception x)
+        {
+          throw new ApplicationException (
+            string.Format ("Error in ElementTermToXml:\r\n{0}", x.Message));
+        }
+      }
+
+
+      static void ContentTermToXml (XmlTextWriter xwr, BaseTerm contentList, NodePath nodePath) // process element content
+      {
+        if (contentList is ListTerm)
+        {
+          while (!contentList.IsEmptyList) // traverse ...
+          {
+            SingleContentListElement (xwr, nodePath, contentList.Arg (0));
+            contentList = contentList.Arg (1);
+          }
+        }
+        else
+          SingleContentListElement (xwr, nodePath, contentList);
+      }
+
+
+      static void SingleContentListElement (XmlTextWriter xwr, NodePath nodePath, BaseTerm e)
+      {
+        string type = e.FunctorToString;
+
+        try
+        {
+          if (e is AtomTerm)
+            xwr.WriteRaw (e.FunctorToString.Dequoted ());
+          else if (e is StringTerm || e is DecimalTerm || (e is OperatorTerm && e.Arity == 0))
+            xwr.WriteString (e.FunctorToString);
+          else if (e is NamedVariable)
+            IO.Error ("ContentTermToXml -- Term contains uninstantiated variable '{0}'", e);
+          else if (!(e is AnonymousVariable)) // anon: don't do anything (no content)
             switch (type)
             {
               case XMLDECL:
                 xwr.WriteStartDocument (true);
                 break;
-#if fullyTagged
-            case ELEMENT:
-              if (!ElementTermToXml (xwr, e)) return false;
-              break;
-            case TEXT:
-              xwr.WriteString (e.Arg (0).FunctorToString);
-              break;
-#endif
               case CDATA:
                 xwr.WriteCData (e.Arg (0).FunctorToString);
                 break;
@@ -484,52 +612,15 @@ namespace Prolog
                 xwr.WriteProcessingInstruction (e.Arg (0).FunctorToString, e.Arg (1).ToString ());
                 break;
               default:
-                IO.Error ("ContentTermToXml -- unhandled type: {0} ({1})",
-                  e.GetType ().Name, type);
+                ElementTermToXml (xwr, e, nodePath);
                 break;
             }
-
-          list = list.Arg (1);
         }
-      }
-
-
-      static void ElementTermToXml (XmlTextWriter xwr, BaseTerm e) // process an element( <tag>, <attributes>, <content>)
-      {
-#if fullyTagged
-        int ft = 1;
-#else
-        int ft = 0;
-#endif
-        // open tag
-        if (e.Arity == 1 + ft && e.FunctorToString == XMLDECL)
+        catch (Exception x)
         {
-          xwr.WriteStartDocument ();
+          throw new ApplicationException (
+            string.Format ("Error in SingleContentListElement:\r\n{0}", x.Message));
         }
-        else if (e.Arity == 2 + ft)
-        {
-#if fullyTagged        
-          xwr.WriteStartElement (e.Arg (0).ToString ().Dequoted ());
-#else
-          xwr.WriteStartElement (e.FunctorToString.Dequoted ());
-#endif
-
-          // attributes
-          BaseTerm le = e.Arg (ft); // t with attribute-value pairs
-          
-          while (!le.IsEmptyList)
-          {
-            BaseTerm av = le.Arg (0); // BaseTerm: attr = value
-            xwr.WriteAttributeString (av.Arg (0).FunctorToString.Dequoted (), av.Arg (1).FunctorToString);
-            le = le.Arg (1);
-          }
-
-          // content
-          ContentTermToXml (xwr, e.Arg (1 + ft));
-          xwr.WriteEndElement ();
-        }
-        else
-          IO.Error ("Unexpected element encountered:\r\n{0}", e);
       }
 
 

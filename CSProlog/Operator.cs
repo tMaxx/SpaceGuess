@@ -1,6 +1,6 @@
 /*-----------------------------------------------------------------------------------------
 
-  C#Prolog -- Copyright (C) 2007-2013 John Pool -- j.pool@ision.nl
+  C#Prolog -- Copyright (C) 2007-2014 John Pool -- j.pool@ision.nl
 
   This library is free software; you can redistribute it and/or modify it under the terms of
   the GNU General Public License as published by the Free Software Foundation; either version
@@ -133,15 +133,23 @@ namespace Prolog
 
       string GT_error (OperatorDescr od0, OperatorDescr od1)
       {
-        return string.Format (
-          "Precedence of {0} must be greater than the precedence of {1}", od0, od1);
+        if (od0 == od1)
+          return string.Format (
+            "Parentheses required for this combination of {0}-operators '{1}'.", od0.Assoc, od0.Name);
+        else
+          return string.Format (
+            "Precedence of {0} must be greater than the precedence of {1}", od0, od1);
       }
 
 
       string GE_error (OperatorDescr od0, OperatorDescr od1)
       {
-        return string.Format (
-          "Precedence of {0} must be greater than or equal to the precedence of {1}", od0, od1);
+        if (od0 == od1)
+          return string.Format (
+            "Parentheses required for this combination of {0}-operators '{1}'.", od0.Assoc, od0.Name);
+        else
+          return string.Format (
+            "Precedence of {0} must be greater than or equal to the precedence of {1}", od0, od1);
       }
 
 

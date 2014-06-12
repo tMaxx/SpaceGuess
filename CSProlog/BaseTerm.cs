@@ -1,6 +1,6 @@
 /*-----------------------------------------------------------------------------------------
 
-  C#Prolog -- Copyright (C) 2007-2013 John Pool -- j.pool@ision.nl
+  C#Prolog -- Copyright (C) 2007-2014 John Pool -- j.pool@ision.nl
 
   This library is free software; you can redistribute it and/or modify it under the terms of
   the GNU General Public License as published by the Free Software Foundation; either version
@@ -67,15 +67,17 @@ namespace Prolog
       Stack<BaseTerm> terms;
       VarStack varStack;
       IEnumerator<BaseTerm> iterator;
+      bool skipVars; // iff true variables in the Term tree will never match the pattern
 
-      public NodeIterator (BaseTerm root, BaseTerm pattern, 
-        BaseTerm minLenTerm, BaseTerm maxLenTerm, BaseTerm path, VarStack varStack)
+      public NodeIterator (BaseTerm root, BaseTerm pattern, BaseTerm minLenTerm, 
+        BaseTerm maxLenTerm, bool skipVars, BaseTerm path, VarStack varStack)
       {
         this.root = root;
         this.pattern = pattern;
         this.varStack = varStack;
         this.minLenTerm = minLenTerm;
         this.maxLenTerm = maxLenTerm;
+        this.skipVars = skipVars;
         this.path = path;
         iterator = GetEnumerator ();
       }
@@ -126,7 +128,9 @@ namespace Prolog
           term = terms.Peek ();
           childNo = pos.Pop ();
 
-          if (childNo == 0 &&
+          // do not match the pattern with single variables, except if the pattern is an atom
+          if ((!(skipVars && term is Variable) || pattern.Arity == 0) &&
+              childNo == 0 &&
               pos.Count >= minLevel &&
               pos.Count <= maxLevel &&
               pattern.Unify (term, varStack))
@@ -268,7 +272,7 @@ namespace Prolog
         }
       }
 
-      protected virtual TermType Rank { get { return TermType.None; } } // overridden in subtypes
+      protected TermType Rank { get { return TermType; } }
       protected virtual int CompareValue (BaseTerm t) { return FunctorToString.CompareTo (t.FunctorToString); }
       public virtual bool IsProperList { get { return false; } }
       public virtual bool IsPartialList { get { return false; } }
@@ -459,7 +463,7 @@ namespace Prolog
         {
           BaseTerm alt = alternatives [i];
           bool embedded = (alternatives.Count > 1);
-          List<BaseTerm> terms = alt.ArgumentsToArrayList ();
+          List<BaseTerm> terms = alt.ToTermList ();
 
           body.Clear ();
           remainder = inVarSave;
@@ -497,14 +501,14 @@ namespace Prolog
       }
 
 
-      public List<BaseTerm> ArgumentsToArrayList ()
+      public List<BaseTerm> ToTermList ()
       {
         BaseTerm t = this;
         List<BaseTerm> a = new List<BaseTerm> ();
 
         while (t.HasFunctor (PrologParser.COMMA) && t.Arity == 2)
         {
-          a.AddRange (t.Arg (0).ArgumentsToArrayList ());
+          a.AddRange (t.Arg (0).ToTermList ());
           t = t.Arg (1); // xfy
         }
 
@@ -647,7 +651,7 @@ namespace Prolog
          that contains the newly created copy.
 
          In order to make this also work for copying a nextClause (which is implemented as
-         a last of terms which are handled consecutively) one must make sure that this
+         a list of terms which are handled consecutively) one must make sure that this
          principle of one copy for all identical variables holds for all terms making up
          the nextClause. Therefor, another int attribute verNo (version number) has been
          introduced. When (bool) newVersion is switched off, the already created

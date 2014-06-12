@@ -25,7 +25,7 @@ SETTINGS
   Prolog               = Y
   CaseSensitive        = Y
   Preprocessor         = Y
-  PreprocessorPrefix   = '#'
+  PreprocessorPrefix   = '!'
   CodeStringChar       = '|'
   CommentStart         = '/*'
   CommentEnd           = '*/'
@@ -47,10 +47,10 @@ TERMINALS
   PromptSym         = '?-'
   DCGArrowSym       = '-->'
   BuiltinCSharp     = ':=='
-  LSqBracket        = '['
-  RSqBracket        = ']'
-  LCuBracket        = '{'
-  RCuBracket        = '}'
+  LSqBracket        = '[' (Group)
+  RSqBracket        = ']' (Group)
+  LCuBracket        = '{' (Group)
+  RCuBracket        = '}' (Group)
   VBar              = '|'
   OpSym             = 'op'
   WrapSym           = 'wrap'
@@ -62,17 +62,18 @@ TERMINALS
   StringStyle       = 'stringstyle' // 'iso' (list of integers) or 'csharp'
   AllDiscontiguous  = 'alldiscontiguous'
   Module            = 'module'
-  ListPatternOpen   = '[!'
-  ListPatternClose  = '!]'
-% TreePatternOpen   = '{!'
-% TreePatternClose  = '!}'
+  Dynamic           = 'dynamic'
+  ListPatternOpen   = '[!' (Group)
+  ListPatternClose  = '!]' (Group)
+% TreePatternOpen   = '{!' (Group)
+% TreePatternClose  = '!}' (Group)
   EllipsisSym       = '..'
   SubtreeSym        = '\'
   NegateSym         = '~' // for 'negative' searches in ListPatternTerm
   PlusSym           = '+'
   TimesSym          = '*'
   QuestionMark      = '?'
-  QuestionMarks     = '??' // TEMP !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  QuestionMarks     = '??' // for testing purposes only
   TrySym            = 'TRY'
   CatchSym          = 'CATCH'
   WrapOpen
@@ -102,10 +103,10 @@ RULES
     [] ProgramSym % consult
        |Initialize ();|
        Program
-    [] ReadingSym % for read (X)
+    [] ReadingSym % for read( X)
        PrologTerm + |out readTerm|
        Dot
-    [] |engine.EraseVariables ();|
+    [] |engine.EraseVariables ();| % Query mode
        |inQueryMode = true;|
        (: |terminalTable [OP] = Atom;|
           |terminalTable [WRAP] = Atom;|
@@ -137,8 +138,8 @@ RULES
     (: PrologTerm + |out head|
        |if (!head.IsCallable)|
        |  IO.Error ("Illegal predicate head: {0}", head.ToString ());|
-       |if (engine.predTable.Predefineds.Contains (head.Key) || head.Precedence >= 1000)|
-       |  IO.Error ("Predefined predicate or operator '{0}' cannot be redefined", head.FunctorToString);|
+       |if (engine.predTable.Predefineds.Contains (head.Key))|
+       |  IO.Error ("Predefined predicate or operator '{0}' cannot be redefined.", head.FunctorToString);|
        %|if (head.Precedence >= 1000)|
        %|  IO.Error ("Predefined operator '{0}' cannot be redefined", head.FunctorToString);|
        (: ImpliesSym
@@ -169,9 +170,10 @@ RULES
        |terminalTable [STRINGSTYLE] = StringStyle;|
        |terminalTable.Add (Module, "Module", "module");|
        |terminalTable.Add (Discontiguous, "Discontiguous", "discontiguous");|
-       |int saveNegate = terminalTable [NEGATE];|
+       |terminalTable.Add (Dynamic, "Dynamic", "dynamic");|
        |try {|
        (: OpDefinition + |true|
+       [] DynamicDirective
        [] WrapDefinition
        [] EnsureLoaded
           (: (: Atom [] Operator :)
@@ -197,6 +199,7 @@ RULES
              |SetCommaAsSeparator (true);|
              (: Atom [] Operator :)
              |ps.SetModuleName (symbol.ToString ());|
+             |IO.Warning ("line {0} -- :- 'module' directive not implemented -- ignored", symbol.LineNo);|
              Comma
              |} finally {|
              |SetCommaAsSeparator (false);|
@@ -225,8 +228,8 @@ RULES
        |} finally {|
        |terminalTable.Remove ("module");|
        |terminalTable.Remove ("discontiguous");|
+       |terminalTable.Remove ("dynamic");|
        |terminalTable [ELLIPSIS] = Atom;|
-       |terminalTable [NEGATE] = saveNegate;|
        |terminalTable [STRINGSTYLE] = Atom;|
        |terminalTable [SLASH] = Operator;|
        |terminalTable [SUBTREE] = Operator;|
@@ -236,12 +239,38 @@ RULES
   ---
 
 
+  DynamicDirective -> % the dynamic directive is ignored
+    Dynamic
+    (: (: Atom [] Operator :)
+    [] (: Atom [] Operator :) PACK
+    :)
+    |string name = symbol.ToString ();|
+    |int saveSlash = terminalTable [SLASH];|
+    |int arity;|
+    |try|
+    |{|
+    |terminalTable [SLASH] = Slash;|
+    Slash
+    IntLiteral
+    |arity = symbol.ToInt ();|
+    |IO.Warning ("line {0} -- :- 'dynamic' directive not implemented -- ignored", symbol.LineNo);|
+    |}|
+    |finally|
+    |{|
+    |terminalTable [SLASH] = saveSlash;|
+    |}|
+  ---
+
+
   SimpleDirective ->
     Atom
     |string directive = symbol.ToString ();|
     |bool spaceAfter = symbol.IsFollowedByLayoutChar;|
     |string argument = null;|
     |int arity = -1;|
+    |int saveSlash = terminalTable [SLASH];|
+    |try|
+    |{|
     |terminalTable [SLASH] = Slash;|
     (: (: |if (spaceAfter)|
           |  IO.Error ("Illegal space between directive '{0}' and left parenthesis", directive);|
@@ -256,6 +285,11 @@ RULES
        :)
     :) PACK OPTION
     |ps.HandleSimpleDirective (this, directive, argument, arity);|
+    |}|
+    |finally|
+    |{|
+    |terminalTable [SLASH] = saveSlash;|
+    |}|
   ---
 
 
@@ -343,6 +377,7 @@ RULES
     [] StringStyle
     [] AllDiscontiguous
     [] Module
+    [] Dynamic
     :)
   ---
 
@@ -621,11 +656,11 @@ RULES
        |//terminalTable [SUBTREE]  = saveSubtree;|  % Subtree ('\') ...
        PrologTermEx + |out t|
        |//terminalTable [ELLIPSIS] = EllipsisSym;|
-       |//terminalTable [NEGATE]   = NegateSym;|  
+       |//terminalTable [NEGATE]   = NegateSym;|
        |//terminalTable [SUBTREE]  = SubtreeSym;|
        |if (!first) searchTerms.Add (new SearchTerm (downRepFactor, t));|
-       |if (t is AnonymousVariable)|
-       |  IO.Warning ("Anonymous variable in alternatives list makes it match anything");|
+       |//if (t is AnonymousVariable)|
+       |//  IO.Warning ("Anonymous variable in alternatives list makes it match anything");|
     :) CHAIN
     (: VBar
        |if (first) searchTerms.Add (new SearchTerm (downRepFactor, t));|
@@ -703,7 +738,7 @@ RULES
     |  terminalTable [QUESTIONMARK] = saveQuestionMark;|
     |}|
   ---
-  
+
 
   TryCatchClause + |TokenSeqToTerm tokenSeqToTerm, out BaseTerm t| ->
     TrySym
@@ -754,7 +789,8 @@ RULES
     |t = null;|
     (: PrologTerm + |out t|
        Dot
-    :) OPTION
+    [] EndOfInput
+    :) 
   ---
 
 

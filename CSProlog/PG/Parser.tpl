@@ -14,14 +14,14 @@ namespace <NameSpace/>
   using System.Security.Principal;<CsUsing/>
 <Banner/>
 
-  public partial class Engine
+  public partial class PrologEngine
   {
     #region <ParserClassPrefix/>Parser
     public partial class <ParserClassPrefix/>Parser : BaseParser<<TerminalDescrPayload/>>
     {
       public static readonly string VersionTimeStamp = "<Now/>";
-      <CsMembers/>
-      
+      <ppChar/>
+      <CsMembers/>     
       #region Terminal definition
       <TTerminal/>
       <TTerminalTableFill/>
@@ -67,9 +67,9 @@ namespace <NameSpace/>
 
         if (syntaxErrorStat) return false;
 
-        if (symbol.Terminal == ANYSYM || followers.Contains (symbol.Terminal)) return true;
+        if (symbol.TerminalId == ANYSYM || followers.Contains (symbol.TerminalId)) return true;
 
-        switch (symbol.Terminal)
+        switch (symbol.TerminalId)
         {
           case EndOfLine:
             if (seeEndOfLine) s = "<EndOfLine>"; else goto default;

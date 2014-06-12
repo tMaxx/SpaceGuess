@@ -1,7 +1,8 @@
+//#define arg1index // if (un)defined, do the same in TermNodeList.cs !!!
 #define enableSpying
 /*-----------------------------------------------------------------------------------------
 
-  C#Prolog -- Copyright (C) 2007-2013 John Pool -- j.pool@ision.nl
+  C#Prolog -- Copyright (C) 2007-2014 John Pool -- j.pool@ision.nl
 
   This library is free software; you can redistribute it and/or modify it under the terms of
   the GNU General Public License as published by the Free Software Foundation; either version
@@ -44,6 +45,9 @@ namespace Prolog
       // over a source file. Should normally not be used (used for code from others).
       const string SLASH = "/";
       public Hashtable Predefineds { get { return predefineds; } }
+      Stack<string> consultFileStack;
+      Stack<PrologParser> consultParserStack;
+      string ConsultFileName { get { return (consultFileStack.Count == 0) ? null : consultFileStack.Peek (); } }
 
       public PredicateTable (PrologEngine engine)
       {
@@ -56,6 +60,8 @@ namespace Prolog
         definedInCurrFile = new Hashtable ();
         isDiscontiguous = new Hashtable ();
         actionWhenUndefined = new Dictionary<string, UndefAction> ();
+        consultFileStack = new Stack<string> ();
+        consultParserStack = new Stack<PrologParser> ();
       }
 
 
@@ -68,6 +74,8 @@ namespace Prolog
         isDiscontiguous.Clear ();
         actionWhenUndefined.Clear ();
         prevIndex = null;
+        consultFileStack.Clear ();
+        consultParserStack.Clear ();
       }
 
 
@@ -205,7 +213,7 @@ namespace Prolog
         if (pd == null)
         {
           this [key] = pd =
-         new PredicateDescr (Globals.ConsultModuleName, Globals.ConsultFileName, f, a, c);
+         new PredicateDescr (null, ConsultFileName, f, a, c);
         }
         else
           pd.SetClauseListHead (c);
@@ -230,11 +238,10 @@ namespace Prolog
 
       public int Consult (string fileName)
       {
-        bool csharpStringsSave = engine.csharpStrings;
         // string as ISO-style charcode lists or as C# strings
-        PrologParser saveCurrentParser = Globals.CurrentParser;
+        consultFileStack.Push (fileName);
+        consultParserStack.Push (Globals.CurrentParser);
         PrologParser parser = Globals.CurrentParser = new PrologParser (engine);
-        string saveConsultFileName = null;
         allDiscontiguous = false;
 
         try
@@ -242,10 +249,8 @@ namespace Prolog
           prevIndex = null;
           definedInCurrFile.Clear ();
           isDiscontiguous.Clear ();
-          actionWhenUndefined.Clear ();
           Uncacheall ();
-          Globals.ConsultFileName = saveConsultFileName = fileName.ToLower ();
-          Globals.ConsultModuleName = null;
+          //Globals.ConsultModuleName = null;
           parser.Prefix = "&program\r\n";
           IO.Write ("--- Consulting {0} ... ", fileName);
           parser.LoadFromFile (fileName);
@@ -254,10 +259,8 @@ namespace Prolog
         }
         finally
         {
-          Globals.ConsultFileName = saveConsultFileName;
-          //Globals.ConsultModuleName = null; Currently not used
-          Globals.CurrentParser = saveCurrentParser;
-          engine.csharpStrings = csharpStringsSave;
+          Globals.CurrentParser = consultParserStack.Pop (); ;
+          //Globals.ConsultModuleName = null; // Currently not used
         }
 
         return parser.LineCount;
@@ -292,7 +295,7 @@ namespace Prolog
         // The predicate descriptor does not yet exist (and may even not come at all!)
         string key = BaseTerm.MakeKey (t.Arg (0).FunctorToString, t.Arg (1).To<short> ());
 
-        //IO.WriteLine ("--- Setting discontiguous for {0} in definingFile {1}", key, Globals.ConsultFileName);
+        //IO.WriteLine ("--- Setting discontiguous for {0} in definitionFile {1}", key, Globals.ConsultFileName);
         isDiscontiguous [key] = "true";
       }
 
@@ -311,6 +314,9 @@ namespace Prolog
         {
           case "workingdir":
             ConfigSettings.SetWorkingDirectory (argument);
+            break;
+          case "fail_if_undefined":
+            SetActionWhenUndefined (argument, arity, UndefAction.Fail);
             break;
           case "cache":
             SetCaching (argument, arity, true);
@@ -332,6 +338,9 @@ namespace Prolog
            else
               IO.Error (":- stacktrace: illegal argument '{0}'; use 'on' or 'off' instead", argument);
             break;
+          case "initialization":
+            IO.Warning ("':- initialization' directive not implemented -- ignored");
+            break;
           default:
             IO.Error ("Unknown directive ':- {0}'", directive);
             break;
@@ -342,17 +351,18 @@ namespace Prolog
       public void SetModuleName (string n)
       {
         object o = moduleName [n];
-        string currFile = Globals.ConsultFileName;
+        string currFile = ConsultFileName;
 
         if (o == null)
         {
           moduleName [n] = currFile;
-          Globals.ConsultModuleName = null;
+          // ConsultModuleName = null;
         }
         else if ((string)o != currFile)
-          IO.Error ("Module name {0} already declared in definingFile {1}", n, (string)o);
+          IO.Error ("Module name {0} already declared in file {1}", n, (string)o);
 
-        // ACTUAL FUNCTIONALITY TO BE IMPLEMENTED
+        // ACTUAL FUNCTIONALITY TO BE IMPLEMENTED, using a 
+        // ConsultModuleName stack, analoguous to ConsultFileName
       }
 
 
@@ -377,15 +387,15 @@ namespace Prolog
 
           if (definedInCurrFile [key] == null) //  very first clause of this predicate in this file -- reset at start of consult
           {
-            if (pd != null && pd.DefiningFile != Globals.ConsultFileName)
-              IO.Error ("Predicate '{0}' is already defined in {1}", index, pd.DefiningFile);
+            if (pd != null && pd.DefinitionFile != ConsultFileName)
+              IO.Error ("Predicate '{0}' is already defined in {1}", index, pd.DefinitionFile);
 
             definedInCurrFile [key] = true;
             pd = SetClauseList (head.FunctorToString, head.Arity, clause); // implicitly erases all previous definitions
             pd.IsDiscontiguous = (isDiscontiguous [key] != null || allDiscontiguous);
             prevIndex = key;
           }
-          else // not the first clause. First may be from another definingFile (which is an error).
+          else // not the first clause. First may be from another definitionFile (which is an error).
           {    // If from same, IsDiscontiguous must hold, unless DiscontiguousAllowed = "1" in .config
             bool b = false;
 
@@ -394,15 +404,15 @@ namespace Prolog
               if (b)
                 IO.Warning ("Predicate '{0}' is defined discontiguously but is not declared as such", index);
 
-              if (pd.DefiningFile == Globals.ConsultFileName)
+              if (pd.DefinitionFile == ConsultFileName)
                 pd.AppendToClauseList (clause);
               else // OK
-                IO.Error ("Discontiguous predicate {0} must be in one file (also found in {1})", index, pd.DefiningFile);
+                IO.Error ("Discontiguous predicate {0} must be in one file (also found in {1})", index, pd.DefinitionFile);
             }
-            else if (pd.DefiningFile == Globals.ConsultFileName) // Warning or Error?
+            else if (pd.DefinitionFile == ConsultFileName) // Warning or Error?
               IO.Error ("Predicate '{0}' occurs discontiguously but is not declared as such", index);
             else
-              IO.Error ("Predicate '{0}' is already defined in {1}", index, pd.DefiningFile);
+              IO.Error ("Predicate '{0}' is already defined in {1}", index, pd.DefinitionFile);
           }
         }
       }
@@ -414,14 +424,15 @@ namespace Prolog
         BaseTerm head;
         TermNode body = null;
         PredicateDescr pd;
+        BaseTerm assertionCopy = assertion.Copy (true);
 
-        if (assertion.HasFunctor (PrologParser.IMPLIES))
+        if (assertionCopy.HasFunctor (PrologParser.IMPLIES))
         {
-          head = assertion.Arg (0);
-          body = assertion.Arg (1).ToGoalList ();
+          head = assertionCopy.Arg (0);
+          body = assertionCopy.Arg (1).ToGoalList ();
         }
         else
-          head = assertion;
+          head = assertionCopy;
 
         if (!head.IsCallable) IO.Error ("Illegal predicate head '{0}'", head.ToString ());
 
@@ -429,7 +440,7 @@ namespace Prolog
 
         if ((predefineds.Contains (key)) || (head.Precedence >= 1000))
           IO.Error ("assert/1 cannot be applied to predefined predicate or operator '{0}'",
-            assertion.Index);
+            assertionCopy.Index);
 
         predTable.TryGetValue (key, out pd);
         ClauseNode newC = new ClauseNode (head, body);
@@ -441,7 +452,7 @@ namespace Prolog
         }
         else if (pd.IsCacheable)
           IO.Error ("assert/1 cannot be applied to cached predicate '{0}'",
-            assertion.Index);
+            assertionCopy.Index);
         else if (asserta) // at beginning
         {
           newC.NextClause = pd.ClauseList; // pd.ClauseList may be null
@@ -620,7 +631,7 @@ namespace Prolog
 
         if ((clause = pd.ClauseList) == null) return false;
 
-        details = "source: " + pd.DefiningFile;
+        details = "source: " + pd.DefinitionFile;
 
 //        if (pd.IsFirstArgIndexed) details += "; arg1-indexed (jump points marked with '.')";
 

@@ -1,7 +1,5 @@
 cls
 
-PG3main PL
-
-REM copy pl.cs ..
+for %%f in (*.grm) do (PG4main %%~nf)
 
 PAUSE

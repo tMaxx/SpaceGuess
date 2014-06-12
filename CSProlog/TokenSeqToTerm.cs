@@ -125,15 +125,13 @@ namespace Prolog
         string name;
         public string Name { get { return name; } }
 
-        public TokenStack (string name)
-          : base ()
+        public TokenStack (string name) : base ()
         {
           this.name = name;
         }
 
         public bool IsEmpty { get { return (Count == 0); } }
         public BaseToken Top { get { return Peek (); } } // no empty stack check!
-        public BaseToken SubTop { get { return this.ElementAt<BaseToken> (1); } }
 
         public void MoveTopTo (TokenStack targetStack)
         {
@@ -147,7 +145,7 @@ namespace Prolog
       static OperandToken SeqEndToken;
       BaseToken topToken { get { return IS.Top; } }
       bool inOpAtBoS; // special case: infix operator (no pre- or post definition) at BoS,
-      // ... only allowed if it is stand-alone or immediately followed by an argument last
+      // ... only allowed if it is stand-alone or immediately followed by an argument list
       BaseToken newToken;
       OperatorToken topOperator
       { get { return (topToken is OperatorToken) ? topToken as OperatorToken : null; } }
@@ -208,9 +206,9 @@ namespace Prolog
         if (args.Length == 1) // i.e. only a single term between parentheses
           Add (args [0]);
         else if (args.Length == 2)
-          Add (new OperatorTerm (CommaOpDescr, args [0], args [1])); // a last of terms between parentheses
+          Add (new OperatorTerm (CommaOpDescr, args [0], args [1])); // a list of terms between parentheses
         else
-          Add (new CompoundTerm (CommaOpDescr.Name, args)); // a last of terms between parentheses
+          Add (new CompoundTerm (CommaOpDescr.Name, args)); // a list of terms between parentheses
       }
 
       public void AddOperatorFunctor (OpDescrTriplet triplet, BaseTerm [] args)

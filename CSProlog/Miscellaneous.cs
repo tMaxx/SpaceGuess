@@ -1,6 +1,6 @@
 /*-----------------------------------------------------------------------------------------
 
-  C#Prolog -- Copyright (C) 2007-2013 John Pool -- j.pool@ision.nl
+  C#Prolog -- Copyright (C) 2007-2014 John Pool -- j.pool@ision.nl
 
   This library is free software; you can redistribute it and/or modify it under the terms of
   the GNU General Public License as published by the Free Software Foundation; either version
@@ -266,6 +266,7 @@ namespace Prolog
       #region public fields
       public static CultureInfo CI = CultureInfo.InvariantCulture;
       public static Hashtable ConsultedFiles = new Hashtable ();
+      //TODO reconsider the use of the statics below
       public static string ConsultFileName = null;   // file being currently consulted
       public static string ConsultModuleName = null; // name of current module (if any) in file being consulted
       public static PrologParser CurrentParser { get { return currentParser; } set { currentParser = value; } }
@@ -458,7 +459,6 @@ namespace Prolog
     public static class Utils
     {
       static readonly string logFileName = "PL" + DateTime.Now.ToString ("yyyy-MM-dd") + ".log";
-      public static readonly CultureInfo CIC = CultureInfo.InvariantCulture;
       static StreamWriter logFile;
       static bool showMode = true;
       enum readStatus { Content }
@@ -668,7 +668,7 @@ namespace Prolog
       public static string ExtendedFileName (string s, string defExt)
       {
         string fileName = null;
-        
+
         try
         {
           fileName = s.Dequoted ();
@@ -736,7 +736,7 @@ namespace Prolog
 
         int [] gnums = re.GetGroupNumbers ();
         BaseTerm groups = new ListTerm ();
-        
+
         while (m.Success)
         {
           for (int i = 1; i < gnums.Length; i++) // start at group 1 (0 is the fully captured match string)
@@ -746,8 +746,8 @@ namespace Prolog
             string groupId = re.GetGroupNames () [i];
             int groupNo;
             BaseTerm groupIdTerm;
-            
-            foreach (Capture c in g.Captures)          
+
+            foreach (Capture c in g.Captures)
               captures = ((ListTerm)captures).AppendElement (new StringTerm (c.ToString ()));
 
             if (int.TryParse (groupId, out groupNo))
@@ -766,7 +766,7 @@ namespace Prolog
         {
           groups = groups.Arg (0); // groups is <groupname>:[<captures>]
 
-          if (groups.Arg (0) is DecimalTerm) 
+          if (groups.Arg (0) is DecimalTerm)
             groups = groups.Arg (1); // anonymous group, just return the list of captures
         }
 
@@ -988,7 +988,7 @@ namespace Prolog
       {
         // special case: if the date is in a week that starts on December 29,
         // 30 or 31 (i.e. date day in sun..wed), then return 1
-        if (date.Month == 12 && date.Day >= 29 && date.DayOfWeek <= DayOfWeek.Wednesday) 
+        if (date.Month == 12 && date.Day >= 29 && date.DayOfWeek <= DayOfWeek.Wednesday)
           return 1;
 
         DateTime jan1 = new DateTime (date.Year, 1, 1); // January 1st
@@ -1002,7 +1002,6 @@ namespace Prolog
         // date of week 1 and (integer) divide that by 7. This is the weekno-1.
         return 1 + (date - startWk1).Days / 7;
       }
-
 
 #if mswindows
       [DllImport ("netapi32.dll")]
@@ -1087,18 +1086,18 @@ namespace Prolog
         internal COORD dwMaximumWindowSize;
       }
 
-      [DllImport ("kernel32.dll", SetLastError=true)]
+      [DllImport ("kernel32.dll", SetLastError = true)]
       static extern bool GetConsoleScreenBufferInfo (
         IntPtr hConsoleOutput,
         out CONSOLE_SCREEN_BUFFER_INFO lpConsoleScreenBufferInfo
       );
 
-      [DllImport ("kernel32.dll", SetLastError=true)]
+      [DllImport ("kernel32.dll", SetLastError = true)]
       static extern IntPtr GetStdHandle (
         int whichHandle
       );
 
-      [DllImport ("kernel32.dll", SetLastError=true)]
+      [DllImport ("kernel32.dll", SetLastError = true)]
       static extern IntPtr GetConsoleWindow ();
 
       static IntPtr GetHandle (int WhichHandle)
@@ -1232,6 +1231,77 @@ namespace Prolog
     {
       return new string (' ', n);
     }
+
+    #region Permutation
+    public class Permutation
+    {
+      BaseTerm [] configuration;
+
+      public Permutation (ListTerm t)
+      {
+        BaseTermSet ts = new BaseTermSet (t);
+        ts.Sort ();
+        configuration = ts.ToArray ();
+      }
+
+      public bool NextPermutation ()
+      {
+        /*
+         Knuth's method
+         1. Find the largest index j such that a[j] < a[j+1]. If no such index exists, 
+            the permutation is the last permutation.
+         2. Find the largest index l such that a[j] < a[l]. Since j+1 is such an index, 
+            l is well defined and satisfies j < l.
+         3. Swap a[j] with a[l].
+         4. Reverse the sequence from a[j+1] up to and including the final element a[n].
+        */
+        int maxIndex = -1;
+
+        for (var i = configuration.Length - 2; i >= 0; i--)
+        {
+          if (configuration [i].CompareTo (configuration [i + 1]) == -1)
+          {
+            maxIndex = i;
+            break;
+          }
+        }
+
+        if (maxIndex < 0) return false;
+
+        int maxIndex2 = -1;
+
+        for (int i = configuration.Length - 1; i >= 0; i--)
+          if (configuration [maxIndex].CompareTo (configuration [i]) == -1)
+          {
+            maxIndex2 = i;
+
+            break;
+          }
+
+        var tmp = configuration [maxIndex];
+        configuration [maxIndex] = configuration [maxIndex2];
+        configuration [maxIndex2] = tmp;
+
+        for (int i = maxIndex + 1, j = configuration.Length - 1; i < j; i++, j--)
+        {
+          tmp = configuration [i];
+          configuration [i] = configuration [j];
+          configuration [j] = tmp;
+        }
+
+        return true;
+      }
+
+      public IEnumerator<ListTerm> GetEnumerator ()
+      {
+        do
+        {
+          yield return ListTerm.ListFromArray (configuration); // first time
+        }
+        while (NextPermutation ());
+      }
+    }
+    #endregion Permutation
   }
 
   public static class Extensions
@@ -1308,7 +1378,7 @@ namespace Prolog
       int p;
 
       for (int i = 0; i < a.Length; i++)
-        if ((p = pairs.IndexOf (a [i])) > -1) a [i] = pairs [p+1];
+        if ((p = pairs.IndexOf (a [i])) > -1) a [i] = pairs [p + 1];
 
       return new string (a);
     }
@@ -1440,6 +1510,8 @@ namespace Prolog
 
     public static string Dequoted (this string s) // remove ' or " quotes (if any)
     {
+      if (s == null) return null;
+
       int len = s.Length;
 
       // check whether the string is quoted at all
@@ -1461,12 +1533,12 @@ namespace Prolog
       return s.Substring (1, len - 2).Replace (quote + quote, quote);
     }
 
-    
+
     public static string Enquote (this string s, char quoteChar) // enclose in ' or " quotes
     {
       string q = quoteChar.ToString ();
 
-      return (s == null) ? q+q : q + s.Replace (q, q+q) + q;
+      return (s == null) ? q + q : q + s.Replace (q, q + q) + q;
     }
 
 
@@ -1501,8 +1573,8 @@ namespace Prolog
       RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.ExplicitCapture
     );
 
-     //@"\\(?:(?<h>'|""|\\|0|a|b|f|n|r|t|v)|u(?<h>[0-9a-fA-F]{4})|x(?<h>[0-9a-fA-F]{1,4})|U(?<h>[0-9a-fA-F]{8})|(?<h>.))",
-    
+    //@"\\(?:(?<h>'|""|\\|0|a|b|f|n|r|t|v)|u(?<h>[0-9a-fA-F]{4})|x(?<h>[0-9a-fA-F]{1,4})|U(?<h>[0-9a-fA-F]{8})|(?<h>.))",
+
     static Regex escapedChar = new Regex (
      @"\\(?:(?<h>'|""|\\|0|a|b|f|n|r|t|v)|u(?<h>[0-9a-fA-F]{4})|x(?<h>[0-9a-fA-F]{1,4})|U(?<h>[0-9a-fA-F]{8}))",
      RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.ExplicitCapture
@@ -1557,14 +1629,14 @@ namespace Prolog
     public static float Levenshtein (this string a, string b)
     {
       if (string.IsNullOrEmpty (a))
-        return string.IsNullOrEmpty (b) ? 0.0F: 1.0F;
+        return string.IsNullOrEmpty (b) ? 0.0F : 1.0F;
 
       if (string.IsNullOrEmpty (b))
         return 1.0F;
 
       int n = a.Length;
       int m = b.Length;
-      int [,] d = new int [n+1, m+1];
+      int [,] d = new int [n + 1, m + 1];
 
       for (int i = 0; i <= n; i++) d [i, 0] = i;
 
@@ -1573,9 +1645,9 @@ namespace Prolog
       for (int i = 1; i <= n; i++)
         for (int j = 1; j <= m; j++)
         {
-          int d0 = d [i-1, j] + 1;
-          int d1 = d [i, j-1] + 1;
-          int d2 = d [i-1, j-1] + (a [i-1] == b [j-1] ? 0 : 1);
+          int d0 = d [i - 1, j] + 1;
+          int d1 = d [i, j - 1] + 1;
+          int d2 = d [i - 1, j - 1] + (a [i - 1] == b [j - 1] ? 0 : 1);
           d [i, j] = Math.Min (Math.Min (d0, d1), d2);
         }
 

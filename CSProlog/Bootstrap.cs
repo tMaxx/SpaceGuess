@@ -1,6 +1,6 @@
 /*-----------------------------------------------------------------------------------------
 
-  C#Prolog -- Copyright (C) 2007-2013 John Pool -- j.pool@ision.nl
+  C#Prolog -- Copyright (C) 2007-2014 John Pool -- j.pool@ision.nl
 
   This library is free software; you can redistribute it and/or modify it under the terms of
   the GNU General Public License as published by the Free Software Foundation; either version
@@ -40,6 +40,14 @@ namespace Prolog
 
        !             :== cut.
        call( X)      :== call.
+       % extra args for implementation of maplist. A1..An will be added to the argument list of X
+       call( X, A1) :== call.
+       call( X, A1, A2) :== call.
+       call( X, A1, A2, A3) :== call.
+       call( X, A1, A2, A3, A4) :== call.
+       call( X, A1, A2, A3, A4, A5) :== call.
+       call( X, A1, A2, A3, A4, A5, A6) :== call.
+       call( X, A1, A2, A3, A4, A5, A6, A7) :== call.
        meta$call( X) :== call.
        fail          :== fail.
 
@@ -51,6 +59,18 @@ namespace Prolog
 
        not( X) :- X, !, fail.
        not( X).
+
+%%     maplist(:Goal, +List1, ?List2)
+%
+%      True if Goal can successfully be applied to all
+%      successive pairs of elements from List1 and List2.
+%
+       maplist( Goal, L1, L2) :-
+         map$list( L1, L2, Goal).
+       map$list( [], [], _).
+       map$list( [H0|T0], [H|T], Goal) :-
+         call( Goal, H0, H),
+         map$list( T0, T, Goal).
 
        %make_array( A, [_|_]) :== make_array. % later
 
@@ -231,7 +251,7 @@ namespace Prolog
        print( X)         :== print.
        treeprint( X)     :== treeprint.
        writeln( X)       :== writeln.
-       writef( S, L)     :== writef.  % formatted write, Ã  la C#. L single arg or list of args.
+       writef( S, L)     :== writef.  % formatted write, à la C#. L single arg or list of args.
        writef( S)        :== write.
        writelnf( S, L)   :== writelnf.
        writelnf( S)      :== writeln.
@@ -259,7 +279,7 @@ namespace Prolog
        and reset to an unbound variable after the last successful call.
        UserClassTerm (in DerivedTerms.cs) can be used for creating a State term with
        an arbitrary class type content. In my experience, an enumerator is eminently
-       suited for this task, since in fact it can be considered a finite state engine
+       suited for this task, since in fact it can be considered a finite state machine
        that yields one value at a time and saves state between calls.
     */
 
@@ -273,6 +293,17 @@ namespace Prolog
          !,
          nonvar( State),             % 'clause' resets State to var upon failure
          clause$( State, H, B).
+
+       permutation( P0, P1) :-         % returns next permutation P1 for list P0.
+         permutation$( State, P0, P1), % First returned value of P1 is P0 sorted
+         !,
+         permutation$( State, P0, P1).
+ 
+       permutation$( State, P0, P1) :== permutation.
+       permutation$( State, P0, P1) :-
+        !,
+         nonvar( State),             % 'permutation' resets State to var upon failure
+         permutation$( State, P0, P1).
 
        current_op( P, F, N) :-       % return operators matching ?P(recedence), ?F(ix), ?N(name)
          current$op( State, P, F, _),
@@ -411,7 +442,7 @@ namespace Prolog
          xml_term( see(+FileName), ?Term) or xml_term( tell(+FileName), +Term)
        */
        xml_term( X, T)          :== xml_term. % X is string or text file containing xml, T is Prolog term
-       xml_term( X, T, [_|_])   :== xml_term. % controls (items in a list): see below
+       xml_term( X, T, Options) :== xml_term. 
        
 
        % 'xmldocument$'/3 is the last argument of xml_term/2/3
@@ -492,6 +523,8 @@ namespace Prolog
        userroles( X)            :== userroles.
        statistics( T, [MSec,_]) :== statistics.
        environment( X, Y)       :== environment.
+       ip_address( X)           :== ip_address.  % local IP-address. X is string.
+       ip_address( X, L)        :== ip_address.  % ..., L is list of numbers
 
        get_counter( N, V)       :== get_counter. % Get current integer value V of counter number N
        set_counter( N, V)       :== set_counter. % N is set to integer V, and not unbound in backtracking

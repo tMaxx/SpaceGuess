@@ -1,6 +1,6 @@
 /*-----------------------------------------------------------------------------------------
 
-  C#Prolog -- Copyright (C) 2007-2013 John Pool -- j.pool@ision.nl
+  C#Prolog -- Copyright (C) 2007-2014 John Pool -- j.pool@ision.nl
 
   This library is free software; you can redistribute it and/or modify it under the terms of
   the GNU General Public License as published by the Free Software Foundation; either version
@@ -20,56 +20,17 @@ using System.Collections;
 using System.Threading;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.IO;
+using System.Windows.Forms;
 
 namespace Prolog
 {
   #region Exceptions
   enum PrologException { ioException }
 
-  class ParserException : ApplicationException
-  {
-    public ParserException (string msg) : base (msg) { }
-  }
-
-  class SyntaxException : ApplicationException
-  {
-    public SyntaxException (string msg) : base (msg) { }
-  }
-
   public class AbortQueryException : ApplicationException
   {
     public AbortQueryException () : base ("\r\n  Execution terminated by user") { }
-  }
-
-  class UserException : ApplicationException
-  {
-    string @class;
-    public string Class { get { return @class; } }
-
-    public UserException (string @class, string msg) :
-      base (string.Format ("(user-thrown {0}exception:)\r\n{1}",
-       (@class == null ? null : string.Format ("({0}) ", @class)), msg))
-    {
-      this.@class = @class;
-    }
-
-
-    public UserException (string @class, string msg, params object [] args) :
-      base (string.Format ("(user-thrown {0}exception:)\r\n{1}",
-        (@class == null ? null : string.Format ("({0}) ", @class)), string.Format (msg, args)))
-    {
-      this.@class = @class;
-    }
-  }
-
-  class FatalException : ApplicationException
-  {
-    public FatalException (string msg) : base (msg) { }
-  }
-
-  class UnhandledParserException : ApplicationException
-  {
-    public UnhandledParserException (string msg) : base (msg) { }
   }
   #endregion Exceptions
 
@@ -198,7 +159,7 @@ namespace Prolog
       public string DataType { get { return value.TermType.ToString ().ToLower (); } }
       bool isSingleton;
       public bool IsSingleton { get { return isSingleton; } set { isSingleton = value; } }
-      
+
 
       public VarValue (string name, BaseTerm value)
       {
@@ -379,12 +340,12 @@ namespace Prolog
 
     static readonly string WELCOME =
 @"|
-| Copyright (C) 2007-2013 John Pool
+| Copyright (C) 2007-2014 John Pool
 |
 | C#Prolog comes with ABSOLUTELY NO WARRANTY. This is free software, licenced
 | under the GNU General Public License, and you are welcome to redistribute it
 | under certain conditions. Enter 'license.' at the command prompt for details.";
-    static string VERSION = "3.2.0";
+    static string VERSION = "4.0.0";
     static string RELEASE = PrologParser.VersionTimeStamp;
     static public string IntroText;
 
@@ -405,6 +366,7 @@ namespace Prolog
     bool halted;
     PredicateCallOptions predicateCallOptions;
     DbCommandSet dbCommandSet;
+    OpenFiles openFiles;
     const int INF = Int32.MaxValue;
     VarStack varStack; // stack of variable bindings and choice points
     OperatorTable opTable;
@@ -414,6 +376,35 @@ namespace Prolog
     PredicateTable predTable;
     Stack<int> catchIdStack;
     int tryCatchId;
+
+    public class OpenFiles : Dictionary<string, FileTerm>
+    {
+      public FileTerm GetFileReader (string fileName)
+      {
+        FileTerm ft;
+
+        TryGetValue (fileName.ToLower (), out ft);
+
+        return ft;
+      }
+
+      public FileTerm GetFileWriter (string fileName)
+      {
+        FileTerm ft;
+
+        TryGetValue (fileName.ToLower (), out ft);
+
+        return ft;
+      }
+
+      public void CloseAllOpenFiles ()
+      {
+        foreach (FileTerm ft in Values)
+          ft.Close ();
+
+        Clear ();
+      }
+    }
 
     class GlobalTermsTable
     {
@@ -442,7 +433,7 @@ namespace Prolog
         int value;
 
         if (counterTable.TryGetValue (a, out value))
-          counterTable [a] = value+1;
+          counterTable [a] = value + 1;
         else
           IO.Error ("Value of counter '{0}' is not set", a);
       }
@@ -452,7 +443,7 @@ namespace Prolog
         int value;
 
         if (counterTable.TryGetValue (a, out value))
-          counterTable [a] = value-1;
+          counterTable [a] = value - 1;
         else
           IO.Error ("Value of counter '{0}' is not set", a);
       }
@@ -536,11 +527,8 @@ namespace Prolog
 
 
     public PrologEngine ()
+      : this (new DosIO ())
     {
-      IO.BasicIO = this.io = new DosIO ();
-      Reset ();
-      cmdBuf = new CommandHistory ();
-      PostBootstrap ();
     }
 
 
@@ -551,7 +539,6 @@ namespace Prolog
       cmdBuf = new CommandHistory ();
       PostBootstrap ();
     }
-
 
     public int CmdNo { get { return cmdBuf.cmdNo; } }
     public bool Debugging { get { return debug; } }
@@ -587,6 +574,7 @@ namespace Prolog
       globalTermsTable = new GlobalTermsTable ();
       predTable = new PredicateTable (this);
       catchIdStack = new Stack<int> ();
+      openFiles = new OpenFiles ();
       tryCatchId = 0;
 
       error = false;
@@ -626,6 +614,7 @@ namespace Prolog
       predTable.Predefineds ["0true"] = true;
       predTable.Predefineds ["0fail"] = true;
       predTable.Predefineds ["2;"] = true;
+      predTable.Predefineds ["2,"] = true;
       retractClause = predTable [BaseTerm.MakeKey ("retract", 1)].ClauseList;
       predTable.ResolveIndices ();
     }
@@ -726,7 +715,7 @@ namespace Prolog
 
     public void PostQueryTidyUp ()
     {
-      FileTerm.PostQueryTidyUp ();
+      openFiles.CloseAllOpenFiles ();
       XmlTraceClose ();
       currentFileReader = null;
       currentFileWriter = null;
@@ -817,15 +806,15 @@ namespace Prolog
       }
     }
 
-/*  Although in the code below a number of references is made to 'caching' (storing
-    intermediate results of a calculation) this feature is currently not available.
-    The reason is that it proved much more complicated than initially thought.
-    I left the various fragments in the code, as I want to sort this out later more
-    thoroughly.
+    /*  Although in the code below a number of references is made to 'caching' (storing
+        intermediate results of a calculation) this feature is currently not available.
+        The reason is that it proved much more complicated than initially thought.
+        I left the various fragments in the code, as I want to sort this out later more
+        thoroughly.
 
-    So technically spoken, the bool 'caching' will never have a true-value in the code
-    below (nor anywhere else).
-*/
+        So technically spoken, the bool 'caching' will never have a true-value in the code
+        below (nor anywhere else).
+    */
     // The ExecuteGoalList() algorithm is the standard algorithm as for example
     // described in Ivan Bratko's "Prolog Programming for Artificial Intelligence"
     // (i.e. 3rd edition p.45+)
@@ -844,7 +833,7 @@ namespace Prolog
       TermNode pTail;
       TermNode tn0;
       TermNode tn1;
-      bool caching;
+      bool caching = false;
       redo = false; // set by CanBacktrack if a choice point was found
 
       while (goalListHead != null) // consume the last of goalNodes until it is exhausted
@@ -911,7 +900,9 @@ namespace Prolog
 
             switch (predTable.ActionWhenUndefined (goal.FunctorToString, goal.Arity))
             {
-              case UndefAction.Fail:
+              case UndefAction.Fail: // pretend the predicate exists, with 'fail' as first and only clause
+                goalListHead.PredDescr = predTable [BaseTerm.FAIL.Key];
+                goalListHead.NextClause = goalListHead.PredDescr.ClauseList;
                 break;
               case UndefAction.Error:
                 return IO.Error ("Undefined predicate: {0}", goal.Name);
@@ -921,20 +912,19 @@ namespace Prolog
                 ? null
                 : string.Format (". Maybe '{0}' is what you mean?", pd.Name);
                 IO.Error ("Undefined predicate: {0}{1}", goal.Name, suggestion);
-
                 break;
             }
-
-            if (!(redo = CanBacktrack ())) return false;  // redo is set if a choice point was found
           }
 
           findFirstClause = false; // i.e. advance to the next clause upon backtracking (redoing)
         }
 
         if (profiling && goalListHead.PredDescr != null)
+        {
           goalListHead.PredDescr.IncProfileCount ();
+          caching = goalListHead.PredDescr.IsCacheable;
+        }
 
-        caching = goalListHead.PredDescr.IsCacheable;
         currClause = goalListHead.NextClause; // the first or next clause of the predicate definition
 
         // in order to be able to retry goal etc.
@@ -991,6 +981,12 @@ namespace Prolog
 
               if (t.IsVar) return IO.Error ("Unbound variable '{0}' in goal list", ((Variable)t).Name);
 
+              if (goalListHead.Head.Arity > 1) // implementation of SWI call/1..8
+              {
+                AddCallArgs (goalListHead);
+                t = goalListHead.Head;
+              }
+
               tn0 = t.ToGoalList (stackSize, goalListHead.Level + 1);
 
               if (reporting)
@@ -1024,8 +1020,7 @@ namespace Prolog
             }
             else if (builtinId == BI.fail)
             {
-              if (!(redo = CanBacktrack ()))
-                return false;
+              if (!(redo = CanBacktrack ())) return false;
             }
             else if (DoBuiltin (builtinId, out findFirstClause))
             {
@@ -1192,6 +1187,23 @@ namespace Prolog
     }
 
 
+    void AddCallArgs (TermNode GoalListHead)
+    {
+      BaseTerm callPred = GoalListHead.Head.Arg (0);
+      int arity0 = callPred.Arity;
+      int arity = arity0 + GoalListHead.Head.Arity - 1;
+      BaseTerm [] callArgs = new BaseTerm [arity];
+
+      for (int i = 0; i < arity0; i++)
+        callArgs [i] = callPred.Arg (i);
+
+      for (int i = arity0; i < arity; i++)
+        callArgs [i] = GoalListHead.Head.Arg (1 + i - arity0);
+
+      GoalListHead.Head = new CompoundTerm (callPred.Functor, callArgs);
+    }
+
+
     enum Status { NextCatchId, CompareIds, NextGoalNode, TestGoalNode, TryMatch }
 
     bool SearchMatchingCatchClause (string exceptionClass, string exceptionMessage)
@@ -1280,7 +1292,7 @@ namespace Prolog
           case Status.TryMatch:
             if (t.ExceptionClass == null || t.ExceptionClass == exceptionClass)
             {
-              t.MsgVar.Unify( new StringTerm(exceptionMessage), varStack);
+              t.MsgVar.Unify (new StringTerm (exceptionMessage), varStack);
 
               return true;
             }
@@ -1756,7 +1768,7 @@ namespace Prolog
 
       new void Add (string cmd)
       {
-        if (Count == 0 || cmd != this [Count-1]) base.Add (cmd);
+        if (Count == 0 || cmd != this [Count - 1]) base.Add (cmd);
       }
 
 
@@ -1834,12 +1846,12 @@ namespace Prolog
             int cmdNo = (m.Groups ["cno"].Captures.Count > 0) ?
               Convert.ToInt32 (m.Groups ["cno"].Value) : Count;
 
-            if (cmdNo < 1 || cmdNo > Count) 
+            if (cmdNo < 1 || cmdNo > Count)
             {
               IO.Error ("No command {0}", cmdNo);
-              query = null; 
-              
-              return true; 
+              query = null;
+
+              return true;
             }
 
             // replace oldSep in command by newSep some char that is bound not to occur in command
@@ -1992,6 +2004,42 @@ namespace Prolog
     }
 
 
+    public void CheckInitialConsultFile ()
+    {
+      string initialConsultFileName = PrologEngine.ConfigSettings.InitialConsultFile;
+
+      if (string.IsNullOrEmpty (initialConsultFileName)) return;
+
+      if (File.Exists (initialConsultFileName))
+      {
+        IO.WriteLine ();
+        Consult (initialConsultFileName);
+      }
+      else
+      {
+        string msg = string.Format (
+          "Initial file to be consulted not found (config file says: '{0}')\r\n",
+            initialConsultFileName);
+
+        IO.Warning (msg);
+      }
+    }
+
+
+    public void CheckConfigFile ()
+    {
+      string configFileName = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
+
+      if (!File.Exists (configFileName))
+      {
+        string msg = string.Format (
+          "No config file ({0}) found: default settings used", configFileName);
+
+        IO.Warning (msg);
+      }
+    }
+
+
     public void Consult (string fileName)
     {
       bool csharpStringsSave = csharpStrings;
@@ -2006,34 +2054,6 @@ namespace Prolog
         csharpStrings = csharpStringsSave;
       }
     }
-
-
-    //Next version
-    //void CallStack (out string stackString, out ListTerm stackList)
-    //{
-    //  StringBuilder sb = new StringBuilder ();
-    //  stackList = GenCallStack ("Predicate", goalListHead, ref sb);
-    //  stackString = sb.ToString ();
-    //}
-
-
-    //ListTerm GenCallStack (string label, TermNode goalListHead, ref StringBuilder sb)
-    //{
-    //  while (goalListHead != null)
-    //  {
-    //    if (goalListHead.IsExpanded)
-    //    {
-    //      sb.AppendLine (string.Format ("{0}: {1}", label, goalListHead.Term));
-
-    //      return (new ListTerm (goalListHead.Term,
-    //        GenCallStack ("Called by", goalListHead.NextGoal, ref sb)));
-    //    }
-
-    //    goalListHead = goalListHead.NextGoal;
-    //  }
-
-    //  return ListTerm.EMPTYLIST;
-    //}
 
 
     public void CreateFact (string functor, BaseTerm [] args)

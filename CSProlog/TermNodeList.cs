@@ -1,6 +1,7 @@
+//#define arg1index // if (un)defined, do the same in PredStorage.cs !!!
 /*-----------------------------------------------------------------------------------------
 
-  C#Prolog -- Copyright (C) 2007-2013 John Pool -- j.pool@ision.nl
+  C#Prolog -- Copyright (C) 2007-2014 John Pool -- j.pool@ision.nl
 
   This library is free software; you can redistribute it and/or modify it under the terms of
   the GNU General Public License as published by the Free Software Foundation; either version
@@ -49,7 +50,7 @@ namespace Prolog
       protected TermNode nextNode = null;       // next node in the chain
       protected ClauseNode nextClause = null;   // next predicate clause (advanced upon backtracking)
       protected PredicateDescr predDescr;       // points to the predicate definition for term
-      public BaseTerm Head { get { return term; } } // for readability only
+      public BaseTerm Head { get { return term; } set { term = value; } }
       public ClauseNode NextClause { get { return nextClause; } set { nextClause = value; } }
       protected int level = 0;                  // debugging and tracing (for indentation)
 
@@ -109,8 +110,8 @@ namespace Prolog
       {
         if (predDescr == null)
         {
-          //IO.WriteLine ("predDescr == null for {0}", term.Name);
-          if ((predDescr = predicateTable [term.Key]) == null) return false;
+          if ((predDescr = predicateTable [term.Key]) == null) 
+            return false;
         }
 
 #if arg1index // first-argument indexing enabled

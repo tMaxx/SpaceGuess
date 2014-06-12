@@ -27,7 +27,7 @@ namespace Prolog
   |_______________________________________________________________________________________________|
 */
 
-// Parser Generator version 4.0 -- Date/Time: 04-May-13 15:16:29
+// Parser Generator version 4.0 -- Date/Time: 03-Apr-14 21:12:01
 
 
   public partial class PrologEngine
@@ -35,9 +35,9 @@ namespace Prolog
     #region PrologParser
     public partial class PrologParser : BaseParser<OpDescrTriplet>
     {
-      public static readonly string VersionTimeStamp = "2013-05-04 15:16:30";
-      
-      
+      public static readonly string VersionTimeStamp = "2014-04-03 21:12:01";
+      protected override char ppChar { get { return '!'; } }
+           
       #region Terminal definition
       
       /* The following constants are defined in BaseParser.cs:
@@ -51,45 +51,45 @@ namespace Prolog
       const int ppUndefine = 7;
       const int ppIf = 8;
       const int ppIfNot = 9;
-      const int ppIfDef = 10;
-      const int ppIfNDef = 11;
-      const int ppElse = 12;
-      const int ppEndIf = 13;
-      const int RealLiteral = 14;
-      const int ImagLiteral = 15;
-      const int StringLiteral = 16;
-      const int CharLiteral = 17;
-      const int CommentStart = 18;
-      const int CommentSingle = 19;
-      const int EndOfLine = 20;
-      const int ANYSYM = 21;
-      const int EndOfInput = 22;
+      const int ppElse = 10;
+      const int ppElseIf = 11;
+      const int ppEndIf = 12;
+      const int RealLiteral = 13;
+      const int ImagLiteral = 14;
+      const int StringLiteral = 15;
+      const int CharLiteral = 16;
+      const int CommentStart = 17;
+      const int CommentSingle = 18;
+      const int EndOfLine = 19;
+      const int ANYSYM = 20;
+      const int EndOfInput = 21;
       */
-      const int Operator = 23;
-      const int Atom = 24;
-      const int VerbatimStringStart = 25;
-      const int Dot = 26;
-      const int Anonymous = 27;
-      const int CutSym = 28;
-      const int ImpliesSym = 29;
-      const int PromptSym = 30;
-      const int DCGArrowSym = 31;
-      const int BuiltinCSharp = 32;
-      const int LSqBracket = 33;
-      const int RSqBracket = 34;
-      const int LCuBracket = 35;
-      const int RCuBracket = 36;
-      const int VBar = 37;
-      const int OpSym = 38;
-      const int WrapSym = 39;
-      const int BuiltinSym = 40;
-      const int ProgramSym = 41;
-      const int ReadingSym = 42;
-      const int EnsureLoaded = 43;
-      const int Discontiguous = 44;
-      const int StringStyle = 45;
-      const int AllDiscontiguous = 46;
-      const int Module = 47;
+      const int Operator = 22;
+      const int Atom = 23;
+      const int VerbatimStringStart = 24;
+      const int Dot = 25;
+      const int Anonymous = 26;
+      const int CutSym = 27;
+      const int ImpliesSym = 28;
+      const int PromptSym = 29;
+      const int DCGArrowSym = 30;
+      const int BuiltinCSharp = 31;
+      const int LSqBracket = 32;
+      const int RSqBracket = 33;
+      const int LCuBracket = 34;
+      const int RCuBracket = 35;
+      const int VBar = 36;
+      const int OpSym = 37;
+      const int WrapSym = 38;
+      const int BuiltinSym = 39;
+      const int ProgramSym = 40;
+      const int ReadingSym = 41;
+      const int EnsureLoaded = 42;
+      const int Discontiguous = 43;
+      const int StringStyle = 44;
+      const int AllDiscontiguous = 45;
+      const int Module = 46;
+      const int Dynamic = 47;
       const int ListPatternOpen = 48;
       const int ListPatternClose = 49;
       const int EllipsisSym = 50;
@@ -112,71 +112,71 @@ namespace Prolog
       
       public static void FillTerminalTable (BaseTrie terminalTable)
       {
-        terminalTable.Add (Undefined, "Undefined");
-        terminalTable.Add (Comma, "Comma", ",");
-        terminalTable.Add (LeftParen, "LeftParen", "(");
-        terminalTable.Add (RightParen, "RightParen", ")");
-        terminalTable.Add (Identifier, "Identifier");
-        terminalTable.Add (IntLiteral, "IntLiteral");
-        terminalTable.Add (ppDefine, "ppDefine", "#define");
-        terminalTable.Add (ppUndefine, "ppUndefine", "#undefine");
-        terminalTable.Add (ppIf, "ppIf", "#if");
-        terminalTable.Add (ppIfNot, "ppIfNot", "#ifnot");
-        terminalTable.Add (ppIfDef, "ppIfDef", "#ifdef");
-        terminalTable.Add (ppIfNDef, "ppIfNDef", "#ifndef");
-        terminalTable.Add (ppElse, "ppElse", "#else");
-        terminalTable.Add (ppEndIf, "ppEndIf", "#endif");
-        terminalTable.Add (RealLiteral, "RealLiteral");
-        terminalTable.Add (ImagLiteral, "ImagLiteral");
-        terminalTable.Add (StringLiteral, "StringLiteral");
-        terminalTable.Add (CharLiteral, "CharLiteral");
-        terminalTable.Add (CommentStart, "CommentStart", "/*");
-        terminalTable.Add (CommentSingle, "CommentSingle", "%");
-        terminalTable.Add (EndOfLine, "EndOfLine");
-        terminalTable.Add (ANYSYM, "ANYSYM");
-        terminalTable.Add (EndOfInput, "EndOfInput");
-        terminalTable.Add (Operator, "Operator");
-        terminalTable.Add (Atom, "Atom");
-        terminalTable.Add (VerbatimStringStart, "VerbatimStringStart", @"@""");
-        terminalTable.Add (Dot, "Dot");
-        terminalTable.Add (Anonymous, "Anonymous", "_");
-        terminalTable.Add (CutSym, "CutSym", "!");
-        terminalTable.Add (ImpliesSym, "ImpliesSym", ":-");
-        terminalTable.Add (PromptSym, "PromptSym", "?-");
-        terminalTable.Add (DCGArrowSym, "DCGArrowSym", "-->");
-        terminalTable.Add (BuiltinCSharp, "BuiltinCSharp", ":==");
-        terminalTable.Add (LSqBracket, "LSqBracket", "[");
-        terminalTable.Add (RSqBracket, "RSqBracket", "]");
-        terminalTable.Add (LCuBracket, "LCuBracket", "{");
-        terminalTable.Add (RCuBracket, "RCuBracket", "}");
-        terminalTable.Add (VBar, "VBar", "|");
-        terminalTable.Add (OpSym, "OpSym", "op");
-        terminalTable.Add (WrapSym, "WrapSym", "wrap");
-        terminalTable.Add (BuiltinSym, "BuiltinSym", "&builtin");
-        terminalTable.Add (ProgramSym, "ProgramSym", "&program");
-        terminalTable.Add (ReadingSym, "ReadingSym", "&reading");
-        terminalTable.Add (EnsureLoaded, "EnsureLoaded", "ensure_loaded");
-        terminalTable.Add (Discontiguous, "Discontiguous", "discontiguous");
-        terminalTable.Add (StringStyle, "StringStyle", "stringstyle");
-        terminalTable.Add (AllDiscontiguous, "AllDiscontiguous", "alldiscontiguous");
-        terminalTable.Add (Module, "Module", "module");
-        terminalTable.Add (ListPatternOpen, "ListPatternOpen", "[!");
-        terminalTable.Add (ListPatternClose, "ListPatternClose", "!]");
-        terminalTable.Add (EllipsisSym, "EllipsisSym", "..");
-        terminalTable.Add (SubtreeSym, "SubtreeSym", @"\");
-        terminalTable.Add (NegateSym, "NegateSym", "~");
-        terminalTable.Add (PlusSym, "PlusSym", "+");
-        terminalTable.Add (TimesSym, "TimesSym", "*");
-        terminalTable.Add (QuestionMark, "QuestionMark", "?");
-        terminalTable.Add (QuestionMarks, "QuestionMarks", "??");
-        terminalTable.Add (TrySym, "TrySym", "TRY");
-        terminalTable.Add (CatchSym, "CatchSym", "CATCH");
-        terminalTable.Add (WrapOpen, "WrapOpen");
-        terminalTable.Add (WrapClose, "WrapClose");
-        terminalTable.Add (AltListOpen, "AltListOpen");
-        terminalTable.Add (AltListClose, "AltListClose");
-        terminalTable.Add (Slash, "Slash");
-        terminalTable.Add (VerbatimStringLiteral, "VerbatimStringLiteral");
+        terminalTable.Add (Undefined, SymbolClass.None, "Undefined");
+        terminalTable.Add (Comma, SymbolClass.None, "Comma", ",");
+        terminalTable.Add (LeftParen, SymbolClass.Group, "LeftParen", "(");
+        terminalTable.Add (RightParen, SymbolClass.Group, "RightParen", ")");
+        terminalTable.Add (Identifier, SymbolClass.Id, "Identifier");
+        terminalTable.Add (IntLiteral, SymbolClass.Number, "IntLiteral");
+        terminalTable.Add (ppDefine, SymbolClass.Meta, "ppDefine", "!define");
+        terminalTable.Add (ppUndefine, SymbolClass.Meta, "ppUndefine", "!undefine");
+        terminalTable.Add (ppIf, SymbolClass.Meta, "ppIf", "!if");
+        terminalTable.Add (ppIfNot, SymbolClass.Meta, "ppIfNot", "!ifnot");
+        terminalTable.Add (ppElse, SymbolClass.Meta, "ppElse", "!else");
+        terminalTable.Add (ppElseIf, SymbolClass.Meta, "ppElseIf", "!elseif");
+        terminalTable.Add (ppEndIf, SymbolClass.Meta, "ppEndIf", "!endif");
+        terminalTable.Add (RealLiteral, SymbolClass.Number, "RealLiteral");
+        terminalTable.Add (ImagLiteral, SymbolClass.Number, "ImagLiteral");
+        terminalTable.Add (StringLiteral, SymbolClass.Text, "StringLiteral");
+        terminalTable.Add (CharLiteral, SymbolClass.Text, "CharLiteral");
+        terminalTable.Add (CommentStart, SymbolClass.Comment, "CommentStart", "/*");
+        terminalTable.Add (CommentSingle, SymbolClass.Comment, "CommentSingle", "%");
+        terminalTable.Add (EndOfLine, SymbolClass.None, "EndOfLine");
+        terminalTable.Add (ANYSYM, SymbolClass.None, "ANYSYM");
+        terminalTable.Add (EndOfInput, SymbolClass.None, "EndOfInput");
+        terminalTable.Add (Operator, SymbolClass.None, "Operator");
+        terminalTable.Add (Atom, SymbolClass.None, "Atom");
+        terminalTable.Add (VerbatimStringStart, SymbolClass.None, "VerbatimStringStart", @"@""");
+        terminalTable.Add (Dot, SymbolClass.None, "Dot");
+        terminalTable.Add (Anonymous, SymbolClass.None, "Anonymous", "_");
+        terminalTable.Add (CutSym, SymbolClass.None, "CutSym", "!");
+        terminalTable.Add (ImpliesSym, SymbolClass.None, "ImpliesSym", ":-");
+        terminalTable.Add (PromptSym, SymbolClass.None, "PromptSym", "?-");
+        terminalTable.Add (DCGArrowSym, SymbolClass.None, "DCGArrowSym", "-->");
+        terminalTable.Add (BuiltinCSharp, SymbolClass.None, "BuiltinCSharp", ":==");
+        terminalTable.Add (LSqBracket, SymbolClass.Group, "LSqBracket", "[");
+        terminalTable.Add (RSqBracket, SymbolClass.Group, "RSqBracket", "]");
+        terminalTable.Add (LCuBracket, SymbolClass.Group, "LCuBracket", "{");
+        terminalTable.Add (RCuBracket, SymbolClass.Group, "RCuBracket", "}");
+        terminalTable.Add (VBar, SymbolClass.None, "VBar", "|");
+        terminalTable.Add (OpSym, SymbolClass.None, "OpSym", "op");
+        terminalTable.Add (WrapSym, SymbolClass.None, "WrapSym", "wrap");
+        terminalTable.Add (BuiltinSym, SymbolClass.None, "BuiltinSym", "&builtin");
+        terminalTable.Add (ProgramSym, SymbolClass.None, "ProgramSym", "&program");
+        terminalTable.Add (ReadingSym, SymbolClass.None, "ReadingSym", "&reading");
+        terminalTable.Add (EnsureLoaded, SymbolClass.None, "EnsureLoaded", "ensure_loaded");
+        terminalTable.Add (Discontiguous, SymbolClass.None, "Discontiguous", "discontiguous");
+        terminalTable.Add (StringStyle, SymbolClass.None, "StringStyle", "stringstyle");
+        terminalTable.Add (AllDiscontiguous, SymbolClass.None, "AllDiscontiguous", "alldiscontiguous");
+        terminalTable.Add (Module, SymbolClass.None, "Module", "module");
+        terminalTable.Add (Dynamic, SymbolClass.None, "Dynamic", "dynamic");
+        terminalTable.Add (ListPatternOpen, SymbolClass.Group, "ListPatternOpen", "[!");
+        terminalTable.Add (ListPatternClose, SymbolClass.Group, "ListPatternClose", "!]");
+        terminalTable.Add (EllipsisSym, SymbolClass.None, "EllipsisSym", "..");
+        terminalTable.Add (SubtreeSym, SymbolClass.None, "SubtreeSym", @"\");
+        terminalTable.Add (NegateSym, SymbolClass.None, "NegateSym", "~");
+        terminalTable.Add (PlusSym, SymbolClass.None, "PlusSym", "+");
+        terminalTable.Add (TimesSym, SymbolClass.None, "TimesSym", "*");
+        terminalTable.Add (QuestionMark, SymbolClass.None, "QuestionMark", "?");
+        terminalTable.Add (QuestionMarks, SymbolClass.None, "QuestionMarks", "??");
+        terminalTable.Add (TrySym, SymbolClass.None, "TrySym", "TRY");
+        terminalTable.Add (CatchSym, SymbolClass.None, "CatchSym", "CATCH");
+        terminalTable.Add (WrapOpen, SymbolClass.None, "WrapOpen");
+        terminalTable.Add (WrapClose, SymbolClass.None, "WrapClose");
+        terminalTable.Add (AltListOpen, SymbolClass.None, "AltListOpen");
+        terminalTable.Add (AltListClose, SymbolClass.None, "AltListClose");
+        terminalTable.Add (Slash, SymbolClass.None, "Slash");
+        terminalTable.Add (VerbatimStringLiteral, SymbolClass.None, "VerbatimStringLiteral");
       }
       
       #endregion Terminal definition
@@ -217,9 +217,9 @@ namespace Prolog
 
         if (syntaxErrorStat) return false;
 
-        if (symbol.Terminal == ANYSYM || followers.Contains (symbol.Terminal)) return true;
+        if (symbol.TerminalId == ANYSYM || followers.Contains (symbol.TerminalId)) return true;
 
-        switch (symbol.Terminal)
+        switch (symbol.TerminalId)
         {
           case EndOfLine:
             if (seeEndOfLine) s = "<EndOfLine>"; else goto default;
@@ -258,11 +258,8 @@ namespace Prolog
 
       
       #region PrologCode
-      void PrologCode (TerminalSet _TS)
+      private void PrologCode (TerminalSet _TS)
       {
-        #if LL1_tracing
-        ReportParserProcEntry ("PrologCode");
-        #endif
         SetCommaAsSeparator (false); // Comma-role only if comma is separating arguments
         terminalTable [OP] = OpSym;
         terminalTable [WRAP] = WrapSym;
@@ -285,19 +282,19 @@ namespace Prolog
                                                      Operator, Atom, Anonymous, CutSym, LSqBracket, LCuBracket, OpSym, WrapSym,
                                                      BuiltinSym, ProgramSym, ReadingSym, ListPatternOpen, TrySym, WrapOpen,
                                                      WrapClose, AltListOpen, AltListClose, VerbatimStringLiteral), false, true);
-          if (symbol.Terminal == BuiltinSym)
+          if (symbol.TerminalId == BuiltinSym)
           {
             symbol.SetProcessed ();
             Initialize ();
             Predefineds (_TS);
           }
-          else if (symbol.Terminal == ProgramSym)
+          else if (symbol.TerminalId == ProgramSym)
           {
             symbol.SetProcessed ();
             Initialize ();
             Program (_TS);
           }
-          else if (symbol.Terminal == ReadingSym)
+          else if (symbol.TerminalId == ReadingSym)
           {
             symbol.SetProcessed ();
             PrologTerm (new TerminalSet (terminalCount, Dot), out readTerm);
@@ -320,7 +317,7 @@ namespace Prolog
               SetReservedOperators (true);
               Query (new TerminalSet (terminalCount, Dot), out queryNode);
             }
-            else if (symbol.Terminal == OpSym)
+            else if (symbol.TerminalId == OpSym)
             {
               OpDefinition (new TerminalSet (terminalCount, Dot), true);
               queryNode = null;
@@ -334,18 +331,12 @@ namespace Prolog
           }
         }
         } finally { Terminate (); }
-        #if LL1_tracing
-        ReportParserProcExit ("PrologCode");
-        #endif
       }
       #endregion
       
       #region Program
-      void Program (TerminalSet _TS)
+      private void Program (TerminalSet _TS)
       {
-        #if LL1_tracing
-        ReportParserProcEntry ("Program");
-        #endif
         bool firstReport = true;
         while (true)
         {
@@ -365,18 +356,12 @@ namespace Prolog
           else
             break;
         }
-        #if LL1_tracing
-        ReportParserProcExit ("Program");
-        #endif
       }
       #endregion
       
       #region ClauseNode
-      void ClauseNode (TerminalSet _TS, ref bool firstReport)
+      private void ClauseNode (TerminalSet _TS, ref bool firstReport)
       {
-        #if LL1_tracing
-        ReportParserProcEntry ("ClauseNode");
-        #endif
         BaseTerm head;
         TermNode body = null;
         ClauseNode c;
@@ -393,13 +378,13 @@ namespace Prolog
           PrologTerm (new TerminalSet (terminalCount, Dot, ImpliesSym, DCGArrowSym), out head);
           if (!head.IsCallable)
             IO.Error ("Illegal predicate head: {0}", head.ToString ());
-          if (engine.predTable.Predefineds.Contains (head.Key) | head.Precedence >= 1000)
-            IO.Error ("Predefined predicate or operator '{0}' cannot be redefined", head.FunctorToString);
+          if (engine.predTable.Predefineds.Contains (head.Key))
+            IO.Error ("Predefined predicate or operator '{0}' cannot be redefined.", head.FunctorToString);
           GetSymbol (new TerminalSet (terminalCount, Dot, ImpliesSym, DCGArrowSym), false, true);
           if (symbol.IsMemberOf (ImpliesSym, DCGArrowSym))
           {
             GetSymbol (new TerminalSet (terminalCount, ImpliesSym, DCGArrowSym), false, true);
-            if (symbol.Terminal == ImpliesSym)
+            if (symbol.TerminalId == ImpliesSym)
             {
               symbol.SetProcessed ();
               Query (new TerminalSet (terminalCount, Dot), out body);
@@ -418,7 +403,7 @@ namespace Prolog
           engine.ReportSingletons (c, lineNo - 1, ref firstReport);
           ps.AddClause (c);
         }
-        else if (symbol.Terminal == PromptSym)
+        else if (symbol.TerminalId == PromptSym)
         {
           symbol.SetProcessed ();
           bool m = inQueryMode;
@@ -439,24 +424,28 @@ namespace Prolog
           terminalTable [STRINGSTYLE] = StringStyle;
           terminalTable.Add (Module, "Module", "module");
           terminalTable.Add (Discontiguous, "Discontiguous", "discontiguous");
-          int saveNegate = terminalTable [NEGATE];
+          terminalTable.Add (Dynamic, "Dynamic", "dynamic");
           try {
           GetSymbol (new TerminalSet (terminalCount, Atom, LSqBracket, OpSym, WrapSym, EnsureLoaded, Discontiguous, StringStyle,
-                                                     AllDiscontiguous, Module), false, true);
-          if (symbol.Terminal == OpSym)
+                                                     AllDiscontiguous, Module, Dynamic), false, true);
+          if (symbol.TerminalId == OpSym)
           {
             OpDefinition (new TerminalSet (terminalCount, Dot), true);
           }
-          else if (symbol.Terminal == WrapSym)
+          else if (symbol.TerminalId == Dynamic)
+          {
+            DynamicDirective (new TerminalSet (terminalCount, Dot));
+          }
+          else if (symbol.TerminalId == WrapSym)
           {
             WrapDefinition (new TerminalSet (terminalCount, Dot));
           }
-          else if (symbol.Terminal == EnsureLoaded)
+          else if (symbol.TerminalId == EnsureLoaded)
           {
             symbol.SetProcessed ();
             GetSymbol (new TerminalSet (terminalCount, LeftParen), true, true);
             GetSymbol (new TerminalSet (terminalCount, Operator, Atom), false, true);
-            if (symbol.Terminal == Atom)
+            if (symbol.TerminalId == Atom)
             {
               symbol.SetProcessed ();
             }
@@ -472,33 +461,33 @@ namespace Prolog
             }
             GetSymbol (new TerminalSet (terminalCount, RightParen), true, true);
           }
-          else if (symbol.Terminal == Discontiguous)
+          else if (symbol.TerminalId == Discontiguous)
           {
             symbol.SetProcessed ();
             BaseTerm t;
             PrologTerm (new TerminalSet (terminalCount, Dot), out t);
             ps.SetDiscontiguous (t);
           }
-          else if (symbol.Terminal == StringStyle)
+          else if (symbol.TerminalId == StringStyle)
           {
             symbol.SetProcessed ();
             BaseTerm t;
             PrologTerm (new TerminalSet (terminalCount, Dot), out t);
             engine.SetStringStyle (t);
           }
-          else if (symbol.Terminal == AllDiscontiguous)
+          else if (symbol.TerminalId == AllDiscontiguous)
           {
             symbol.SetProcessed ();
             ps.SetDiscontiguous (true);
           }
-          else if (symbol.Terminal == Module)
+          else if (symbol.TerminalId == Module)
           {
             symbol.SetProcessed ();
             GetSymbol (new TerminalSet (terminalCount, LeftParen), true, true);
             try {
             SetCommaAsSeparator (true);
             GetSymbol (new TerminalSet (terminalCount, Operator, Atom), false, true);
-            if (symbol.Terminal == Atom)
+            if (symbol.TerminalId == Atom)
             {
               symbol.SetProcessed ();
             }
@@ -507,6 +496,7 @@ namespace Prolog
               symbol.SetProcessed ();
             }
             ps.SetModuleName (symbol.ToString ());
+            IO.Warning ("line {0} -- :- 'module' directive not implemented -- ignored", symbol.LineNo);
             GetSymbol (new TerminalSet (terminalCount, Comma), true, true);
             } finally {
             SetCommaAsSeparator (false);
@@ -515,7 +505,7 @@ namespace Prolog
             PrologTerm (new TerminalSet (terminalCount, RightParen), out t);
             GetSymbol (new TerminalSet (terminalCount, RightParen), true, true);
           }
-          else if (symbol.Terminal == LSqBracket)
+          else if (symbol.TerminalId == LSqBracket)
           {
             symbol.SetProcessed ();
             int lines = 0;
@@ -524,7 +514,7 @@ namespace Prolog
             while (true)
             {
               GetSymbol (new TerminalSet (terminalCount, Operator, Atom), false, true);
-              if (symbol.Terminal == Atom)
+              if (symbol.TerminalId == Atom)
               {
                 symbol.SetProcessed ();
               }
@@ -538,7 +528,7 @@ namespace Prolog
               files++;
               SetCommaAsSeparator (true);
               GetSymbol (new TerminalSet (terminalCount, Comma, RSqBracket), false, true);
-              if (symbol.Terminal == Comma)
+              if (symbol.TerminalId == Comma)
               {
                 symbol.SetProcessed ();
               }
@@ -558,34 +548,80 @@ namespace Prolog
           } finally {
           terminalTable.Remove ("module");
           terminalTable.Remove ("discontiguous");
+          terminalTable.Remove ("dynamic");
           terminalTable [ELLIPSIS] = Atom;
-          terminalTable [NEGATE] = saveNegate;
           terminalTable [STRINGSTYLE] = Atom;
           terminalTable [SLASH] = Operator;
           terminalTable [SUBTREE] = Operator;
           }
         }
         GetSymbol (new TerminalSet (terminalCount, Dot), true, true);
-        #if LL1_tracing
-        ReportParserProcExit ("ClauseNode");
-        #endif
+      }
+      #endregion
+      
+      #region DynamicDirective
+      private void DynamicDirective (TerminalSet _TS)
+      {
+        GetSymbol (new TerminalSet (terminalCount, Dynamic), true, true);
+        GetSymbol (new TerminalSet (terminalCount, LeftParen, Operator, Atom), false, true);
+        if (symbol.IsMemberOf (Operator, Atom))
+        {
+          GetSymbol (new TerminalSet (terminalCount, Operator, Atom), false, true);
+          if (symbol.TerminalId == Atom)
+          {
+            symbol.SetProcessed ();
+          }
+          else
+          {
+            symbol.SetProcessed ();
+          }
+        }
+        else
+        {
+          symbol.SetProcessed ();
+          GetSymbol (new TerminalSet (terminalCount, Operator, Atom), false, true);
+          if (symbol.TerminalId == Atom)
+          {
+            symbol.SetProcessed ();
+          }
+          else
+          {
+            symbol.SetProcessed ();
+          }
+          GetSymbol (new TerminalSet (terminalCount, RightParen), true, true);
+        }
+        string name = symbol.ToString ();
+        int saveSlash = terminalTable [SLASH];
+        int arity;
+        try
+        {
+        terminalTable [SLASH] = Slash;
+        GetSymbol (new TerminalSet (terminalCount, Slash), true, true);
+        GetSymbol (new TerminalSet (terminalCount, IntLiteral), true, true);
+        arity = symbol.ToInt ();
+        IO.Warning ("line {0} -- :- 'dynamic' directive not implemented -- ignored", symbol.LineNo);
+        }
+        finally
+        {
+        terminalTable [SLASH] = saveSlash;
+        }
       }
       #endregion
       
       #region SimpleDirective
-      void SimpleDirective (TerminalSet _TS)
+      private void SimpleDirective (TerminalSet _TS)
       {
-        #if LL1_tracing
-        ReportParserProcEntry ("SimpleDirective");
-        #endif
         GetSymbol (new TerminalSet (terminalCount, Atom), true, true);
         string directive = symbol.ToString ();
         bool spaceAfter = symbol.IsFollowedByLayoutChar;
         string argument = null;
         int arity = -1;
+        int saveSlash = terminalTable [SLASH];
+        try
+        {
         terminalTable [SLASH] = Slash;
         GetSymbol (_TS.Union (terminalCount, LeftParen), false, true);
-        if (symbol.Terminal == LeftParen)
+        if (symbol.TerminalId == LeftParen)
         {
           symbol.SetProcessed ();
           GetSymbol (new TerminalSet (terminalCount, IntLiteral, StringLiteral, Operator, Atom), false, true);
@@ -594,7 +630,7 @@ namespace Prolog
             if (spaceAfter)
               IO.Error ("Illegal space between directive '{0}' and left parenthesis", directive);
             GetSymbol (new TerminalSet (terminalCount, Operator, Atom), false, true);
-            if (symbol.Terminal == Atom)
+            if (symbol.TerminalId == Atom)
             {
               symbol.SetProcessed ();
             }
@@ -604,7 +640,7 @@ namespace Prolog
             }
             argument = symbol.ToString ();
             GetSymbol (new TerminalSet (terminalCount, RightParen, Slash), false, true);
-            if (symbol.Terminal == Slash)
+            if (symbol.TerminalId == Slash)
             {
               symbol.SetProcessed ();
               GetSymbol (new TerminalSet (terminalCount, IntLiteral), true, true);
@@ -614,7 +650,7 @@ namespace Prolog
           else
           {
             GetSymbol (new TerminalSet (terminalCount, IntLiteral, StringLiteral), false, true);
-            if (symbol.Terminal == StringLiteral)
+            if (symbol.TerminalId == StringLiteral)
             {
               symbol.SetProcessed ();
             }
@@ -627,18 +663,17 @@ namespace Prolog
           GetSymbol (new TerminalSet (terminalCount, RightParen), true, true);
         }
         ps.HandleSimpleDirective (this, directive, argument, arity);
-        #if LL1_tracing
-        ReportParserProcExit ("SimpleDirective");
-        #endif
+        }
+        finally
+        {
+        terminalTable [SLASH] = saveSlash;
+        }
       }
       #endregion
       
       #region OpDefinition
-      void OpDefinition (TerminalSet _TS, bool user)
+      private void OpDefinition (TerminalSet _TS, bool user)
       {
-        #if LL1_tracing
-        ReportParserProcEntry ("OpDefinition");
-        #endif
         string name;
         string assoc;
         try {
@@ -647,7 +682,7 @@ namespace Prolog
         int prec;
         GetSymbol (new TerminalSet (terminalCount, LeftParen), true, true);
         GetSymbol (new TerminalSet (terminalCount, IntLiteral, CutSym), false, true);
-        if (symbol.Terminal == IntLiteral)
+        if (symbol.TerminalId == IntLiteral)
         {
           symbol.SetProcessed ();
           prec = symbol.ToInt ();
@@ -659,7 +694,7 @@ namespace Prolog
         }
         GetSymbol (new TerminalSet (terminalCount, Comma), true, true);
         GetSymbol (new TerminalSet (terminalCount, Operator, Atom), false, true);
-        if (symbol.Terminal == Atom)
+        if (symbol.TerminalId == Atom)
         {
           symbol.SetProcessed ();
         }
@@ -670,9 +705,9 @@ namespace Prolog
         assoc = symbol.ToString ();
         GetSymbol (new TerminalSet (terminalCount, Comma), true, true);
         GetSymbol (new TerminalSet (terminalCount, LeftParen, Operator, Atom, LSqBracket, OpSym, WrapSym, EnsureLoaded,
-                                                   Discontiguous, StringStyle, AllDiscontiguous, Module, WrapOpen, WrapClose),
-                   false, true);
-        if (symbol.Terminal == LSqBracket)
+                                                   Discontiguous, StringStyle, AllDiscontiguous, Module, Dynamic, WrapOpen,
+                                                   WrapClose), false, true);
+        if (symbol.TerminalId == LSqBracket)
         {
           symbol.SetProcessed ();
           while (true)
@@ -683,7 +718,7 @@ namespace Prolog
             else
               AddPrologOperator (prec, assoc, name, user);
             GetSymbol (new TerminalSet (terminalCount, Comma, RSqBracket), false, true);
-            if (symbol.Terminal == Comma)
+            if (symbol.TerminalId == Comma)
             {
               symbol.SetProcessed ();
             }
@@ -704,18 +739,12 @@ namespace Prolog
         } finally {
         SetCommaAsSeparator (false);
         }
-        #if LL1_tracing
-        ReportParserProcExit ("OpDefinition");
-        #endif
       }
       #endregion
       
       #region WrapDefinition
-      void WrapDefinition (TerminalSet _TS)
+      private void WrapDefinition (TerminalSet _TS)
       {
-        #if LL1_tracing
-        ReportParserProcEntry ("WrapDefinition");
-        #endif
         // wrapClose is set to the reverse of wrapOpen if only one argument is supplied.
         string wrapOpen;
         string wrapClose = null;
@@ -726,24 +755,24 @@ namespace Prolog
         GetSymbol (new TerminalSet (terminalCount, LeftParen), true, true);
         PotentialOpName (new TerminalSet (terminalCount, Comma, RightParen), out wrapOpen);
         GetSymbol (new TerminalSet (terminalCount, Comma, RightParen), false, true);
-        if (symbol.Terminal == Comma)
+        if (symbol.TerminalId == Comma)
         {
           symbol.SetProcessed ();
           GetSymbol (new TerminalSet (terminalCount, LeftParen, RightParen, Operator, Atom, VBar, OpSym, WrapSym, EnsureLoaded,
-                                                     Discontiguous, StringStyle, AllDiscontiguous, Module, WrapOpen, WrapClose),
-                     false, true);
+                                                     Discontiguous, StringStyle, AllDiscontiguous, Module, Dynamic, WrapOpen,
+                                                     WrapClose), false, true);
           if (symbol.IsMemberOf (LeftParen, Operator, Atom, VBar, OpSym, WrapSym, EnsureLoaded, Discontiguous, StringStyle,
-                                 AllDiscontiguous, Module, WrapOpen, WrapClose))
+                                 AllDiscontiguous, Module, Dynamic, WrapOpen, WrapClose))
           {
             GetSymbol (new TerminalSet (terminalCount, LeftParen, Operator, Atom, VBar, OpSym, WrapSym, EnsureLoaded,
-                                                       Discontiguous, StringStyle, AllDiscontiguous, Module, WrapOpen,
+                                                       Discontiguous, StringStyle, AllDiscontiguous, Module, Dynamic, WrapOpen,
                                                        WrapClose), false, true);
-            if (symbol.Terminal == VBar)
+            if (symbol.TerminalId == VBar)
             {
               symbol.SetProcessed ();
               useAsList = true;
               GetSymbol (new TerminalSet (terminalCount, Comma, RightParen), false, true);
-              if (symbol.Terminal == Comma)
+              if (symbol.TerminalId == Comma)
               {
                 symbol.SetProcessed ();
                 PotentialOpName (new TerminalSet (terminalCount, RightParen), out wrapClose);
@@ -763,38 +792,33 @@ namespace Prolog
         } finally {
         SetCommaAsSeparator (false);
         }
-        #if LL1_tracing
-        ReportParserProcExit ("WrapDefinition");
-        #endif
       }
       #endregion
       
       #region PotentialOpName
-      void PotentialOpName (TerminalSet _TS, out string name)
+      private void PotentialOpName (TerminalSet _TS, out string name)
       {
-        #if LL1_tracing
-        ReportParserProcEntry ("PotentialOpName");
-        #endif
         GetSymbol (new TerminalSet (terminalCount, LeftParen, Operator, Atom, OpSym, WrapSym, EnsureLoaded, Discontiguous,
-                                                   StringStyle, AllDiscontiguous, Module, WrapOpen, WrapClose), false, true);
+                                                   StringStyle, AllDiscontiguous, Module, Dynamic, WrapOpen, WrapClose), false,
+                   true);
         if (symbol.IsMemberOf (Operator, Atom, OpSym, WrapSym, EnsureLoaded, Discontiguous, StringStyle, AllDiscontiguous,
-                               Module, WrapOpen, WrapClose))
+                               Module, Dynamic, WrapOpen, WrapClose))
         {
           GetSymbol (new TerminalSet (terminalCount, Operator, Atom, OpSym, WrapSym, EnsureLoaded, Discontiguous, StringStyle,
-                                                     AllDiscontiguous, Module, WrapOpen, WrapClose), false, true);
-          if (symbol.Terminal == Atom)
+                                                     AllDiscontiguous, Module, Dynamic, WrapOpen, WrapClose), false, true);
+          if (symbol.TerminalId == Atom)
           {
             symbol.SetProcessed ();
           }
-          else if (symbol.Terminal == Operator)
+          else if (symbol.TerminalId == Operator)
           {
             symbol.SetProcessed ();
           }
-          else if (symbol.Terminal == WrapOpen)
+          else if (symbol.TerminalId == WrapOpen)
           {
             symbol.SetProcessed ();
           }
-          else if (symbol.Terminal == WrapClose)
+          else if (symbol.TerminalId == WrapClose)
           {
             symbol.SetProcessed ();
           }
@@ -810,41 +834,39 @@ namespace Prolog
           PotentialOpName (new TerminalSet (terminalCount, RightParen), out name);
           GetSymbol (new TerminalSet (terminalCount, RightParen), true, true);
         }
-        #if LL1_tracing
-        ReportParserProcExit ("PotentialOpName");
-        #endif
       }
       #endregion
       
       #region ReservedWord
-      void ReservedWord (TerminalSet _TS)
+      private void ReservedWord (TerminalSet _TS)
       {
-        #if LL1_tracing
-        ReportParserProcEntry ("ReservedWord");
-        #endif
         GetSymbol (new TerminalSet (terminalCount, OpSym, WrapSym, EnsureLoaded, Discontiguous, StringStyle, AllDiscontiguous,
-                                                   Module), false, true);
-        if (symbol.Terminal == OpSym)
+                                                   Module, Dynamic), false, true);
+        if (symbol.TerminalId == OpSym)
         {
           symbol.SetProcessed ();
         }
-        else if (symbol.Terminal == WrapSym)
+        else if (symbol.TerminalId == WrapSym)
         {
           symbol.SetProcessed ();
         }
-        else if (symbol.Terminal == EnsureLoaded)
+        else if (symbol.TerminalId == EnsureLoaded)
         {
           symbol.SetProcessed ();
         }
-        else if (symbol.Terminal == Discontiguous)
+        else if (symbol.TerminalId == Discontiguous)
         {
           symbol.SetProcessed ();
         }
-        else if (symbol.Terminal == StringStyle)
+        else if (symbol.TerminalId == StringStyle)
         {
           symbol.SetProcessed ();
         }
-        else if (symbol.Terminal == AllDiscontiguous)
+        else if (symbol.TerminalId == AllDiscontiguous)
+        {
+          symbol.SetProcessed ();
+        }
+        else if (symbol.TerminalId == Module)
         {
           symbol.SetProcessed ();
         }
@@ -852,18 +874,12 @@ namespace Prolog
         {
           symbol.SetProcessed ();
         }
-        #if LL1_tracing
-        ReportParserProcExit ("ReservedWord");
-        #endif
       }
       #endregion
       
       #region Predefineds
-      void Predefineds (TerminalSet _TS)
+      private void Predefineds (TerminalSet _TS)
       {
-        #if LL1_tracing
-        ReportParserProcEntry ("Predefineds");
-        #endif
         do
         {
           Predefined (_TS.Union (terminalCount, LeftParen, Identifier, IntLiteral, RealLiteral, ImagLiteral, StringLiteral,
@@ -874,19 +890,13 @@ namespace Prolog
                                                Operator, Atom, Anonymous, CutSym, ImpliesSym, LSqBracket, LCuBracket,
                                                ListPatternOpen, TrySym, WrapOpen, WrapClose, AltListOpen, AltListClose,
                                                VerbatimStringLiteral), false, true);
-        } while (! (_TS.Contains (symbol.Terminal)) );
-        #if LL1_tracing
-        ReportParserProcExit ("Predefineds");
-        #endif
+        } while (! (_TS.Contains (symbol.TerminalId)) );
       }
       #endregion
       
       #region Predefined
-      void Predefined (TerminalSet _TS)
+      private void Predefined (TerminalSet _TS)
       {
-        #if LL1_tracing
-        ReportParserProcEntry ("Predefined");
-        #endif
         BaseTerm head;
         bool     opt  = true;
         TermNode body = null;
@@ -895,15 +905,15 @@ namespace Prolog
                                                    Operator, Atom, Anonymous, CutSym, ImpliesSym, LSqBracket, LCuBracket,
                                                    ListPatternOpen, TrySym, WrapOpen, WrapClose, AltListOpen, AltListClose,
                                                    VerbatimStringLiteral), false, true);
-        if (symbol.Terminal == ImpliesSym)
+        if (symbol.TerminalId == ImpliesSym)
         {
           symbol.SetProcessed ();
           GetSymbol (new TerminalSet (terminalCount, Atom, OpSym, WrapSym), false, true);
-          if (symbol.Terminal == OpSym)
+          if (symbol.TerminalId == OpSym)
           {
             OpDefinition (new TerminalSet (terminalCount, Dot), false);
           }
-          else if (symbol.Terminal == WrapSym)
+          else if (symbol.TerminalId == WrapSym)
           {
             WrapDefinition (new TerminalSet (terminalCount, Dot));
           }
@@ -919,11 +929,11 @@ namespace Prolog
           if (symbol.IsMemberOf (ImpliesSym, DCGArrowSym, BuiltinCSharp))
           {
             GetSymbol (new TerminalSet (terminalCount, ImpliesSym, DCGArrowSym, BuiltinCSharp), false, true);
-            if (symbol.Terminal == BuiltinCSharp)
+            if (symbol.TerminalId == BuiltinCSharp)
             {
               symbol.SetProcessed ();
               GetSymbol (new TerminalSet (terminalCount, Operator, Atom), false, true);
-              if (symbol.Terminal == Atom)
+              if (symbol.TerminalId == Atom)
               {
                 symbol.SetProcessed ();
               }
@@ -934,7 +944,7 @@ namespace Prolog
               ps.AddPredefined (new ClauseNode (head, new TermNode (symbol.ToString ())));
               opt = false;
             }
-            else if (symbol.Terminal == ImpliesSym)
+            else if (symbol.TerminalId == ImpliesSym)
             {
               symbol.SetProcessed ();
               Query (new TerminalSet (terminalCount, Dot), out body);
@@ -956,48 +966,30 @@ namespace Prolog
           if (opt) ps.AddPredefined (new ClauseNode (head, null));
         }
         GetSymbol (new TerminalSet (terminalCount, Dot), true, true);
-        #if LL1_tracing
-        ReportParserProcExit ("Predefined");
-        #endif
       }
       #endregion
       
       #region Query
-      void Query (TerminalSet _TS, out TermNode body)
+      private void Query (TerminalSet _TS, out TermNode body)
       {
-        #if LL1_tracing
-        ReportParserProcEntry ("Query");
-        #endif
         BaseTerm t = null;
         PrologTerm (_TS, out t);
         body = t.ToGoalList ();
-        #if LL1_tracing
-        ReportParserProcExit ("Query");
-        #endif
       }
       #endregion
       
       #region PrologTerm
-      void PrologTerm (TerminalSet _TS, out BaseTerm t)
+      private void PrologTerm (TerminalSet _TS, out BaseTerm t)
       {
-        #if LL1_tracing
-        ReportParserProcEntry ("PrologTerm");
-        #endif
         bool saveStatus = SetCommaAsSeparator (false);
         PrologTermEx (_TS, out t);
         SetCommaAsSeparator (saveStatus);
-        #if LL1_tracing
-        ReportParserProcExit ("PrologTerm");
-        #endif
       }
       #endregion
       
       #region PrologTermEx
-      void PrologTermEx (TerminalSet _TS, out BaseTerm t)
+      private void PrologTermEx (TerminalSet _TS, out BaseTerm t)
       {
-        #if LL1_tracing
-        ReportParserProcEntry ("PrologTermEx");
-        #endif
         string functor;
         OpDescrTriplet triplet;
         bool spaceAfter;
@@ -1010,7 +1002,7 @@ namespace Prolog
                                                      Operator, Atom, Anonymous, CutSym, LSqBracket, LCuBracket, ListPatternOpen,
                                                      TrySym, WrapOpen, WrapClose, AltListOpen, AltListClose,
                                                      VerbatimStringLiteral), false, true);
-          if (symbol.Terminal == Operator)
+          if (symbol.TerminalId == Operator)
           {
             symbol.SetProcessed ();
             spaceAfter = symbol.IsFollowedByLayoutChar;
@@ -1020,7 +1012,7 @@ namespace Prolog
                                                  Operator, Atom, Anonymous, CutSym, LSqBracket, LCuBracket, ListPatternOpen,
                                                  TrySym, WrapOpen, WrapClose, AltListOpen, AltListClose, VerbatimStringLiteral),
                        false, true);
-            if (symbol.Terminal == LeftParen)
+            if (symbol.TerminalId == LeftParen)
             {
               symbol.SetProcessed ();
               ArgumentList (new TerminalSet (terminalCount, RightParen), out args, commaAsSeparator);
@@ -1042,7 +1034,7 @@ namespace Prolog
                                                        StringLiteral, Atom, Anonymous, CutSym, LSqBracket, LCuBracket,
                                                        ListPatternOpen, TrySym, WrapOpen, WrapClose, AltListOpen, AltListClose,
                                                        VerbatimStringLiteral), false, true);
-            if (symbol.Terminal == Atom)
+            if (symbol.TerminalId == Atom)
             {
               symbol.SetProcessed ();
               functor = symbol.ToString ();
@@ -1051,7 +1043,7 @@ namespace Prolog
                                                    Operator, Atom, Anonymous, CutSym, LSqBracket, LCuBracket, ListPatternOpen,
                                                    TrySym, WrapOpen, WrapClose, AltListOpen, AltListClose,
                                                    VerbatimStringLiteral), false, true);
-              if (symbol.Terminal == LeftParen)
+              if (symbol.TerminalId == LeftParen)
               {
                 symbol.SetProcessed ();
                 ArgumentList (new TerminalSet (terminalCount, RightParen), out args, true);
@@ -1059,7 +1051,7 @@ namespace Prolog
               }
               tokenSeqToTerm.AddFunctorTerm (functor, spaceAfter, args);
             }
-            else if (symbol.Terminal == LeftParen)
+            else if (symbol.TerminalId == LeftParen)
             {
               symbol.SetProcessed ();
               bool saveStatus = SetCommaAsSeparator (false);
@@ -1068,7 +1060,7 @@ namespace Prolog
               tokenSeqToTerm.Add (t);
               GetSymbol (new TerminalSet (terminalCount, RightParen), true, true);
             }
-            else if (symbol.Terminal == Identifier)
+            else if (symbol.TerminalId == Identifier)
             {
               GetIdentifier (_TS.Union (terminalCount, LeftParen, Identifier, IntLiteral, RealLiteral, ImagLiteral,
                                                        StringLiteral, Operator, Atom, Anonymous, CutSym, LSqBracket, LCuBracket,
@@ -1076,17 +1068,17 @@ namespace Prolog
                                                        VerbatimStringLiteral), out t);
               tokenSeqToTerm.Add (t);
             }
-            else if (symbol.Terminal == Anonymous)
+            else if (symbol.TerminalId == Anonymous)
             {
               symbol.SetProcessed ();
               tokenSeqToTerm.Add (new AnonymousVariable ());
             }
-            else if (symbol.Terminal == CutSym)
+            else if (symbol.TerminalId == CutSym)
             {
               symbol.SetProcessed ();
               tokenSeqToTerm.Add (new Cut (0));
             }
-            else if (symbol.Terminal == AltListOpen)
+            else if (symbol.TerminalId == AltListOpen)
             {
               AltList (_TS.Union (terminalCount, LeftParen, Identifier, IntLiteral, RealLiteral, ImagLiteral, StringLiteral,
                                                  Operator, Atom, Anonymous, CutSym, LSqBracket, LCuBracket, ListPatternOpen,
@@ -1094,7 +1086,7 @@ namespace Prolog
                       out t);
               tokenSeqToTerm.Add (t);
             }
-            else if (symbol.Terminal == LSqBracket)
+            else if (symbol.TerminalId == LSqBracket)
             {
               List (_TS.Union (terminalCount, LeftParen, Identifier, IntLiteral, RealLiteral, ImagLiteral, StringLiteral,
                                               Operator, Atom, Anonymous, CutSym, LSqBracket, LCuBracket, ListPatternOpen,
@@ -1105,7 +1097,7 @@ namespace Prolog
             else if (symbol.IsMemberOf (IntLiteral, RealLiteral))
             {
               GetSymbol (new TerminalSet (terminalCount, IntLiteral, RealLiteral), false, true);
-              if (symbol.Terminal == IntLiteral)
+              if (symbol.TerminalId == IntLiteral)
               {
                 symbol.SetProcessed ();
               }
@@ -1115,26 +1107,26 @@ namespace Prolog
               }
               tokenSeqToTerm.Add (new DecimalTerm (symbol.ToDecimal ()));
             }
-            else if (symbol.Terminal == ImagLiteral)
+            else if (symbol.TerminalId == ImagLiteral)
             {
               symbol.SetProcessed ();
               tokenSeqToTerm.Add (new ComplexTerm (0, symbol.ToImaginary ()));
             }
-            else if (symbol.Terminal == StringLiteral)
+            else if (symbol.TerminalId == StringLiteral)
             {
               symbol.SetProcessed ();
               string s = symbol.ToUnquoted ();
               s = ConfigSettings.ResolveEscapes ? s.Unescaped () : s.Replace ("\"\"", "\"");
               tokenSeqToTerm.Add (engine.NewIsoOrCsStringTerm (s));
             }
-            else if (symbol.Terminal == VerbatimStringLiteral)
+            else if (symbol.TerminalId == VerbatimStringLiteral)
             {
               symbol.SetProcessed ();
               string s = symbol.ToUnquoted ();
               s = s.Replace ("\"\"", "\"");
               tokenSeqToTerm.Add (engine.NewIsoOrCsStringTerm (s));
             }
-            else if (symbol.Terminal == LCuBracket)
+            else if (symbol.TerminalId == LCuBracket)
             {
               DCGBracketList (_TS.Union (terminalCount, LeftParen, Identifier, IntLiteral, RealLiteral, ImagLiteral,
                                                         StringLiteral, Operator, Atom, Anonymous, CutSym, LSqBracket,
@@ -1142,7 +1134,7 @@ namespace Prolog
                                                         AltListClose, VerbatimStringLiteral), out t);
               tokenSeqToTerm.Add (t);
             }
-            else if (symbol.Terminal == WrapOpen)
+            else if (symbol.TerminalId == WrapOpen)
             {
               symbol.SetProcessed ();
               string wrapOpen = symbol.ToString ();
@@ -1169,7 +1161,7 @@ namespace Prolog
             else if (symbol.IsMemberOf (WrapClose, AltListClose))
             {
               GetSymbol (new TerminalSet (terminalCount, WrapClose, AltListClose), false, true);
-              if (symbol.Terminal == WrapClose)
+              if (symbol.TerminalId == WrapClose)
               {
                 symbol.SetProcessed ();
               }
@@ -1180,7 +1172,7 @@ namespace Prolog
               string orphanCloseBracket = symbol.ToString ();
               tokenSeqToTerm.Add (new AtomTerm (orphanCloseBracket.ToAtom ()));
             }
-            else if (symbol.Terminal == ListPatternOpen)
+            else if (symbol.TerminalId == ListPatternOpen)
             {
               symbol.SetProcessed ();
               ListPatternMembers (new TerminalSet (terminalCount, ListPatternClose), out t);
@@ -1199,20 +1191,14 @@ namespace Prolog
                                                Operator, Atom, Anonymous, CutSym, LSqBracket, LCuBracket, ListPatternOpen,
                                                TrySym, WrapOpen, WrapClose, AltListOpen, AltListClose, VerbatimStringLiteral),
                      false, true);
-        } while (! (_TS.Contains (symbol.Terminal)) );
+        } while (! (_TS.Contains (symbol.TerminalId)) );
         tokenSeqToTerm.ConstructPrefixTerm (out t);
-        #if LL1_tracing
-        ReportParserProcExit ("PrologTermEx");
-        #endif
       }
       #endregion
       
       #region GetIdentifier
-      void GetIdentifier (TerminalSet _TS, out BaseTerm t)
+      private void GetIdentifier (TerminalSet _TS, out BaseTerm t)
       {
-        #if LL1_tracing
-        ReportParserProcEntry ("GetIdentifier");
-        #endif
         GetSymbol (new TerminalSet (terminalCount, Identifier), true, true);
         string id = symbol.ToString ();
         t = engine.GetVariable (id);
@@ -1223,18 +1209,12 @@ namespace Prolog
         }
         else
           engine.RegisterVarNonSingleton (id);
-        #if LL1_tracing
-        ReportParserProcExit ("GetIdentifier");
-        #endif
       }
       #endregion
       
       #region ArgumentList
-      void ArgumentList (TerminalSet _TS, out BaseTerm [] args, bool commaIsSeparator)
+      private void ArgumentList (TerminalSet _TS, out BaseTerm [] args, bool commaIsSeparator)
       {
-        #if LL1_tracing
-        ReportParserProcEntry ("ArgumentList");
-        #endif
         bool b = isReservedOperatorSetting;
         List<BaseTerm> argList = new List<BaseTerm> ();
         BaseTerm a;
@@ -1245,7 +1225,7 @@ namespace Prolog
           PrologTermEx (_TS.Union (terminalCount, Comma), out a);
           argList.Add (a);
           GetSymbol (_TS.Union (terminalCount, Comma), false, true);
-          if (symbol.Terminal == Comma)
+          if (symbol.TerminalId == Comma)
           {
             symbol.SetProcessed ();
           }
@@ -1255,18 +1235,12 @@ namespace Prolog
         SetCommaAsSeparator (saveStatus);
         SetReservedOperators (b);
         args = argList.ToArray ();
-        #if LL1_tracing
-        ReportParserProcExit ("ArgumentList");
-        #endif
       }
       #endregion
       
       #region ListPatternMembers
-      void ListPatternMembers (TerminalSet _TS, out BaseTerm t)
+      private void ListPatternMembers (TerminalSet _TS, out BaseTerm t)
       {
-        #if LL1_tracing
-        ReportParserProcEntry ("ListPatternMembers");
-        #endif
         bool b = isReservedOperatorSetting;
         List<SearchTerm> searchTerms;
         bool saveStatus = SetCommaAsSeparator (true);
@@ -1339,7 +1313,7 @@ namespace Prolog
             minLenTerm = maxLenTerm = new DecimalTerm (0);
           }
           GetSymbol (_TS.Union (terminalCount, Comma), false, true);
-          if (symbol.Terminal == Comma)
+          if (symbol.TerminalId == Comma)
           {
             symbol.SetProcessed ();
           }
@@ -1355,20 +1329,14 @@ namespace Prolog
         terminalTable [SUBTREE] = saveSubtree;
         SetReservedOperators (b);
         }
-        #if LL1_tracing
-        ReportParserProcExit ("ListPatternMembers");
-        #endif
       }
       #endregion
       
       #region AlternativeTerms
-      void AlternativeTerms (TerminalSet _TS, 
-                            int saveEllipsis, int saveNegate, int saveSubtree, out List<SearchTerm> searchTerms, 
-                            out BaseTerm altListName, out bool isSingleVar, out bool isNegSearch)
+      private void AlternativeTerms (TerminalSet _TS, 
+                                    int saveEllipsis, int saveNegate, int saveSubtree, out List<SearchTerm> searchTerms, 
+                                    out BaseTerm altListName, out bool isSingleVar, out bool isNegSearch)
       {
-        #if LL1_tracing
-        ReportParserProcEntry ("AlternativeTerms");
-        #endif
         searchTerms = new List<SearchTerm> ();
         BaseTerm t;
         altListName = null;
@@ -1381,7 +1349,7 @@ namespace Prolog
                                                      Operator, Atom, Anonymous, CutSym, LSqBracket, LCuBracket, ListPatternOpen,
                                                      NegateSym, TrySym, WrapOpen, WrapClose, AltListOpen, AltListClose,
                                                      VerbatimStringLiteral), false, true);
-          if (symbol.Terminal == NegateSym)
+          if (symbol.TerminalId == NegateSym)
           {
             if (isNegSearch) IO.Error ("Only one '~' allowed (which will apply to the entire alternatives list)");
             GetSymbol (new TerminalSet (terminalCount, NegateSym), true, true);
@@ -1395,13 +1363,13 @@ namespace Prolog
           //terminalTable [NEGATE]   = NegateSym;
           //terminalTable [SUBTREE]  = SubtreeSym;
           if (!first) searchTerms.Add (new SearchTerm (downRepFactor, t));
-          if (t is AnonymousVariable)
-            IO.Warning ("Anonymous variable in alternatives list makes it match anything");
+          //if (t is AnonymousVariable)
+          //  IO.Warning ("Anonymous variable in alternatives list makes it match anything");
           GetSymbol (_TS.Union (terminalCount, CutSym, VBar), false, true);
           if (symbol.IsMemberOf (CutSym, VBar))
           {
             GetSymbol (new TerminalSet (terminalCount, CutSym, VBar), false, true);
-            if (symbol.Terminal == VBar)
+            if (symbol.TerminalId == VBar)
             {
               symbol.SetProcessed ();
               if (first) searchTerms.Add (new SearchTerm (downRepFactor, t));
@@ -1431,18 +1399,12 @@ namespace Prolog
         }
         if (first) searchTerms.Add (new SearchTerm (downRepFactor, t));
         isSingleVar = (searchTerms.Count == 1 && searchTerms [0].term is Variable);
-        #if LL1_tracing
-        ReportParserProcExit ("AlternativeTerms");
-        #endif
       }
       #endregion
       
       #region Range
-      void Range (TerminalSet _TS, out BaseTerm minLenTerm, out BaseTerm maxLenTerm)
+      private void Range (TerminalSet _TS, out BaseTerm minLenTerm, out BaseTerm maxLenTerm)
       {
-        #if LL1_tracing
-        ReportParserProcEntry ("Range");
-        #endif
         try
         {
           savePlusSym = terminalTable [PLUSSYM];
@@ -1452,7 +1414,7 @@ namespace Prolog
           terminalTable [TIMESSYM] = TimesSym;
           terminalTable [QUESTIONMARK] = QuestionMark;
         GetSymbol (new TerminalSet (terminalCount, LCuBracket, EllipsisSym), false, true);
-        if (symbol.Terminal == LCuBracket)
+        if (symbol.TerminalId == LCuBracket)
         {
           int minLen = 0;
           int maxLen = 0;
@@ -1465,7 +1427,7 @@ namespace Prolog
             if (symbol.IsMemberOf (Identifier, IntLiteral))
             {
               GetSymbol (new TerminalSet (terminalCount, Identifier, IntLiteral), false, true);
-              if (symbol.Terminal == IntLiteral)
+              if (symbol.TerminalId == IntLiteral)
               {
                 symbol.SetProcessed ();
                 minLen = maxLen = symbol.ToInt ();
@@ -1478,7 +1440,7 @@ namespace Prolog
               }
             }
             GetSymbol (new TerminalSet (terminalCount, Comma, RCuBracket), false, true);
-            if (symbol.Terminal == Comma)
+            if (symbol.TerminalId == Comma)
             {
               symbol.SetProcessed ();
               maxLen = Infinite;
@@ -1487,7 +1449,7 @@ namespace Prolog
               if (symbol.IsMemberOf (Identifier, IntLiteral))
               {
                 GetSymbol (new TerminalSet (terminalCount, Identifier, IntLiteral), false, true);
-                if (symbol.Terminal == IntLiteral)
+                if (symbol.TerminalId == IntLiteral)
                 {
                   symbol.SetProcessed ();
                   if (minLen > (maxLen = symbol.ToInt ()))
@@ -1501,19 +1463,19 @@ namespace Prolog
               }
             }
           }
-          else if (symbol.Terminal == TimesSym)
+          else if (symbol.TerminalId == TimesSym)
           {
             symbol.SetProcessed ();
             minLenTerm = new DecimalTerm (0);
             maxLenTerm = new DecimalTerm (Infinite);
           }
-          else if (symbol.Terminal == PlusSym)
+          else if (symbol.TerminalId == PlusSym)
           {
             symbol.SetProcessed ();
             minLenTerm = new DecimalTerm (1);
             maxLenTerm = new DecimalTerm (Infinite);
           }
-          else if (symbol.Terminal == QuestionMark)
+          else if (symbol.TerminalId == QuestionMark)
           {
             symbol.SetProcessed ();
             minLenTerm = new DecimalTerm (0);
@@ -1534,18 +1496,12 @@ namespace Prolog
           terminalTable [TIMESSYM] = saveTimesSym;
           terminalTable [QUESTIONMARK] = saveQuestionMark;
         }
-        #if LL1_tracing
-        ReportParserProcExit ("Range");
-        #endif
       }
       #endregion
       
       #region TryCatchClause
-      void TryCatchClause (TerminalSet _TS, TokenSeqToTerm tokenSeqToTerm, out BaseTerm t)
+      private void TryCatchClause (TerminalSet _TS, TokenSeqToTerm tokenSeqToTerm, out BaseTerm t)
       {
-        #if LL1_tracing
-        ReportParserProcEntry ("TryCatchClause");
-        #endif
         GetSymbol (new TerminalSet (terminalCount, TrySym), true, true);
         bool nullClass = false;
         tokenSeqToTerm.Add (new TryOpenTerm ());
@@ -1572,7 +1528,7 @@ namespace Prolog
             {
               bool saveStatus = SetCommaAsSeparator (true);
               GetSymbol (new TerminalSet (terminalCount, IntLiteral, Atom), false, true);
-              if (symbol.Terminal == Atom)
+              if (symbol.TerminalId == Atom)
               {
                 symbol.SetProcessed ();
               }
@@ -1588,7 +1544,7 @@ namespace Prolog
               if (symbol.IsMemberOf (Comma, Identifier))
               {
                 GetSymbol (new TerminalSet (terminalCount, Comma, Identifier), false, true);
-                if (symbol.Terminal == Comma)
+                if (symbol.TerminalId == Comma)
                 {
                   symbol.SetProcessed ();
                 }
@@ -1624,25 +1580,19 @@ namespace Prolog
             tokenSeqToTerm.Add (CommaOpTriplet);
           }
           GetSymbol (_TS.Union (terminalCount, CatchSym), false, true);
-        } while (! (_TS.Contains (symbol.Terminal)) );
+        } while (! (_TS.Contains (symbol.TerminalId)) );
         tokenSeqToTerm.Add (TC_CLOSE);
-        #if LL1_tracing
-        ReportParserProcExit ("TryCatchClause");
-        #endif
       }
       #endregion
       
       #region OptionalPrologTerm
-      void OptionalPrologTerm (TerminalSet _TS, out BaseTerm t)
+      private void OptionalPrologTerm (TerminalSet _TS, out BaseTerm t)
       {
-        #if LL1_tracing
-        ReportParserProcEntry ("OptionalPrologTerm");
-        #endif
         t = null;
-        GetSymbol (_TS.Union (terminalCount, LeftParen, Identifier, IntLiteral, RealLiteral, ImagLiteral, StringLiteral,
-                                             Operator, Atom, Anonymous, CutSym, LSqBracket, LCuBracket, ListPatternOpen, TrySym,
-                                             WrapOpen, WrapClose, AltListOpen, AltListClose, VerbatimStringLiteral), false,
-                   true);
+        GetSymbol (new TerminalSet (terminalCount, LeftParen, Identifier, IntLiteral, RealLiteral, ImagLiteral, StringLiteral,
+                                                   EndOfInput, Operator, Atom, Anonymous, CutSym, LSqBracket, LCuBracket,
+                                                   ListPatternOpen, TrySym, WrapOpen, WrapClose, AltListOpen, AltListClose,
+                                                   VerbatimStringLiteral), false, true);
         if (symbol.IsMemberOf (LeftParen, Identifier, IntLiteral, RealLiteral, ImagLiteral, StringLiteral, Operator, Atom,
                                Anonymous, CutSym, LSqBracket, LCuBracket, ListPatternOpen, TrySym, WrapOpen, WrapClose,
                                AltListOpen, AltListClose, VerbatimStringLiteral))
@@ -1650,18 +1600,16 @@ namespace Prolog
           PrologTerm (new TerminalSet (terminalCount, Dot), out t);
           GetSymbol (new TerminalSet (terminalCount, Dot), true, true);
         }
-        #if LL1_tracing
-        ReportParserProcExit ("OptionalPrologTerm");
-        #endif
+        else
+        {
+          symbol.SetProcessed ();
+        }
       }
       #endregion
       
       #region List
-      void List (TerminalSet _TS, out BaseTerm term)
+      private void List (TerminalSet _TS, out BaseTerm term)
       {
-        #if LL1_tracing
-        ReportParserProcEntry ("List");
-        #endif
         BaseTerm afterBar = null;
         terminalTable [OP] = Atom;
         terminalTable [WRAP] = Atom;
@@ -1677,7 +1625,7 @@ namespace Prolog
         {
           ArgumentList (new TerminalSet (terminalCount, RSqBracket, VBar), out elements, true);
           GetSymbol (new TerminalSet (terminalCount, RSqBracket, VBar), false, true);
-          if (symbol.Terminal == VBar)
+          if (symbol.TerminalId == VBar)
           {
             symbol.SetProcessed ();
             PrologTerm (new TerminalSet (terminalCount, RSqBracket), out afterBar);
@@ -1688,18 +1636,12 @@ namespace Prolog
         GetSymbol (new TerminalSet (terminalCount, RSqBracket), true, true);
         term = (afterBar == null) ? new ListTerm () : afterBar;
         if (elements != null) term = ListTerm.ListFromArray (elements, term);
-        #if LL1_tracing
-        ReportParserProcExit ("List");
-        #endif
       }
       #endregion
       
       #region AltList
-      void AltList (TerminalSet _TS, out BaseTerm term)
+      private void AltList (TerminalSet _TS, out BaseTerm term)
       {
-        #if LL1_tracing
-        ReportParserProcEntry ("AltList");
-        #endif
         BaseTerm afterBar = null;
         terminalTable [OP] = Atom;
         terminalTable [WRAP] = Atom;
@@ -1717,7 +1659,7 @@ namespace Prolog
         {
           ArgumentList (new TerminalSet (terminalCount, VBar, AltListClose), out elements, true);
           GetSymbol (new TerminalSet (terminalCount, VBar, AltListClose), false, true);
-          if (symbol.Terminal == VBar)
+          if (symbol.TerminalId == VBar)
           {
             symbol.SetProcessed ();
             PrologTerm (new TerminalSet (terminalCount, AltListClose), out afterBar);
@@ -1732,18 +1674,12 @@ namespace Prolog
         term = (afterBar == null) ? new AltListTerm (altListOpen, altListClose) : afterBar;
         if (elements != null)
           term = AltListTerm.ListFromArray (altListOpen, altListClose, elements, term);
-        #if LL1_tracing
-        ReportParserProcExit ("AltList");
-        #endif
       }
       #endregion
       
       #region DCGBracketList
-      void DCGBracketList (TerminalSet _TS, out BaseTerm term)
+      private void DCGBracketList (TerminalSet _TS, out BaseTerm term)
       {
-        #if LL1_tracing
-        ReportParserProcEntry ("DCGBracketList");
-        #endif
         terminalTable [OP] = Atom;
         terminalTable [WRAP] = Atom;
         BaseTerm [] elements = null;
@@ -1766,9 +1702,6 @@ namespace Prolog
               term = new DcgTerm (elements [i], term);
           else
             term = new CompoundTerm (CURL, elements);
-        #if LL1_tracing
-        ReportParserProcExit ("DCGBracketList");
-        #endif
       }
       #endregion
       

@@ -1,7 +1,7 @@
 #define enableSpying
 /*-----------------------------------------------------------------------------------------
 
-  C#Prolog -- Copyright (C) 2007-2013 John Pool -- j.pool@ision.nl
+  C#Prolog -- Copyright (C) 2007-2014 John Pool -- j.pool@ision.nl
 
   This library is free software; you can redistribute it and/or modify it under the terms of
   the GNU General Public License as published by the Free Software Foundation; either version
@@ -27,7 +27,7 @@ namespace Prolog
     public partial class PredicateDescr
     {
       string module; // TO BE IMPLEMENTED
-      string definingFile;
+      string definitionFile;
       protected string functor;
       public string Functor { get { return functor; } }
       protected int arity;
@@ -36,11 +36,11 @@ namespace Prolog
       public string Key { get { return arity + functor; } }
       const short ARG0COUNT_MIN = 8;
       Dictionary<object, ClauseNode> arg0Index = null; // for first argument indexing
-      ClauseNode clauseList;         // start of last of clauses making up this predicate
+      ClauseNode clauseList;         // start of list of clauses making up this predicate
       public ClauseNode ClauseList { get { return clauseList; } }
       ClauseNode lastCachedClause;   // if the predicate is cacheable, each 'calculated' answer is inserted after this node
       ClauseNode clauseListEnd;      // keeps track of the position of the last clause
-      bool isDiscontiguous = false;  // pertains to a single definingFile only. A predicate must always be in a single definingFile
+      bool isDiscontiguous = false;  // pertains to a single definitionFile only. A predicate must always be in a single definitionFile
       bool isCacheable = false;      // indicates whether in principle the result of the predicate evaluation can be cached (tabled)
       int profileCount = 0;          // number of times the predicate was called
       public bool IsDiscontiguous { get { return isDiscontiguous; } set { isDiscontiguous = value; } }
@@ -58,12 +58,12 @@ namespace Prolog
       public SpyPort SpyPort { get { return spyMode; } }
 #endif
       public string Module { get { return module; } set { module = value; } }
-      public string DefiningFile { get { return definingFile; } }
+      public string DefinitionFile { get { return definitionFile; } }
 
-      public PredicateDescr (string module, string definingFile, string functor, int arity, ClauseNode clauseList)
+      public PredicateDescr (string module, string definitionFile, string functor, int arity, ClauseNode clauseList)
       {
         this.module = module;
-        this.definingFile = (definingFile == null) ? "predefined or asserted predicate" : definingFile;
+        this.definitionFile = (definitionFile == null) ? "predefined or asserted predicate" : definitionFile;
         this.functor = functor;
         this.arity = arity;
 #if enableSpying

@@ -49,15 +49,22 @@ namespace Visual.Class
                 logApp("Query exception: " + e.ToString());
             }
 
-            if (ss == null || !ss.Success)
-                logApp("Query error: '" + cmd + "'");
+            if (ss == null)
+                logApp("Solution is null: '" + cmd + "'");
+            else
+            {
+                if (ss.HasError)
+                    logApp("Query errors: " + ss.ErrMsg);
 
-            string buf = "";
-            foreach (var single in ss.NextSolution)
-                foreach (Variable v in single.NextVariable)
-                    buf += string.Format("{0} = {1}", v.Name, v.Value) + Environment.NewLine;
-
-            logProlog(buf);
+                string buf = ss.Success + ":" + ss.Count + ":" + ss.Query + Environment.NewLine;
+                
+                foreach (var single in ss.NextSolution)
+                    foreach (Variable v in single.NextVariable)
+                        buf += string.Format("{0} = {1}", v.Name, v.Value) + Environment.NewLine;
+         
+                if (buf.Length > 0)
+                    logProlog(buf);
+            }
         }
 
         public static void processInput(string cmd)

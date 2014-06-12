@@ -27,7 +27,7 @@ namespace Prolog
   |_______________________________________________________________________________________________|
 */
 
-// Parser Generator version 4.0 -- Date/Time: 1-5-2013 11:56:26
+// Parser Generator version 4.0 -- Date/Time: 10-Feb-14 08:40:11
 
 
   public partial class PrologEngine
@@ -35,9 +35,9 @@ namespace Prolog
     #region JsonParser
     public partial class JsonParser : BaseParser<object>
     {
-      public static readonly string VersionTimeStamp = "2013-05-01 11:56:26";
+      public static readonly string VersionTimeStamp = "2014-02-10 08:40:11";
       
-      
+           
       #region Terminal definition
       
       /* The following constants are defined in BaseParser.cs:
@@ -51,64 +51,62 @@ namespace Prolog
       const int ppUndefine = 7;
       const int ppIf = 8;
       const int ppIfNot = 9;
-      const int ppIfDef = 10;
-      const int ppIfNDef = 11;
-      const int ppElse = 12;
-      const int ppEndIf = 13;
-      const int RealLiteral = 14;
-      const int ImagLiteral = 15;
-      const int StringLiteral = 16;
-      const int CharLiteral = 17;
-      const int CommentStart = 18;
-      const int CommentSingle = 19;
-      const int EndOfLine = 20;
-      const int ANYSYM = 21;
-      const int EndOfInput = 22;
+      const int ppElse = 10;
+      const int ppElseIf = 11;
+      const int ppEndIf = 12;
+      const int RealLiteral = 13;
+      const int ImagLiteral = 14;
+      const int StringLiteral = 15;
+      const int CharLiteral = 16;
+      const int CommentStart = 17;
+      const int CommentSingle = 18;
+      const int EndOfLine = 19;
+      const int ANYSYM = 20;
+      const int EndOfInput = 21;
       */
-      const int LSqBracket = 23;
-      const int RSqBracket = 24;
-      const int LCuBracket = 25;
-      const int RCuBracket = 26;
-      const int Colon = 27;
-      const int TrueSym = 28;
-      const int FalseSym = 29;
-      const int NullSym = 30;
+      const int LSqBracket = 22;
+      const int RSqBracket = 23;
+      const int LCuBracket = 24;
+      const int RCuBracket = 25;
+      const int Colon = 26;
+      const int TrueSym = 27;
+      const int FalseSym = 28;
+      const int NullSym = 29;
       // Total number of terminals:
-      public const int terminalCount = 31;
+      public const int terminalCount = 30;
       
       public static void FillTerminalTable (BaseTrie terminalTable)
       {
-        terminalTable.Add (Undefined, "Undefined");
-        terminalTable.Add (Comma, "Comma", ",");
-        terminalTable.Add (LeftParen, "LeftParen", "(");
-        terminalTable.Add (RightParen, "RightParen", ")");
-        terminalTable.Add (Identifier, "Identifier");
-        terminalTable.Add (IntLiteral, "IntLiteral");
-        terminalTable.Add (ppDefine, "ppDefine", "#define");
-        terminalTable.Add (ppUndefine, "ppUndefine", "#undefine");
-        terminalTable.Add (ppIf, "ppIf", "#if");
-        terminalTable.Add (ppIfNot, "ppIfNot", "#ifnot");
-        terminalTable.Add (ppIfDef, "ppIfDef", "#ifdef");
-        terminalTable.Add (ppIfNDef, "ppIfNDef", "#ifndef");
-        terminalTable.Add (ppElse, "ppElse", "#else");
-        terminalTable.Add (ppEndIf, "ppEndIf", "#endif");
-        terminalTable.Add (RealLiteral, "RealLiteral");
-        terminalTable.Add (ImagLiteral, "ImagLiteral");
-        terminalTable.Add (StringLiteral, "StringLiteral");
-        terminalTable.Add (CharLiteral, "CharLiteral");
-        terminalTable.Add (CommentStart, "CommentStart", "/*");
-        terminalTable.Add (CommentSingle, "CommentSingle", "%");
-        terminalTable.Add (EndOfLine, "EndOfLine");
-        terminalTable.Add (ANYSYM, "ANYSYM");
-        terminalTable.Add (EndOfInput, "EndOfInput");
-        terminalTable.Add (LSqBracket, "LSqBracket", "[");
-        terminalTable.Add (RSqBracket, "RSqBracket", "]");
-        terminalTable.Add (LCuBracket, "LCuBracket", "{");
-        terminalTable.Add (RCuBracket, "RCuBracket", "}");
-        terminalTable.Add (Colon, "Colon", ":");
-        terminalTable.Add (TrueSym, "TrueSym", "true");
-        terminalTable.Add (FalseSym, "FalseSym", "false");
-        terminalTable.Add (NullSym, "NullSym", "null");
+        terminalTable.Add (Undefined, SymbolClass.None, "Undefined");
+        terminalTable.Add (Comma, SymbolClass.None, "Comma", ",");
+        terminalTable.Add (LeftParen, SymbolClass.Group, "LeftParen", "(");
+        terminalTable.Add (RightParen, SymbolClass.Group, "RightParen", ")");
+        terminalTable.Add (Identifier, SymbolClass.Id, "Identifier");
+        terminalTable.Add (IntLiteral, SymbolClass.Number, "IntLiteral");
+        terminalTable.Add (ppDefine, SymbolClass.Meta, "ppDefine", "#define");
+        terminalTable.Add (ppUndefine, SymbolClass.Meta, "ppUndefine", "#undefine");
+        terminalTable.Add (ppIf, SymbolClass.Meta, "ppIf", "#if");
+        terminalTable.Add (ppIfNot, SymbolClass.Meta, "ppIfNot", "#ifnot");
+        terminalTable.Add (ppElse, SymbolClass.Meta, "ppElse", "#else");
+        terminalTable.Add (ppElseIf, SymbolClass.Meta, "ppElseIf", "#elseif");
+        terminalTable.Add (ppEndIf, SymbolClass.Meta, "ppEndIf", "#endif");
+        terminalTable.Add (RealLiteral, SymbolClass.Number, "RealLiteral");
+        terminalTable.Add (ImagLiteral, SymbolClass.Number, "ImagLiteral");
+        terminalTable.Add (StringLiteral, SymbolClass.Text, "StringLiteral");
+        terminalTable.Add (CharLiteral, SymbolClass.Text, "CharLiteral");
+        terminalTable.Add (CommentStart, SymbolClass.Comment, "CommentStart", "/*");
+        terminalTable.Add (CommentSingle, SymbolClass.Comment, "CommentSingle", "%");
+        terminalTable.Add (EndOfLine, SymbolClass.None, "EndOfLine");
+        terminalTable.Add (ANYSYM, SymbolClass.None, "ANYSYM");
+        terminalTable.Add (EndOfInput, SymbolClass.None, "EndOfInput");
+        terminalTable.Add (LSqBracket, SymbolClass.None, "LSqBracket", "[");
+        terminalTable.Add (RSqBracket, SymbolClass.None, "RSqBracket", "]");
+        terminalTable.Add (LCuBracket, SymbolClass.None, "LCuBracket", "{");
+        terminalTable.Add (RCuBracket, SymbolClass.None, "RCuBracket", "}");
+        terminalTable.Add (Colon, SymbolClass.None, "Colon", ":");
+        terminalTable.Add (TrueSym, SymbolClass.None, "TrueSym", "true");
+        terminalTable.Add (FalseSym, SymbolClass.None, "FalseSym", "false");
+        terminalTable.Add (NullSym, SymbolClass.None, "NullSym", "null");
       }
       
       #endregion Terminal definition
@@ -136,9 +134,9 @@ namespace Prolog
 
         if (syntaxErrorStat) return false;
 
-        if (symbol.Terminal == ANYSYM || followers.Contains (symbol.Terminal)) return true;
+        if (symbol.TerminalId == ANYSYM || followers.Contains (symbol.TerminalId)) return true;
 
-        switch (symbol.Terminal)
+        switch (symbol.TerminalId)
         {
           case EndOfLine:
             if (seeEndOfLine) s = "<EndOfLine>"; else goto default;
@@ -177,13 +175,10 @@ namespace Prolog
 
       
       #region JsonStruct
-      void JsonStruct (TerminalSet _TS)
+      private void JsonStruct (TerminalSet _TS)
       {
-        #if LL1_tracing
-        ReportParserProcEntry ("JsonStruct");
-        #endif
         GetSymbol (new TerminalSet (terminalCount, LSqBracket, LCuBracket), false, true);
-        if (symbol.Terminal == LCuBracket)
+        if (symbol.TerminalId == LCuBracket)
         {
           JsonObject (_TS, out jsonListTerm);
         }
@@ -191,30 +186,24 @@ namespace Prolog
         {
           JsonArray (_TS, out jsonListTerm);
         }
-        #if LL1_tracing
-        ReportParserProcExit ("JsonStruct");
-        #endif
       }
       #endregion
       
       #region JsonObject
-      void JsonObject (TerminalSet _TS, out BaseTerm t)
+      private void JsonObject (TerminalSet _TS, out BaseTerm t)
       {
-        #if LL1_tracing
-        ReportParserProcEntry ("JsonObject");
-        #endif
         BaseTerm e;
         List<BaseTerm> listItems = new List<BaseTerm> ();
         GetSymbol (new TerminalSet (terminalCount, LCuBracket), true, true);
         GetSymbol (new TerminalSet (terminalCount, StringLiteral, RCuBracket), false, true);
-        if (symbol.Terminal == StringLiteral)
+        if (symbol.TerminalId == StringLiteral)
         {
           while (true)
           {
             JsonPair (new TerminalSet (terminalCount, Comma, RCuBracket), out e);
             listItems.Add (e);
             GetSymbol (new TerminalSet (terminalCount, Comma, RCuBracket), false, true);
-            if (symbol.Terminal == Comma)
+            if (symbol.TerminalId == Comma)
             {
               symbol.SetProcessed ();
             }
@@ -224,36 +213,24 @@ namespace Prolog
         }
         GetSymbol (new TerminalSet (terminalCount, RCuBracket), true, true);
         t = JsonTerm.FromArray (listItems.ToArray ());
-        #if LL1_tracing
-        ReportParserProcExit ("JsonObject");
-        #endif
       }
       #endregion
       
       #region JsonPair
-      void JsonPair (TerminalSet _TS, out BaseTerm t)
+      private void JsonPair (TerminalSet _TS, out BaseTerm t)
       {
-        #if LL1_tracing
-        ReportParserProcEntry ("JsonPair");
-        #endif
         BaseTerm t0, t1;
         GetSymbol (new TerminalSet (terminalCount, StringLiteral), true, true);
         t0 = new StringTerm (symbol.ToString ().Dequoted ());
         GetSymbol (new TerminalSet (terminalCount, Colon), true, true);
         JsonValue (_TS, out t1);
         t = new OperatorTerm (opTable, PrologParser.COLON, t0, t1);
-        #if LL1_tracing
-        ReportParserProcExit ("JsonPair");
-        #endif
       }
       #endregion
       
       #region JsonArray
-      void JsonArray (TerminalSet _TS, out BaseTerm t)
+      private void JsonArray (TerminalSet _TS, out BaseTerm t)
       {
-        #if LL1_tracing
-        ReportParserProcEntry ("JsonArray");
-        #endif
         BaseTerm e;
         List<BaseTerm> listItems = new List<BaseTerm> ();
         GetSymbol (new TerminalSet (terminalCount, LSqBracket), true, true);
@@ -266,7 +243,7 @@ namespace Prolog
             JsonValue (new TerminalSet (terminalCount, Comma, RSqBracket), out e);
             listItems.Add (e);
             GetSymbol (new TerminalSet (terminalCount, Comma, RSqBracket), false, true);
-            if (symbol.Terminal == Comma)
+            if (symbol.TerminalId == Comma)
             {
               symbol.SetProcessed ();
             }
@@ -276,25 +253,19 @@ namespace Prolog
         }
         GetSymbol (new TerminalSet (terminalCount, RSqBracket), true, true);
         t = new CompoundTerm ("array", ListTerm.ListFromArray (listItems.ToArray (), BaseTerm.EMPTYLIST));
-        #if LL1_tracing
-        ReportParserProcExit ("JsonArray");
-        #endif
       }
       #endregion
       
       #region JsonValue
-      void JsonValue (TerminalSet _TS, out BaseTerm t)
+      private void JsonValue (TerminalSet _TS, out BaseTerm t)
       {
-        #if LL1_tracing
-        ReportParserProcEntry ("JsonValue");
-        #endif
         GetSymbol (new TerminalSet (terminalCount, IntLiteral, RealLiteral, StringLiteral, LSqBracket, LCuBracket, TrueSym,
                                                    FalseSym, NullSym), false, true);
-        if (symbol.Terminal == LCuBracket)
+        if (symbol.TerminalId == LCuBracket)
         {
           JsonObject (_TS, out t);
         }
-        else if (symbol.Terminal == LSqBracket)
+        else if (symbol.TerminalId == LSqBracket)
         {
           JsonArray (_TS, out t);
         }
@@ -302,24 +273,18 @@ namespace Prolog
         {
           JsonLiteral (_TS, out t);
         }
-        #if LL1_tracing
-        ReportParserProcExit ("JsonValue");
-        #endif
       }
       #endregion
       
       #region JsonLiteral
-      void JsonLiteral (TerminalSet _TS, out BaseTerm t)
+      private void JsonLiteral (TerminalSet _TS, out BaseTerm t)
       {
-        #if LL1_tracing
-        ReportParserProcEntry ("JsonLiteral");
-        #endif
         GetSymbol (new TerminalSet (terminalCount, IntLiteral, RealLiteral, StringLiteral, TrueSym, FalseSym, NullSym), false,
                    true);
         if (symbol.IsMemberOf (IntLiteral, RealLiteral))
         {
           GetSymbol (new TerminalSet (terminalCount, IntLiteral, RealLiteral), false, true);
-          if (symbol.Terminal == IntLiteral)
+          if (symbol.TerminalId == IntLiteral)
           {
             symbol.SetProcessed ();
           }
@@ -329,17 +294,17 @@ namespace Prolog
           }
           t = new DecimalTerm (symbol.ToDecimal ());
         }
-        else if (symbol.Terminal == StringLiteral)
+        else if (symbol.TerminalId == StringLiteral)
         {
           symbol.SetProcessed ();
           t = new StringTerm (symbol.ToString ().Dequoted ());
         }
-        else if (symbol.Terminal == TrueSym)
+        else if (symbol.TerminalId == TrueSym)
         {
           symbol.SetProcessed ();
           t = new AtomTerm ("true");
         }
-        else if (symbol.Terminal == FalseSym)
+        else if (symbol.TerminalId == FalseSym)
         {
           symbol.SetProcessed ();
           t = new AtomTerm ("false");
@@ -349,9 +314,6 @@ namespace Prolog
           symbol.SetProcessed ();
           t = new AtomTerm ("null");
         }
-        #if LL1_tracing
-        ReportParserProcExit ("JsonLiteral");
-        #endif
       }
       #endregion
       

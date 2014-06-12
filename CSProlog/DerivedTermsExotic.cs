@@ -1,6 +1,6 @@
 /*-----------------------------------------------------------------------------------------
 
-  C#Prolog -- Copyright (C) 2007-2013 John Pool -- j.pool@ision.nl
+  C#Prolog -- Copyright (C) 2007-2014 John Pool -- j.pool@ision.nl
 
   This library is free software; you can redistribute it and/or modify it under the terms of
   the GNU General Public License as published by the Free Software Foundation; either version
@@ -820,7 +820,7 @@ System message : {2}",
         double im = Math.Round (this.im, 6);
 
         if (im == 0)
-          return (re == 0 ? "0" : re.ToString ("0.######", Utils.CIC));
+          return (re == 0 ? "0" : re.ToString ("0.######", CIC));
         else // im != 0
         {
           string ims = null;
@@ -828,12 +828,12 @@ System message : {2}",
           if (im == -1)
             ims = "-";
           else if (im != 1)
-            ims = im.ToString ("0.######", Utils.CIC);
+            ims = im.ToString ("0.######", CIC);
 
           if (re == 0)
-            return string.Format (Utils.CIC, "{0}i", ims);
+            return string.Format (CIC, "{0}i", ims);
           else
-            return string.Format (Utils.CIC, "{0:0.######}{1}{2}i", re, (im < 0 ? null : "+"), ims);
+            return string.Format (CIC, "{0:0.######}{1}{2}i", re, (im < 0 ? null : "+"), ims);
         }
       }
     }

@@ -1,6 +1,6 @@
 /*-----------------------------------------------------------------------------------------
 
-  C#Prolog -- Copyright (C) 2007-2013 John Pool -- j.pool@ision.nl
+  C#Prolog -- Copyright (C) 2007-2014 John Pool -- j.pool@ision.nl
 
   This library is free software; you can redistribute it and/or modify it under the terms of
   the GNU General Public License as published by the Free Software Foundation; either version
@@ -433,7 +433,7 @@ namespace Prolog
 
         if (!DoLowerAndUpperboundChecks (ip, it, out minLen, out maxLen)) return false;
 
-        // scan the minimal number of range elements. Add them to the range last,
+        // scan the minimal number of range elements. Add them to the range list,
         // i.e. the last variable (if present) preceding the '{ , }'
         for (int i = 0; i < minLen; i++)
         {
@@ -473,8 +473,8 @@ namespace Prolog
               }
               else // traverse the downRepFactor tree, which in principle may yield more than one match
               {
-                subtreeIterator = new NodeIterator (t, searchTerm,
-                  downRepFactor.minLenTerm, downRepFactor.maxLenTerm, downRepFactor.bindVar, varStack);
+                subtreeIterator = new NodeIterator (t, searchTerm, downRepFactor.minLenTerm, 
+                  downRepFactor.maxLenTerm, false, downRepFactor.bindVar, varStack);
 
                 foreach (BaseTerm match in subtreeIterator) // try -- if necessary -- each tree match with the current search term
                 {
@@ -505,7 +505,7 @@ namespace Prolog
               else if (UnifyTailEx (ip + 1, k + 1, varStack)) // now deal with the rest
                 return true;
             }
-            else if (i < maxLen) // append the rejected term to the range last and go try the next term
+            else if (i < maxLen) // append the rejected term to the range list and go try the next term
               AppendToRangeList (ref RangeList, rangeSpecVar, t, ref tail);
           }
         }
@@ -554,7 +554,7 @@ namespace Prolog
         }
         else
         {
-          if (unified &&                                                 // we found a match. Unify, and
+          if (unified &&                                                     // we found a match. Unify, and
               TryBindingAltListVarToMatch (e.AltListBindVar, t, varStack) && // bind the AltListBindVar to the match
               TryBindingRangeRelatedVars (e, i, RangeList, varStack))        // bind the range to the range variables
           {
@@ -569,7 +569,7 @@ namespace Prolog
 
           // if we arrive here, it was not possible to ...
           // (1) ... unify the range's SearchTerm with the target element, or
-          // (2) ... unify the range variable with the range last, or
+          // (2) ... unify the range variable with the range list, or
           // (3) ... successfully process the rest of the pattern and target
           // Now unbind and try matching with the next target element
           BaseTerm.UnbindToMarker (varStack, marker);
@@ -616,7 +616,7 @@ namespace Prolog
         return (minLen <= maxLen); // fail if we ended up with a zero-length range
       }
 
-      // try to bind the variable associated with the last of search alternatives
+      // try to bind the variable associated with the list of search alternatives
       // (t1|t2|...|tn) to the target term found matching one of these alternatives
       bool TryBindingAltListVarToMatch (BaseTerm AltListVar, BaseTerm searchTerm, VarStack varStack)
       {
@@ -626,7 +626,7 @@ namespace Prolog
       }
 
 
-      // try to bind the range specification variable (if present) to the range last.
+      // try to bind the range specification variable (if present) to the range list.
       // if the minimun or the maximum range length was a variable, then bind it to the actual length just found
       bool TryBindingRangeRelatedVars (ListPatternElem g, int rangeLength, ListTerm RangeList, VarStack varStack)
       {
@@ -650,7 +650,7 @@ namespace Prolog
 
       void AppendToRangeList (ref ListTerm RangeList, BaseTerm rangeSpecVar, BaseTerm t, ref BaseTerm tail) // append t to RangeList
       {
-        if (rangeSpecVar == null) return; // no point in constructing a range last if it won't be bound later
+        if (rangeSpecVar == null) return; // no point in constructing a range list if it won't be bound later
 
         if (RangeList == null)
         {

@@ -1,6 +1,6 @@
 /*-----------------------------------------------------------------------------------------
 
-  C#Prolog -- Copyright (C) 2007-2013 John Pool -- j.pool@ision.nl
+  C#Prolog -- Copyright (C) 2007-2014 John Pool -- j.pool@ision.nl
 
   This library is free software; you can redistribute it and/or modify it under the terms of
   the GNU General Public License as published by the Free Software Foundation; either version
@@ -20,6 +20,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Text;
 
 namespace Prolog
 {
@@ -136,7 +137,9 @@ namespace Prolog
         }
         else if (arity == 1)
         {
-          a0 = Arg (0).Eval ();
+          // do not evaluate the first arg of string/1.
+          // E.engine 'string( 1+1)' will evaluate to "1+1", not "2"
+          a0 = (FunctorToString == "string") ? Arg (0) : Arg (0).Eval ();
 
           switch (FunctorToString)
           {
@@ -277,6 +280,9 @@ namespace Prolog
                 break;
               }
             // string handling
+            case "string":
+            case "string2":
+              return new StringTerm (string.Format ("{0}", a0.ToString ()));
             case "length":
               return new DecimalTerm ((a0.FunctorToString).Length);
             case "upcase":
@@ -342,10 +348,10 @@ namespace Prolog
 
           switch (FunctorToString)
           {
-            case "..": // range -> last
+            case "..": // range -> list
               int lo = a0.To<int> ();
               int hi = a1.To<int> ();
-              // create a last with elements [lo, lo+1, ... hi]
+              // create a list with elements [lo, lo+1, ... hi]
               ListTerm result = ListTerm.EMPTYLIST;
 
               for (int i = hi; i >= lo; i--)
@@ -493,6 +499,33 @@ namespace Prolog
               return new StringTerm ((a0.FunctorToString).Substring (len, (a0.FunctorToString).Length - len));
             case "wrap":
               return new StringTerm (Utils.ForceSpaces (a0.FunctorToString, (a1.To<int> ())));
+            case "split":
+              string splitChars = a1.FunctorToString;
+              ListTerm splitList = ListTerm.EMPTYLIST;
+              if (splitChars.Length == 0)
+              {
+                splitChars = a0.FunctorToString;
+                for (int i = splitChars.Length-1; i >= 0; i--)
+                  splitList = new ListTerm (new StringTerm (splitChars [i]), splitList);
+              }
+              else
+              {
+                string [] part = a0.FunctorToString.Split (splitChars.ToCharArray ());
+                for (int i = part.Length - 1; i >= 0; i--)
+                  splitList = new ListTerm (new StringTerm (part [i]), splitList);
+              }
+              return splitList;
+            case "chain":
+              if (!a0.IsProperList)
+                IO.Error ("chain/2:first argument '{0}' is not a proper list", a0);
+              StringBuilder chain = new StringBuilder ();
+              string separator = a1.FunctorToString;
+              foreach (BaseTerm t in (ListTerm)a0)
+              {
+                if (chain.Length != 0) chain.Append (separator);
+                chain.Append (t.FunctorToString);
+              }
+              return new StringTerm (chain.ToString ());
             case "repeat":
               return new StringTerm (a0.FunctorToString.Repeat (a1.To<int> ()));
             case "levdist": // Levenshtein distance

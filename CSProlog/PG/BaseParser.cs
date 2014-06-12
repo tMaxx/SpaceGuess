@@ -1,4 +1,4 @@
-//#define showToken
+#define showToken
 
 namespace Prolog
 {
@@ -7,13 +7,14 @@ namespace Prolog
   using System.Text;
   using System.Xml;
   using System.Collections;
+  using System.Collections.Generic;
   using System.Security.Principal;
   using System.Diagnostics;
   using System.Globalization;
 
   /* _______________________________________________________________________________________________
     |                                                                                               |
-    |  C#Prolog -- Copyright (C) 2007 John Pool -- j.pool@ision.nl                                  |
+    |  C#Prolog -- Copyright (C) 2007-2014 John Pool -- j.pool@ision.nl                                  |
     |                                                                                               |
     |  This library is free software; you can redistribute it and/or modify it under the terms of   |
     |  the GNU General Public License as published by the Free Software Foundation; either version  |
@@ -29,6 +30,57 @@ namespace Prolog
 
   public partial class PrologEngine
   {
+    public static readonly CultureInfo CIC = CultureInfo.InvariantCulture;
+    
+    #region Exceptions
+    class ParserException : ApplicationException
+    {
+      public ParserException (string msg) : base (msg) { }
+
+      public ParserException (string msg, params object [] args) :
+        base (string.Format (msg, args)) { }
+    }
+
+    class SyntaxException : ApplicationException
+    {
+      public SyntaxException (string msg) : base (msg) { }
+
+      public SyntaxException (string msg, params object [] args) :
+        base (string.Format (msg, args)) { }
+    }
+
+    class UserException : ApplicationException
+    {
+      string @class;
+      public string Class { get { return @class; } }
+
+      public UserException (string @class, string msg) :
+        base (string.Format ("(user-thrown {0}exception:)\r\n{1}",
+         (@class == null ? null : string.Format ("({0}) ", @class)), msg))
+      {
+        this.@class = @class;
+      }
+
+
+      public UserException (string @class, string msg, params object [] args) :
+        base (string.Format ("(user-thrown {0}exception:)\r\n{1}",
+          (@class == null ? null : string.Format ("({0}) ", @class)), string.Format (msg, args)))
+      {
+        this.@class = @class;
+      }
+    }
+
+    class FatalException : ApplicationException
+    {
+      public FatalException (string msg) : base (msg) { }
+    }
+
+    class UnhandledParserException : ApplicationException
+    {
+      public UnhandledParserException (string msg) : base (msg) { }
+    }
+    #endregion Exceptions
+
     #region TerminalSet
     public class TerminalSet
     {
@@ -108,6 +160,197 @@ namespace Prolog
     #region BaseParser
     public class BaseParser<T>
     {
+      public BaseParser ()
+      {
+        cdh = new ConditionalDefinitionHandler (ppChar);
+      }
+
+      #region ConditionalDefinitionHandler
+      protected class ConditionalDefinitionHandler
+      {
+        // An ifdef..endif statement is made up by one or more more blocks separated by else(if)s.
+        // At most one of these blocks wil actually be processed; the others contain 'dead' code.
+        enum IfStatStatus
+        {
+          Pristine, // No block in the ifdef..endif statement has been processed yet.
+          Active,   // The current block is being processed.
+          Done      // A previous block in the ifdef..endif statement has already been processed.
+        }
+        const int NONE = -1;
+        List<string> definedSymbols;
+        Stack<IfStatStatus> nestedBlockStatus; // for keeping track of conditional definitions nesting
+        bool isExpectingId;
+        IfStatStatus ifStatStatus;
+        bool codeIsActive { get { return (ifStatStatus == IfStatStatus.Active); } }
+        bool codeIsInactive { get { return (ifStatStatus != IfStatStatus.Active); } }
+        int prevTerminalId;
+        int prevSymLineNo;
+        char ppChar;
+        public bool IsExpectingId { get { return isExpectingId; } }
+        public bool CodeIsInactive { get { return codeIsInactive; } }
+
+        public ConditionalDefinitionHandler (char ppChar)
+        {
+          this.ppChar = ppChar;
+          definedSymbols = new List<string> ();
+          Initialize ();
+        }
+
+
+        public void Initialize ()
+        {
+          nestedBlockStatus = new Stack<IfStatStatus> ();
+          ifStatStatus = IfStatStatus.Active; // default for outermost scope
+          isExpectingId = false;
+          prevTerminalId = NONE;
+          nestedBlockStatus.Push (ifStatStatus);
+        }
+
+
+        public void HandleSymbol (Symbol symbol)
+        {
+          if (symbol.TerminalId == Undefined)
+            IO.Error ("Unknown conditional definition symbol: {0}", symbol);
+
+          if (isExpectingId)
+          {
+            if (symbol.Class == SymbolClass.Id && symbol.LineNo == prevSymLineNo)
+            {
+              symbol.Class = SymbolClass.Meta; // in order to get rid of it in NextSymbol loop
+              string s = symbol.ToString ();
+
+              if (prevTerminalId == ppDefine && codeIsActive)
+                Define (s);
+              else if (prevTerminalId == ppUndefine && codeIsActive)
+                Undefine (s);
+              else if (prevTerminalId == ppIf)
+              {
+                if (codeIsInactive)
+                  EnterScope (ifStatStatus, symbol); // do nothing; keep non-active status
+                else if (IsDefined (s)) //
+                  EnterScope (IfStatStatus.Active, symbol);
+                else
+                  EnterScope (IfStatStatus.Pristine, symbol); // wait for potential else(if) block
+              }
+              else if (prevTerminalId == ppIfNot)
+              {
+                if (codeIsInactive)
+                  EnterScope (ifStatStatus, symbol); // do nothing; keep non-active status
+                else if (IsDefined (s)) //
+                  EnterScope (IfStatStatus.Pristine, symbol); // wait for potential else(if) block
+                else
+                  EnterScope (IfStatStatus.Active, symbol);
+              }
+              else if (prevTerminalId == ppElseIf)
+              {
+                if (codeIsActive)
+                {
+                  ExitScope (symbol);
+                  EnterScope (IfStatStatus.Done, symbol);
+                }
+                else if (ifStatStatus == IfStatStatus.Pristine && IsDefined (s))
+                {
+                  ExitScope (symbol);
+                  EnterScope (IfStatStatus.Active, symbol);
+                }
+              } //else leave status untouched
+            }
+            else
+              IO.Error (
+                "Identifier missing after {0}if, {0}ifdef {0}ifndef, {0}elseif, {0}define or {0}undefine",
+                ppChar);
+
+            isExpectingId = false;
+          }
+          else if (symbol.TerminalId == EndOfInput && nestedBlockStatus.Count > 1)
+            IO.Error ("Unexpected end of input -- {0}else or {0}endif expected", ppChar);
+          else
+          {
+            switch (symbol.TerminalId)
+            {
+              case ppDefine:
+              case ppUndefine:
+              case ppIf:
+              case ppIfNot:
+                isExpectingId = true;
+                break;
+              case ppElseIf:
+                if (prevTerminalId == ppIf || prevTerminalId == ppEndIf || prevTerminalId == ppElseIf)
+                  isExpectingId = true;
+                else
+                  IO.Error ("Unexpected {0}elseif-directive", ppChar);
+                break;
+              case ppElse:
+                if (prevTerminalId == ppIf || prevTerminalId == ppEndIf || prevTerminalId == ppElseIf)
+                {
+                  if (codeIsActive) // code is active ...
+                  {
+                    ExitScope (symbol);
+                    EnterScope (IfStatStatus.Done, symbol); // ... deactivate it
+                  }
+                  else if (ifStatStatus == IfStatStatus.Pristine) // code is inactive ...
+                  {
+                    ExitScope (symbol);         // ... activate it (sets codeIsInactive !!)
+                    EnterScope (IfStatStatus.Active, symbol); // ...
+                  }
+                }
+                else
+                  IO.Error ("Unexpected {0}else-directive", ppChar);
+                break;
+              case ppEndIf:
+                ExitScope (symbol);
+                break;
+            }
+
+            prevTerminalId = symbol.TerminalId;
+            prevSymLineNo = symbol.LineNo;
+          }
+        }
+
+
+        void Define (string sym)
+        {
+          if (!definedSymbols.Contains (sym))
+            definedSymbols.Add (sym);
+        }
+
+
+        void Undefine (string sym)
+        {
+          if (definedSymbols.Contains (sym))
+            definedSymbols.Remove (sym);
+        }
+
+
+        bool IsDefined (string sym)
+        {
+          return definedSymbols.Contains (sym);
+        }
+
+
+        bool AtOuterScope
+        {
+          get { return (nestedBlockStatus.Count == 1); }
+        }
+
+
+        void EnterScope (IfStatStatus mode, Symbol symbol)
+        {
+          nestedBlockStatus.Push (ifStatStatus = mode);
+        }
+
+
+        void ExitScope (Symbol symbol)
+        {
+          if (nestedBlockStatus.Count == 1)
+            IO.Error ("Unexpected {0}-symbol", symbol);
+
+          nestedBlockStatus.Pop ();
+          ifStatStatus = nestedBlockStatus.Peek ();
+        }
+      }
+      #endregion ConditionalDefinitionHandler
+
       #region Fields and properties
       int traceIndentLevel;
       // The const values below must be in strict accordance with the
@@ -122,20 +365,20 @@ namespace Prolog
       protected const int ppUndefine = 7;
       protected const int ppIf = 8;
       protected const int ppIfNot = 9;
-      protected const int ppIfDef = 10;
-      protected const int ppIfNDef = 11;
-      protected const int ppElse = 12;
-      protected const int ppEndIf = 13;
-      protected const int RealLiteral = 14;
-      protected const int ImagLiteral = 15;
-      protected const int StringLiteral = 16;
-      protected const int CharLiteral = 17;
-      protected const int CommentStart = 18;
-      protected const int CommentSingle = 19;
-      protected const int EndOfLine = 20;
-      protected const int ANYSYM = 21;
-      protected const int EndOfInput = 22;
+      protected const int ppElse = 10;
+      protected const int ppElseIf = 11;
+      protected const int ppEndIf = 12;
+      protected const int RealLiteral = 13;
+      protected const int ImagLiteral = 14;
+      protected const int StringLiteral = 15;
+      protected const int CharLiteral = 16;
+      protected const int CommentStart = 17;
+      protected const int CommentSingle = 18;
+      protected const int EndOfLine = 19;
+      protected const int ANYSYM = 20;
+      protected const int EndOfInput = 21;
       // end of Terminal symbol const values
+      protected virtual char ppChar { get { return '#'; } }
 
       protected const char SQUOTE = '\'';
       protected const char DQUOTE = '"';
@@ -143,9 +386,9 @@ namespace Prolog
       protected const int UNDEF = -1;
 
       protected BaseTrie terminalTable;
+      protected ConditionalDefinitionHandler cdh;
       protected char ch;
       protected char prevCh;
-      protected char extraUnquotedAtomChar = '_';
       protected bool endText;
       protected Symbol symbol;
       protected int maxRuntime = 0; // maximum runtime in miliseconds; 0 means unlimited
@@ -173,15 +416,6 @@ namespace Prolog
           defined in the outer Call are visible in the inner Call. At the end of the
           inner parse, the state is reset to the one at the start of the inner parse.
       */
-      protected Stack ppXeqStack = new Stack ();
-      protected static Hashtable ppSymbols = new Hashtable ();
-      protected Hashtable ppSymSnapShot; // for saving/restoring the initial state
-      protected Stack ppElseOK = new Stack ();
-      protected bool ppProcessSource;
-      protected bool ppDefineSymbol;
-      protected bool ppUndefineSymbol;
-      protected bool ppDoIfSymbol;
-      protected bool ppDoIfNotSymbol;
       protected int eoLineCount;
       protected int lineCount = 0;
       protected bool showErrTrace = true;
@@ -192,7 +426,6 @@ namespace Prolog
       public int ClipEnd { get { return clipEnd; } }
       public bool FormatMode { get { return formatMode; } set { formatMode = value; } }
       public int LineCount { get { return lineCount; } }
-      public static Hashtable PpSymbols { get { return ppSymbols; } }
       public bool ShowErrTrace { get { return showErrTrace; } set { showErrTrace = value; } }
       public int MaxRuntime { get { return maxRuntime; } set { maxRuntime = value; } }
       public int ActRuntime { get { return actRuntime; } }
@@ -210,10 +443,6 @@ namespace Prolog
         }
       }
 
-      public ArrayList TerminalList
-      {
-        get { return terminalTable.ToArrayList (); }
-      }
 
       public string SyntaxError
       {
@@ -239,18 +468,12 @@ namespace Prolog
         {
           if (parseAnyText) return;
 
-          throw new SyntaxException (String.Format ("{0}{1}{2}", symbol.Context, value, Environment.NewLine));
+          throw new SyntaxException ("{0}{1}{2}", symbol.Context, value, Environment.NewLine);
         }
         get
         {
           return errorMessage;
         }
-      }
-
-
-      public void SetDollarAsPossibleUnquotedAtomChar (bool set)
-      {
-        extraUnquotedAtomChar = set ? '$' : '_';
       }
 
 
@@ -264,7 +487,7 @@ namespace Prolog
 
         if (errMark.Start != UNDEF) InputStreamRedo (errMark, 0);
 
-        IO.WriteLine (String.Format ("{0}{1}{2}", symbol.Context, msg, Environment.NewLine));
+        IO.WriteLine ("{0}{1}{2}", symbol.Context, msg, Environment.NewLine);
 
         if (errMark.Start != UNDEF) InputStreamRedo (currPos, 0);
       }
@@ -324,26 +547,6 @@ namespace Prolog
       }
 
 
-      protected void CheckPpIllegalSymbol ()
-      {
-        int prevTerminal = -1;
-        string currSym = symbol.ToString ();
-
-        if (ppDefineSymbol)
-          prevTerminal = ppDefine;
-        else if (ppUndefineSymbol)
-          prevTerminal = ppUndefine;
-        else if (ppDoIfSymbol)
-          prevTerminal = ppIf;
-        else if (ppDoIfNotSymbol)
-          prevTerminal = ppIfNot;
-
-        if (prevTerminal != -1)
-          Error (String.Format ("Illegal symbol {0} after {1} (identifier expected)",
-                                currSym, terminalTable.TerminalImage (prevTerminal)));
-      }
-
-
       public string StreamIn
       {
         get
@@ -355,48 +558,6 @@ namespace Prolog
           inStream = new StringReadBuffer (value);
           streamInLen = inStream.Length;
           Parse ();
-        }
-      }
-
-
-      public string StreamInName
-      {
-        get
-        {
-          return inStream.Name;
-        }
-      }
-
-
-      public bool StreamInChar (int i, out char c)
-      {
-        try
-        {
-          GetStreamInChar (i, out c);
-
-          return true;
-        }
-        catch
-        {
-          c = '\0';
-
-          return false;
-        }
-      }
-
-
-      public Buffer StreamOut
-      {
-        get
-        {
-          return outStream;
-        }
-        set
-        {
-          if (!(value is FileWriteBuffer || value is StringWriteBuffer))
-            throw new ParserException ("*** StreamOut buffer type must be of type FileWriteBuffer or StringWriteBuffer");
-
-          outStream = value;
         }
       }
 
@@ -493,6 +654,7 @@ namespace Prolog
         public T Payload;
         public StreamPointer Pointer;
         public int Terminal;
+        public SymbolClass Class;
         public int Start;
         public int Final;
         public int FinalPlus;
@@ -501,7 +663,6 @@ namespace Prolog
         public int AbsSeqNo;
         public int RelSeqNo;
         public int LineStart;
-        public bool HasIdFormat;
         public bool Processed;
         public bool IsSet; // initialized to false
       }
@@ -509,13 +670,15 @@ namespace Prolog
       #endregion Structs and classes
 
       #region Symbol
+      public enum SymbolClass { None, Id, Text, Number, Meta, Group, Comment }
+
       protected class Symbol
       {
         BaseParser<T> parser;
         bool processed;
         public T Payload;
-        public int Type; // type
-        public int Terminal;
+        public SymbolClass Class;
+        public int TerminalId;
         public int Start;     // position in input stream
         public int Final;     // first position after symbol
         public int FinalPlus; // first position of next symbol
@@ -524,7 +687,6 @@ namespace Prolog
         public int LineStart; // position of first char of line in input stream
         public int AbsSeqNo;  // sequence number of symbol // -- absolute value, invariant under MARK/REDO
         public int RelSeqNo;  // sequence number of symbol in current line // -- relative value, invariant under MARK/REDO
-        public bool HasIdFormat;
         public bool IsFollowedByLayoutChar; // true iff the symbol is followed by a layout character
 
         public Symbol (BaseParser<T> p)
@@ -532,8 +694,8 @@ namespace Prolog
           parser = p;
           processed = false;
           Payload = default (T);
-          Type = 0;
-          Terminal = PrologParser.Undefined;
+          Class = SymbolClass.None;
+          TerminalId = PrologParser.Undefined;
           Start = UNDEF;
           Final = UNDEF;
           FinalPlus = UNDEF;
@@ -542,18 +704,19 @@ namespace Prolog
           LineStart = UNDEF;
           AbsSeqNo = UNDEF;
           RelSeqNo = UNDEF;
-          HasIdFormat = false;
         }
 
-        public new string ToString ()
+        public bool IsNumber { get { return true; } }
+
+        public override string ToString ()
         {
           if (this.Start == Final) return "";
 
-          if (this.Terminal == PrologParser.Undefined && Start > Final) return "<Undefined>";
+          if (this.TerminalId == Undefined && Start > Final) return "<Undefined>";
 
-          if (this.Terminal == PrologParser.EndOfLine) return "<EndOfLine>";
+          if (this.TerminalId == EndOfLine) return "<EndOfLine>";
 
-          if (this.Terminal == PrologParser.EndOfInput) return "<EndOfInput>";
+          if (this.TerminalId == EndOfInput) return "<EndOfInput>";
 
           return parser.StreamInClip (Start, Final);
         }
@@ -564,7 +727,7 @@ namespace Prolog
 
         public string ToName ()
         {
-          return parser.terminalTable.Name (Terminal);
+          return parser.terminalTable.Name (TerminalId);
         }
 
 
@@ -592,7 +755,7 @@ namespace Prolog
           }
           catch
           {
-            throw new ParserException ("*** Unable to convert \"" + ToString () + "\" to an integer value");
+            throw new ParserException ("*** Unable to convert '{0}' to an integer value", this);
           }
         }
 
@@ -605,7 +768,7 @@ namespace Prolog
           }
           catch
           {
-            throw new ParserException ("*** Unable to convert \"" + ToString () + "\" to a short value");
+            throw new ParserException ("*** Unable to convert '{0}' to a short value", this);
           }
         }
 
@@ -614,11 +777,11 @@ namespace Prolog
         {
           try
           {
-            return Double.Parse (ToString (), Utils.CIC);
+            return Double.Parse (ToString (), CIC);
           }
           catch
           {
-            throw new ParserException ("*** Unable to convert \"" + ToString () + "\" to a real (double) value");
+            throw new ParserException ("*** Unable to convert '{0}' to a real (double) value", this);
           }
         }
 
@@ -627,26 +790,26 @@ namespace Prolog
         {
           try
           {
-            return Decimal.Parse (ToString (), NumberStyles.Float, Utils.CIC);
+            return Decimal.Parse (ToString (), NumberStyles.Float, CIC);
           }
           catch
           {
-            throw new ParserException ("*** Unable to convert \"" + ToString () + "\" to a decimal value");
+            throw new ParserException ("*** Unable to convert '{0}' to a decimal value", this);
           }
         }
 
 
         public decimal ToImaginary ()
         {
+          string imag = ToString ();
+
           try
           {
-            string imag = ToString ();
-
-            return Decimal.Parse (imag.Substring (0, imag.Length - 1), NumberStyles.Float, Utils.CIC);
+            return Decimal.Parse (imag.Substring (0, imag.Length - 1), NumberStyles.Float, CIC);
           }
           catch
           {
-            throw new ParserException ("*** Unable to convert \"" + ToString () + "\" to an imaginary value");
+            throw new ParserException ("*** Unable to convert '{0}' to an imaginary value", imag);
           }
         }
 
@@ -684,9 +847,9 @@ namespace Prolog
 
           if (n <= 8) // linear
           {
-            for (lo = 0; lo < n; lo++) if (Terminal <= ts [lo]) break;
+            for (lo = 0; lo < n; lo++) if (TerminalId <= ts [lo]) break;
 
-            return (lo >= n) ? false : ts [lo] == Terminal;
+            return (lo >= n) ? false : ts [lo] == TerminalId;
           }
           else // binary
           {
@@ -697,13 +860,13 @@ namespace Prolog
             {
               mid = (lo + hi) >> 1;
 
-              if (Terminal < ts [mid])
+              if (TerminalId < ts [mid])
                 hi = mid;
               else
                 lo = mid;
             }
 
-            return (lo < 0) ? false : ts [lo] == Terminal;
+            return (lo < 0) ? false : ts [lo] == TerminalId;
           }
         }
 
@@ -728,7 +891,7 @@ namespace Prolog
 
         public string TextPlus ()
         {
-          if (Terminal == PrologParser.Undefined && this.Start > this.FinalPlus)
+          if (TerminalId == Undefined && this.Start > this.FinalPlus)
             return "<Undefined>";
           else
             return parser.StreamInClip (this.Start, this.FinalPlus);
@@ -737,7 +900,7 @@ namespace Prolog
 
         public string IntroText ()
         {
-          if (Terminal == PrologParser.Undefined && this.Start > this.FinalPlus)
+          if (TerminalId == Undefined && this.Start > this.FinalPlus)
             return "<Undefined>";
           else
             return parser.StreamInClip (this.PrevFinal, this.Start);
@@ -769,27 +932,27 @@ namespace Prolog
         T payload;
         int iVal;
         string image;
-        int type;
+        SymbolClass @class;
 
         public T Payload { get { return payload; } set { payload = value; } }
         public int IVal { get { return iVal; } set { iVal = value; } }
         public string Image { get { return image; } set { image = value; } }
-        public int Type { get { return type; } set { type = value; } }
+        public SymbolClass Class { get { return @class; } set { @class = value; } }
 
         public TerminalDescr (int iVal, T payload, string image)
         {
           this.iVal = iVal;
           this.payload = payload;
           this.image = image;
-          this.type = 0;
+          this.@class = 0;
         }
 
-        public TerminalDescr (int iVal, T payload, string image, int type)
+        public TerminalDescr (int iVal, T payload, string image, SymbolClass @class)
         {
           this.iVal = iVal;
           this.payload = payload;
           this.image = image;
-          this.type = type;
+          this.@class = @class;
         }
 
         public int CompareTo (object o)
@@ -802,7 +965,7 @@ namespace Prolog
           if (payload == null)
             return String.Format ("{0} ({1})", iVal, image);
           else
-            return String.Format ("{0}:{1} ({2}) [{3}]", iVal, payload.ToString (), image, type);
+            return String.Format ("{0}:{1} ({2}) [{3}]", iVal, payload.ToString (), image, @class);
         }
       }
       #endregion Payload
@@ -933,11 +1096,11 @@ namespace Prolog
         }
 
 
-        public void Add (int iVal, int type, string name, params string [] images)
+        public void Add (int iVal, SymbolClass @class, string name, params string [] images)
         {
           names [iVal] = name;
 
-          foreach (string key in images) Add (key, iVal, default (T), type);
+          foreach (string key in images) Add (key, iVal, default (T), @class);
         }
 
 
@@ -947,7 +1110,7 @@ namespace Prolog
         }
 
 
-        public void Add (string key, int iVal, T payload, int type)
+        public void Add (string key, int iVal, T payload, SymbolClass @class)
         {
           if (key == null || key == "")
             throw new Exception ("*** Trie.Add: Attempt to insert a null- or empty key");
@@ -973,14 +1136,14 @@ namespace Prolog
               if (i == imax) // at end of key
               {
                 if (node.TermRec == null)
-                  AddToIndices (node.TermRec = new TerminalDescr (iVal, payload, key, type));
+                  AddToIndices (node.TermRec = new TerminalDescr (iVal, payload, key, @class));
                 else if (dupMode == DupMode.dupAccept)
                 {
                   TerminalDescr trec = node.TermRec;
                   trec.IVal = iVal;
                   trec.Payload = payload;
                   trec.Image = key;
-                  trec.Type = type;
+                  trec.Class = @class;
                 }
                 else if (dupMode == DupMode.dupError)
                   throw new Exception (String.Format ("*** Attempt to insert duplicate key '{0}'", key));
@@ -1000,7 +1163,7 @@ namespace Prolog
               {
                 if (i == imax) // at end of key
                 {
-                  AddToIndices (node.TermRec = new TerminalDescr (iVal, payload, key, type));
+                  AddToIndices (node.TermRec = new TerminalDescr (iVal, payload, key, @class));
 
                   return;
                 }
@@ -1168,12 +1331,6 @@ namespace Prolog
           return result.ToString ();
         }
 
-
-        public string TerminalImage (int t)
-        {
-          return TerminalImageSet (new TerminalSet (terminalCount, new int [] { t }));
-        }
-
         /*
                 // public bool Remove (string key)
 
@@ -1302,7 +1459,7 @@ namespace Prolog
 
         do { NextCh (); } while (Char.IsDigit (ch));
 
-        symbol.Terminal = IntLiteral;
+        symbol.TerminalId = IntLiteral;
         isReal = true; // assumed until proven conversily
 
         if (ch == '.') // fractional part?
@@ -1313,7 +1470,7 @@ namespace Prolog
 
           if (Char.IsDigit (ch))
           {
-            symbol.Terminal = RealLiteral;
+            symbol.TerminalId = RealLiteral;
 
             do { NextCh (); } while (Char.IsDigit (ch));
           }
@@ -1326,7 +1483,7 @@ namespace Prolog
 
         if (ch == 'i')
         {
-          symbol.Terminal = ImagLiteral;
+          symbol.TerminalId = ImagLiteral;
           NextCh ();
         }
 
@@ -1350,17 +1507,18 @@ namespace Prolog
 
               if (ch == 'i')
               {
-                symbol.Terminal = ImagLiteral;
+                symbol.TerminalId = ImagLiteral;
                 NextCh ();
               }
               else
-                symbol.Terminal = RealLiteral;
+                symbol.TerminalId = RealLiteral;
             }
             else if (!stringMode) // Error in real syntax
               InitCh (savPosition);
           }
         }
 
+        symbol.Class = SymbolClass.Number;
         symbol.Final = streamInPtr.Position;
       }
 
@@ -1377,11 +1535,11 @@ namespace Prolog
         {
           if (ch == 'i')
           {
-            symbol.Terminal = ImagLiteral;
+            symbol.TerminalId = ImagLiteral;
             NextCh ();
           }
           else
-            symbol.Terminal = RealLiteral;
+            symbol.TerminalId = RealLiteral;
         }
         else
           InitCh (savPosition);
@@ -1405,7 +1563,7 @@ namespace Prolog
             {
               if (ch == DQUOTE)
               {
-                symbol.Terminal = StringLiteral;
+                symbol.TerminalId = StringLiteral;
                 NextCh ();
               }
               else if (ch == BSLASH)
@@ -1416,20 +1574,21 @@ namespace Prolog
               NextCh ();
 
               if ((streamInPtr.EndLine && !multiLine) ||
-                   ch != DQUOTE) symbol.Terminal = StringLiteral;
+                   ch != DQUOTE) symbol.TerminalId = StringLiteral;
             }
           }
-        } while ((!streamInPtr.EndLine || multiLine) && !endText && symbol.Terminal != StringLiteral);
+        } while ((!streamInPtr.EndLine || multiLine) && !endText && symbol.TerminalId != StringLiteral);
 
+        symbol.Class = SymbolClass.Text;
         symbol.Final = streamInPtr.Position;
 
-        if (streamInPtr.EndLine && symbol.Terminal != StringLiteral)
+        if (streamInPtr.EndLine && symbol.TerminalId != StringLiteral)
           SyntaxError = "Unterminated string: " + symbol.ToString ();
       }
       #endregion
 
       #region ScanIdOrTerminal
-      protected virtual void ScanIdOrTerminal ()
+      protected virtual void ScanIdOrTerminalOrCommentStart ()
       {
         TerminalDescr tRec;
         StreamPointer iPtr = streamInPtr;
@@ -1447,9 +1606,9 @@ namespace Prolog
         {
           if (tRec != null)
           {
-            symbol.Terminal = tRec.IVal;
+            symbol.TerminalId = tRec.IVal;
             symbol.Payload = tRec.Payload;
-            symbol.Type = tRec.Type;
+            symbol.Class = tRec.Class;
             tLen = fCnt;
             tPtr = streamInPtr; // next char to be processed
             if (terminalTable.AtLeaf) break; // terminal cannot be extended
@@ -1462,7 +1621,7 @@ namespace Prolog
             iPtr = streamInPtr;
           }
         } // fCnt++ by last (i.e. failing) call
-        /*      
+        /*
               At this point: (in the Prolog case, read 'Identifier and Atom made up
               from specials' for 'Identifier'):
               - tLen has length of Trie terminal (if any, 0 otherwise);
@@ -1490,15 +1649,15 @@ namespace Prolog
 
         if (iLen > tLen) // tLen = 0 iff Terminal == Undefined
         {
-          symbol.Terminal = Identifier;
-          symbol.HasIdFormat = true;
+          symbol.TerminalId = Identifier;
+          symbol.Class = SymbolClass.Id;
           InitCh (iPtr);
         }
-        else if (symbol.Terminal == Undefined)
+        else if (symbol.TerminalId == Undefined)
           InitCh (iPtr);
         else // we have a terminal != Identifier
         {
-          symbol.HasIdFormat = (iLen == tLen);
+          if (iLen == tLen) symbol.Class = SymbolClass.Id;
           InitCh (tPtr);
         }
 
@@ -1507,9 +1666,9 @@ namespace Prolog
       #endregion
 
       #region NextSymbol, GetSymbol
-      protected void NextSymbol ()
+      protected virtual void NextSymbol ()
       {
-        NextSymbol ("");
+        NextSymbol (null);
       }
 
       protected virtual void NextSymbol (string _Proc)
@@ -1518,41 +1677,56 @@ namespace Prolog
 
         symbol.PrevFinal = symbol.Final;
 
-        if (symbol.Terminal == EndOfInput)
+        if (symbol.TerminalId == EndOfInput)
           SyntaxError = "*** Trying to read beyond end of input";
 
-        prevTerminal = symbol.Terminal;
-        symbol.HasIdFormat = false;
+        prevTerminal = symbol.TerminalId;
+        symbol.Class = SymbolClass.None;
         symbol.Payload = default (T);
         bool Break = false;
 
         do
         {
-          while (Char.IsWhiteSpace (ch)) NextCh ();
-
-          symbol.Start = streamInPtr.Position;
-          symbol.LineNo = streamInPtr.LineNo;
-          symbol.LineStart = streamInPtr.LineStart;
-          symbol.Terminal = Undefined;
-
-          if (endText)
-            symbol.Terminal = EndOfInput;
-          else if (streamInPtr.EndLine)
-            symbol.Terminal = EndOfLine;
-          else if (Char.IsDigit (ch))
-            ScanNumber ();
-          else if (ch == DQUOTE)
-            ScanString ();
-          else if (ch == '.')
+          #region basic and conditional definition symbol handling
+          do
           {
-            if (!ScanFraction ()) ScanIdOrTerminal ();
-          }
-          else
-            ScanIdOrTerminal ();
+            while (Char.IsWhiteSpace (ch)) NextCh ();
 
-          symbol.Final = streamInPtr.Position;
+            symbol.Start = streamInPtr.Position;
+            symbol.LineNo = streamInPtr.LineNo;
+            symbol.LineStart = streamInPtr.LineStart;
+            symbol.TerminalId = Undefined;
+            symbol.Class = SymbolClass.None;
 
-          if (symbol.Terminal == EndOfLine)
+            if (endText)
+            {
+              symbol.TerminalId = EndOfInput;
+              cdh.HandleSymbol (symbol); // check for missing #endif missing
+            }
+            else if (streamInPtr.EndLine)
+              symbol.TerminalId = EndOfLine;
+            else if (Char.IsDigit (ch))
+              ScanNumber ();
+            else if (ch == DQUOTE)
+              ScanString ();
+            else if (ch == '.')
+            {
+              if (!ScanFraction ()) ScanIdOrTerminalOrCommentStart ();
+            }
+            else
+              ScanIdOrTerminalOrCommentStart ();
+
+            symbol.Final = symbol.FinalPlus = streamInPtr.Position;
+
+            if (symbol.Class == SymbolClass.Comment) break;
+
+            if (cdh.IsExpectingId || symbol.Class == SymbolClass.Meta)
+              cdh.HandleSymbol (symbol); // if expecting: symbol must be an identifier
+
+          } while (cdh.CodeIsInactive || symbol.Class == SymbolClass.Meta);
+          #endregion
+
+          if (symbol.TerminalId == EndOfLine)
           {
             eoLineCount++;
             NextCh ();
@@ -1562,87 +1736,13 @@ namespace Prolog
           {
             eoLineCount = 0;
 
-            switch (symbol.Terminal)
+            switch (symbol.TerminalId)
             {
-              case ppDefine:
-                CheckPpIllegalSymbol ();
-                ppDefineSymbol = true;
-                break;
-              case ppUndefine:
-                CheckPpIllegalSymbol ();
-                ppUndefineSymbol = true;
-                break;
-              case ppIf:
-              case ppIfDef:
-                CheckPpIllegalSymbol ();
-                ppDoIfSymbol = true;
-                ppElseOK.Push (true); // block is open
-                break;
-              case ppIfNot:
-              case ppIfNDef:
-                CheckPpIllegalSymbol ();
-                ppDoIfNotSymbol = true;
-                ppElseOK.Push (true); // block is open
-                break;
-              case ppElse:
-                CheckPpIllegalSymbol ();
-
-                if (!(bool)ppElseOK.Pop ()) Error ("Unexpected #else");
-
-                ppElseOK.Push (false); // no else allowed after an else
-                ppXeqStack.Pop (); // remove the current value of ppProcessSource (pushed by the if-branch)
-
-                // if the if-branch was executed, then this branch should not
-                if (ppProcessSource) // ... it was executed
-                  ppProcessSource = !ppProcessSource;
-                else // ... it was not. But execute this branch only if the outer scope value of ppProcessSource is true
-                  if ((bool)ppXeqStack.Peek ()) ppProcessSource = true;
-
-                ppXeqStack.Push (ppProcessSource); // push the new value for this scope
-                break;
-              case ppEndIf:
-                if (ppElseOK.Count == 0) Error ("Unexpected #endif");
-                ppElseOK.Pop (); // go to outer scope
-                ppXeqStack.Pop ();
-                ppProcessSource = (bool)ppXeqStack.Peek ();
-                break;
               case Identifier:
-                if (ppProcessSource && ppDefineSymbol)
-                {
-                  ppSymbols [symbol.ToString ().ToLower ()] = true; // any non-null value will do
-                  ppDefineSymbol = false;
-                }
-                else if (ppProcessSource && ppUndefineSymbol)
-                {
-                  ppSymbols.Remove (symbol.ToString ().ToLower ());
-                  ppUndefineSymbol = false;
-                }
-                else if (ppDoIfSymbol) // identifier following #if
-                {
-                  // do not alter ppProcessSource here if the outer scope value of ppProcessSource is false
-                  if (ppProcessSource && (bool)ppXeqStack.Peek ()) // ... value is true
-                    if (ppSymbols [symbol.ToString ().ToLower ()] == null)
-                      ppProcessSource = false; // set to false if symbol is not defined
-
-                  ppXeqStack.Push (ppProcessSource);
-                  ppDoIfSymbol = false;
-                }
-                else if (ppDoIfNotSymbol) // identifier following #ifnot
-                {
-                  // do not alter ppProcessSource here if the outer scope value of ppProcessSource is false
-                  if (ppProcessSource && (bool)ppXeqStack.Peek ()) // ... value is true
-                    if (ppSymbols [symbol.ToString ().ToLower ()] != null)
-                      ppProcessSource = false; // set to false if symbol is defined
-
-                  ppXeqStack.Push (ppProcessSource);
-                  ppDoIfNotSymbol = false;
-                }
-                else
-                  Break = true; // 'regular' identifier
+                Break = true;
                 break;
               case EndOfInput:
                 Break = true;
-                ppProcessSource = true; // force while-loop termination
                 break;
               case CommentStart:
                 if (stringMode)
@@ -1650,7 +1750,6 @@ namespace Prolog
 
                 if (!DoComment ("*/", true, streamInPtr.FOnLine))
                   ErrorMessage = "Unterminated comment starting at line " + symbol.LineNo.ToString ();
-
                 break;
               case CommentSingle:
                 if (stringMode) Break = true; else Break = false;
@@ -1659,19 +1758,20 @@ namespace Prolog
 
                 if (seeEndOfLine)
                 {
-                  symbol.Terminal = EndOfLine;
+                  symbol.TerminalId = EndOfLine;
                   Break = true;
                 }
 
                 break;
               default:
-                if (seeEndOfLine && symbol.Terminal != EndOfLine) streamInPtr.FOnLine = false;
+                if (seeEndOfLine && symbol.TerminalId != EndOfLine)
+                  streamInPtr.FOnLine = false;
 
                 Break = true;
                 break;
             }
           }
-        } while (!Break || !ppProcessSource);
+        } while (!Break); // skip symbols while in preprocessing ignore mode
 
         symbol.AbsSeqNo++;
         symbol.RelSeqNo++;
@@ -1683,16 +1783,16 @@ namespace Prolog
 
       protected virtual bool GetSymbol (TerminalSet followers, bool done, bool genXCPN)
       {
-        return true;
+        throw new Exception ("GetSymbol must be overridden");
       }
 
       protected void EOL (TerminalSet followers, bool GenXCPN)
       {
         GetSymbol (new TerminalSet (EndOfLine), true, GenXCPN);
 
-        while (symbol.Terminal == EndOfLine)
+        while (symbol.TerminalId == EndOfLine)
         {
-          NextSymbol ();
+          NextSymbol (null);
         }
         symbol.SetProcessed (false);
       }
@@ -1707,7 +1807,7 @@ namespace Prolog
         else
           anyTextStart = symbol.Start;
 
-        if (followers.Contains (symbol.Terminal) && !symbol.IsProcessed)
+        if (followers.Contains (symbol.TerminalId) && !symbol.IsProcessed)
         {
           anyTextFinal = anyTextStart; // empty, nullstring
           anyTextFPlus = anyTextStart;
@@ -1722,12 +1822,12 @@ namespace Prolog
         {
           // Follower will eventually be a symbol from Followers
           follower = streamInPtr;
-          NextSymbol ();
+          NextSymbol (null);
           symbol.FinalPlus = symbol.Start; // up to next symbol
           anyTextFPlus = symbol.Start;
         }
 
-        while (symbol.Terminal != EndOfInput && !followers.Contains (symbol.Terminal));
+        while (symbol.TerminalId != EndOfInput && !followers.Contains (symbol.TerminalId));
 
         // "unread" last symbol
         InitCh (follower);
@@ -1736,7 +1836,7 @@ namespace Prolog
         symbol.LineNo = anyStart.LineNo;
         symbol.LineStart = anyStart.LineStart;
         symbol.Final = streamInPtr.Position;
-        symbol.Terminal = Undefined;
+        symbol.TerminalId = Undefined;
         symbol.SetProcessed (true);
         anyTextFinal = streamInPtr.Position;
         parseAnyText = false;
@@ -1766,7 +1866,8 @@ namespace Prolog
       protected void InputStreamMark (out positionMarker m)
       {
         m.Pointer = streamInPtr;
-        m.Terminal = symbol.Terminal;
+        m.Terminal = symbol.TerminalId;
+        m.Class = symbol.Class;
         m.Payload = symbol.Payload;
         m.Start = symbol.Start;
         m.Final = symbol.Final;
@@ -1776,7 +1877,6 @@ namespace Prolog
         m.AbsSeqNo = symbol.AbsSeqNo;
         m.RelSeqNo = symbol.RelSeqNo;
         m.LineStart = symbol.LineStart;
-        m.HasIdFormat = symbol.HasIdFormat;
         m.Processed = symbol.IsProcessed;
         m.IsSet = true;
       }
@@ -1787,7 +1887,8 @@ namespace Prolog
         if (!m.IsSet) throw new Exception ("REDO Error: positionMarker " + n.ToString () + " is not set");
 
         InitCh (m.Pointer);
-        symbol.Terminal = m.Terminal;
+        symbol.TerminalId = m.Terminal;
+        symbol.Class = m.Class;
         symbol.Payload = m.Payload;
         symbol.Start = m.Start;
         symbol.Final = m.Final;
@@ -1797,7 +1898,6 @@ namespace Prolog
         symbol.AbsSeqNo = m.AbsSeqNo;
         symbol.RelSeqNo = m.RelSeqNo;
         symbol.LineStart = m.LineStart;
-        symbol.HasIdFormat = m.HasIdFormat;
         symbol.SetProcessed (m.Processed);
       }
       #endregion NextSymbol, GetSymbol
@@ -1823,19 +1923,10 @@ namespace Prolog
         eoLineCount = 1;
         // For the very first symbol pretend that an EndOfLine preceded it (for formatting purposes)
         // This also means that leading blank lines will be formatted
-        ppSymSnapShot = (Hashtable)ppSymbols.Clone (); // save the entry state
-        ppProcessSource = true;
-        ppDefineSymbol = false;
-        ppUndefineSymbol = false;
-        ppDoIfSymbol = false;
-        ppDoIfNotSymbol = false;
-        ppXeqStack.Clear ();
-        ppXeqStack.Push (ppProcessSource);
-        ppElseOK.Clear ();
         symbol.SetProcessed (true);
         symbol.AbsSeqNo = 0;
         symbol.RelSeqNo = 0;
-        symbol.Terminal = Undefined;
+        symbol.TerminalId = Undefined;
         streamInPtr.Position = UNDEF;
         streamInPtr.LineNo = 0;
         streamInPtr.LineStart = UNDEF;
@@ -1850,6 +1941,7 @@ namespace Prolog
         traceIndentLevel = -1;
         streamInLen += streamInPreLen;
         inStream.UpdateCache (0);
+        cdh.Initialize ();
         NextCh ();
         Delegates ();
       }
@@ -1880,11 +1972,10 @@ namespace Prolog
           RootCall ();
           lineCount = LineNo;
 
-          if (symbol.IsProcessed) NextSymbol ();
+          if (symbol.IsProcessed) NextSymbol (null);
 
-          if (symbol.Terminal != EndOfInput)
+          if (symbol.TerminalId != EndOfInput)
             throw new Exception (String.Format ("Unexpected symbol {0} after end of input", symbol.ToString ()));
-          if (ppElseOK.Count > 0) Error ("#endif expected");
         }
         catch (UnhandledParserException)
         {
@@ -2077,24 +2168,25 @@ namespace Prolog
 
         int start = streamInPtr.Position;
         int final = start;
-        Console.WriteLine ("start: {0}", start);
 
-        while (!endText && ch != '\n')
-        {
-          final = streamInPtr.Position;
-          Console.WriteLine (ch);
-          NextCh ();
-        }
+        while (!streamInPtr.EndLine) NextCh ();
 
+        final = streamInPtr.Position;
         NextCh ();
 
-        return StreamInClip (start, final);
+        return StreamInClip (start, final).TrimEnd ('\r');
       }
 
 
       public int ReadChar ()
       {
-        return endText ? -1 : ch;
+        if (endText) return -1;
+
+        int result = ch;
+
+        NextCh ();
+
+        return result;
       }
 
 

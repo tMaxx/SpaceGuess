@@ -1,6 +1,6 @@
 /*-----------------------------------------------------------------------------------------
 
-  C#Prolog -- Copyright (C) 2007-2013 John Pool -- j.pool@ision.nl
+  C#Prolog -- Copyright (C) 2007-2014 John Pool -- j.pool@ision.nl
 
   This library is free software; you can redistribute it and/or modify it under the terms of
   the GNU General Public License as published by the Free Software Foundation; either version
@@ -27,30 +27,38 @@ using System.IO;
 using System.Globalization;
 using System.Data.Common;
 using System.Data;
+using System.Net;
+using System.Net.Sockets;
 #endif
 
 namespace Prolog
 {
   public enum BI // builtins
   {
-    none, abolish, arg, append, append2, assert, asserta, assertz, atom_, atom_string, atomic, between,
-    bool_, cache, call, clause, clearall, clearprofile, clipboard, cls, collection_add, collection_exit,
-    collection_init, compound, config_setting, console, consult, copy_term, crossref, current_op, cut,
-    dayname, dcg_flat, date_part, datetime, dayofweek, dayofyear, debug, dec_counter, display, environment,
-    eq_num, eq_str, errorlevel, expand_term, fail, fileexists, flat, float_, format, functor, ge_num, ge_ord,
-    gensym, genvar, get, get_counter, get0, getenvvar, getvar, ground, gt_num, gt_ord, halt, help,
-    inc_counter, integer, is_, json_term, json_xml, le_num, le_ord, leapyear, length, list, listing,
-    listing0, listing0X, listing0XN, listingX, listingXN, lt_num, lt_ord, make_help_resx, maxwritedepth, 
-    member, name, ne_num, ne_str, ne_uni, nl, nocache, nodebug, nonvar, noprofile, nospy, nospyall, notrace, 
-    noverbose, now, number, numbervars, numcols, or, patmat, pp_defines, predicatePN, predicateX, print, 
-    profile, put, query_timeout, read, readatoms, readatom, readeof, readln, regex_match, regex_replace, 
-    retract, retractall, reverse, sendmail, see, seeing, seen, set_counter, setenvvar, setvar, shell_d, 
-    shell_p, shell_x, shell_sync_d, shell_sync_p, shell_sync_x, shell_dos, shell_exe, showfile, showprofile, 
-    silent, sort, spy, spypoints, sql_connect, sql_connection, sql_command, sql_disconnect, sql_select, 
-    stacktrace, callstack, statistics, string_, string_datetime, string_term, string_words, stringstyle, 
-    succ, tab, tell, telling, term_pattern, throw_, time_part, timespan, today, told, trace, treeprint, 
-    undefineds, unifiable, univ, username, userroles, validdate, validtime, var, verbose, version, weekno, 
-    workingdir, write, writef, writeln, writelnf, xml_term, xmltrace, xml_transform
+    none, abolish, arg, append, append2, assert, asserta, assertz, atom_,
+    atom_string, atomic, between, bool_, cache, call, clause, clearall, clearprofile,
+    clipboard, cls, collection_add, collection_exit, collection_init, compound,
+    config_setting, console, consult, copy_term, crossref, current_op, cut, dayname,
+    dcg_flat, date_part, datetime, dayofweek, dayofyear, debug, dec_counter, display,
+    environment, eq_num, eq_str, errorlevel, expand_term, fail, fileexists, flat,
+    float_, format, functor, ge_num, ge_ord, gensym, genvar, get, get_counter, get0,
+    getenvvar, getvar, ground, gt_num, gt_ord, halt, help, inc_counter, integer,
+    ip_address, is_, json_term, json_xml, le_num, le_ord, leapyear, length, list,
+    listing, listing0, listing0X, listing0XN, listingX, listingXN, lt_num, lt_ord,
+    make_help_resx, maxwritedepth, member, name, ne_num, ne_str, ne_uni, nl,
+    nocache, nodebug, nonvar, noprofile, nospy, nospyall, notrace, noverbose, now,
+    number, numbervars, numcols, or, permutation, pp_defines, predicatePN, predicateX,
+    print, profile, put, query_timeout, read, readatoms, readatom, readeof, readln,
+    regex_match, regex_replace, retract, retractall, reverse, sendmail, see, seeing,
+    seen, set_counter, setenvvar, setvar, shell_d, shell_p, shell_x, shell_sync_d,
+    shell_sync_p, shell_sync_x, shell_dos, shell_exe, showfile, showprofile, silent,
+    sort, spy, spypoints, sql_connect, sql_connection, sql_command, sql_disconnect,
+    sql_select, stacktrace, callstack, statistics, string_, string_datetime,
+    string_term, string_words, stringstyle, succ, tab, tell, telling, term_pattern,
+    throw_, time_part, timespan, today, told, trace, treeprint, undefineds,
+    unifiable, univ, username, userroles, validdate, validtime, var, verbose,
+    version, weekno, workingdir, write, writef, writeln, writelnf, xml_term,
+    xmltrace, xml_transform
   }
 
   public partial class PrologEngine
@@ -174,6 +182,9 @@ namespace Prolog
       }
     }
 
+    string currentInputName = null;
+    string currentOutputName = null;
+
     bool DoBuiltin (BI biId, out bool findFirstClause)
     {
       findFirstClause = false;
@@ -204,7 +215,7 @@ namespace Prolog
       #region switch
       switch (biId)
       {
-        case BI.consult: // individual file or last of files
+        case BI.consult: // individual file or list of files
           t0 = term.Arg (0);
 
           if (t0.IsProperList)
@@ -386,7 +397,7 @@ namespace Prolog
           halted = true;
           break;
 
-        case BI.reverse: // reverse( ?X, ?R) -- proper last X is the reversed version of last R
+        case BI.reverse: // reverse( ?X, ?R) -- proper list X is the reversed version of list R
           t0 = term.Arg (0);
           t1 = term.Arg (1);
 
@@ -402,6 +413,50 @@ namespace Prolog
 
             if (!t1.Unify (((ListTerm)t0).Reverse (), varStack))
               return false;
+          }
+
+          break;
+
+        case BI.permutation: // permutation( +P, ?Q) -- list Q is the 'next' permutation of list P
+          t1 = term.Arg (1);
+
+          if (!t1.IsProperList) return false;
+
+          if (t1.IsEmptyList)
+          {
+            if (term.Arg (2).Unify (ListTerm.EMPTYLIST, varStack)) break;
+
+            return false;
+          }
+
+          Permutation pmt;
+          IEnumerator<ListTerm> iPermut = null;
+          t0 = term.Arg (0);
+
+          if (t0.IsVar) // first call only, Arg(0) contains State info
+          {
+            pmt = new Permutation ((ListTerm)t1);
+            iPermut = pmt.GetEnumerator ();
+            t0.Unify (new UserClassTerm<IEnumerator<ListTerm>> (iPermut), varStack);
+
+            break;
+          }
+
+          iPermut = ((UserClassTerm<IEnumerator<ListTerm>>)t0).UserObject;
+
+
+          while (true)
+          {
+            if (!iPermut.MoveNext ())
+            {
+              term.SetArg (0, Variable.VAR);
+
+              return false;
+            }
+
+            if (term.Arg (2).Unify (iPermut.Current, varStack)) break;
+              
+            return false;
           }
 
           break;
@@ -441,7 +496,7 @@ namespace Prolog
             if (!term.Arg (1).Unify (new DecimalTerm (t0.FunctorToString.Length), varStack))
               return false;
           }
-          else // create a last with N elements
+          else // create a list with N elements
           {
             if (!t1.IsNatural) return false;
 
@@ -527,11 +582,17 @@ namespace Prolog
           }
 
         case BI.arg: // arg( N, BaseTerm, A)
+          t0 = term.Arg (0);
           t1 = term.Arg (1);
-          if (t1.Arity <= 0) return false;
-          n = term.Arg<int> (0);
-          BaseTerm arg = t1.Arg (n - 1); // N is 1-based
-          if (arg == null || !arg.Unify (term.Arg (2), varStack)) return false;
+
+          if (t0.IsVar || t1.IsVar ) return false;
+ 
+          n = t0.To<int> ();  // N is 1-based
+
+          if (n <= 0 || n > t1.Arity) return false; 
+
+          if (!t1.Arg (n - 1).Unify (term.Arg (2), varStack)) return false;
+          
           break;
 
         case BI.abolish: // abolish( X/N)
@@ -764,9 +825,9 @@ namespace Prolog
 
             if (t1.IsVar || !t1.IsProperList) return false;
 
-            if (t1.Arg (0) == null) return false; // empty term
+            if (t1.Arg (0).IsVar) return false; // not a valid functor
 
-            functor = t1.Arg (0).FunctorToString;
+            functor = t1.Arg (0).FunctorToString.ToAtom ();
             // convert rest of term to arguments: calculate arity first
             t1 = t1.Arg (1);
             arity = 0;
@@ -791,7 +852,7 @@ namespace Prolog
 
             break;
           }
-          else // create a last representation of the lhs and unify that with the rhs
+          else // create a list representation of the lhs and unify that with the rhs
           {
             arity = t0.Arity;
             BaseTerm [] args = new BaseTerm [arity];
@@ -815,6 +876,7 @@ namespace Prolog
         #region Reading
         case BI.fileexists:
           t0 = term.Arg (0);
+
           fileName = Utils.FileNameFromTerm (t0, ".pl");
 
           if (fileName == null || !File.Exists (fileName)) return false;
@@ -823,6 +885,16 @@ namespace Prolog
         case BI.see: // see( F)
           t0 = term.Arg (0);
 
+          if (!t0.IsAtomOrString)
+            IO.Error ("see/1 argument must be an atom or a string");
+
+          if (t0.HasFunctor ("user"))
+          {
+            currentFileReader = null;
+
+            break;
+          }
+          
           if (t0 is FileReaderTerm) // functor previously saved with seeing/1
           {
             currentFileReader = (FileReaderTerm)t0;
@@ -837,13 +909,15 @@ namespace Prolog
             break;
           }
 
-          string currentInputName = Utils.FileNameFromTerm (t0, ".pl");
+          currentInputName = Utils.FileNameFromTerm (t0, ".pl");
+          currentFileReader = (FileReaderTerm)openFiles.GetFileReader (currentInputName);
 
-          if (currentInputName == null) return false;
-
-          currentFileReader = new FileReaderTerm (this, currentInputName);
-          currentFileReader.Open ();
-          term.SetArg (0, currentFileReader); // replace file functor by term
+          if (currentFileReader == null)
+          {
+            currentFileReader = new FileReaderTerm (this, currentInputName);
+            openFiles.Add (currentInputName, currentFileReader);
+            currentFileReader.Open ();
+          }
           break;
 
         case BI.seeing:
@@ -932,7 +1006,11 @@ namespace Prolog
           break;
 
         case BI.seen:
-          if (currentFileReader != null) currentFileReader.Close ();
+          if (currentFileReader != null)
+          {
+            currentFileReader.Close ();
+            openFiles.Remove (currentInputName);
+          }
 
           currentFileReader = null;
 
@@ -942,13 +1020,9 @@ namespace Prolog
         #region Writing
         case BI.tell: // tell( F)
           t0 = term.Arg (0);
-
-          if (t0 is FileWriterTerm) // functor previously saved with telling/1
-          {
-            currentFileWriter = (FileWriterTerm)t0;
-
-            break;
-          }
+          
+          if (!t0.IsAtomOrString)
+            IO.Error ("tell/1 argument must be an atom or a string");
 
           if (t0.HasFunctor ("user"))
           {
@@ -957,13 +1031,15 @@ namespace Prolog
             break;
           }
 
-          string currentOutputName = Utils.FileNameFromTerm (t0, ".pl");
+          currentOutputName = Utils.FileNameFromTerm (t0, ".pl");
+          currentFileWriter = (FileWriterTerm)openFiles.GetFileWriter (currentOutputName);
 
-          if (currentOutputName == null) return false;
-
-          currentFileWriter = new FileWriterTerm (this, currentOutputName);
-          currentFileWriter.Open ();
-          term.SetArg (0, currentFileWriter); // replace file functor by term
+          if (currentFileWriter == null)
+          {
+            currentFileWriter = new FileWriterTerm (this, currentOutputName);
+            openFiles.Add (currentOutputName, currentFileWriter);
+            currentFileWriter.Open ();
+          }
           break;
 
         case BI.telling:
@@ -1032,7 +1108,11 @@ namespace Prolog
           break;
 
         case BI.told:
-          if (currentFileWriter != null) currentFileWriter.Close ();
+          if (currentFileWriter != null)
+          {
+            currentFileWriter.Close ();
+            openFiles.Remove (currentOutputName);
+          }
 
           currentFileWriter = null;
           break;
@@ -1050,7 +1130,7 @@ namespace Prolog
             IO.WriteLine (a);
           }
           else
-            IO.WriteLine (term.Arg (0).ToWriteString (0));
+            IO.WriteLine ("{0}", term.Arg (0));
 
           break;
 
@@ -1170,7 +1250,7 @@ namespace Prolog
               IO.Error ("First argument of sql_select/3 must be a ConnectionInfo term created with sql_connect/3");
             else if ((cnt = (DbConnectionTerm)t1).DbCommand.Connection.State != ConnectionState.Open)
               IO.Error ("Connection is not open. ConnectionInfo:\r\n{0}", cnt.Connectstring);
-            
+
             t2 = term.Arg (2); // SELECT-statement
             string queryText;
 
@@ -1637,12 +1717,13 @@ namespace Prolog
           t3 = term.Arg (3); // Dmin (0 if var)
           t4 = term.Arg (4); // Dmax (inf if var)
           t5 = term.Arg (5); // Path ('!' if not wanted)
+          bool skipVars = true; // i.e. the search pattern will not match a term variable in t
 
           NodeIterator iterable = null;
 
           if (t0.IsVar) // first call only, Arg(0) contains State info
           {
-            iterable = new NodeIterator (t1, t2, t3, t4, t5, varStack);
+            iterable = new NodeIterator (t1, t2, t3, t4, skipVars, t5, varStack);
             term.Arg (0).Unify (new UserClassTerm<NodeIterator> (iterable), varStack);
 
             break;
@@ -1669,14 +1750,17 @@ namespace Prolog
           string exceptionClass = null;
           string exceptionMessage;
 
-          if (t0 is AtomTerm || t0 is DecimalTerm) // exception class
+          if (term.Arity == 2)
           {
-            exceptionClass = t0.FunctorToString;
-            t0 = term.Arg (1);
-            t1 = (term.Arity == 2) ? null : term.Arg (2);
+            if (t0 is AtomTerm || t0 is DecimalTerm) // exception class
+            {
+              exceptionClass = t0.FunctorToString;
+              t0 = term.Arg (1);
+              t1 = (term.Arity == 2) ? null : term.Arg (2);
+            }
+            else
+              t1 = term.Arg (1);
           }
-          else if (term.Arity == 2)
-            t1 = term.Arg (1);
           else if (term.Arity == 3) // something is wrong
             IO.Error ("First argument of throw/3 ({0}) is not an atom or an integer", t0);
 
@@ -2069,17 +2153,24 @@ namespace Prolog
           break;
 
 
-        case BI.xml_term: // xml_term( ?X, ?P, [C,]) converts between XML and Prolog representation
+        case BI.xml_term: // xml_term( ?X, ?P [,C]) converts between XML and Prolog representation
           BaseTerm ss = null;
           bool settings = (term.Arity == 3);
+
           t0 = term.Arg (0);
           t1 = term.Arg (1);
 
-          if (settings) ss = term.Arg (2);
+          if (settings && !(ss = term.Arg (2)).IsProperList)
+            IO.Error ("xml_term: options must be in a list");
 
           if (t0.IsVar)
           {
-            if (t1.IsVar) return false;
+            if (t1.IsVar)
+            {
+              IO.Error ("xml_term: at least one of the arguments must be instantiated");
+
+              return false;
+            }
 
             x = null;
 
@@ -2351,15 +2442,15 @@ namespace Prolog
           break;
 
 
-        case BI.pp_defines: // pp_defines( X) -- preprocessor symbol definitions -- mainly useful for debugging in nested calls
-          t0 = term.Arg (0);
-          if (!t0.IsVar) return false;
-          t1 = ListTerm.EMPTYLIST;
-          //IO.WriteLine ("PrologParser.PpSymbols.count = {0}", PrologParser.PpSymbols.Count);
-          foreach (DictionaryEntry de in PrologParser.PpSymbols)
-            t1 = new CompoundTerm ((de.Key as string).ToAtom (), new Variable (), t1);
-          t0.Unify (t1, varStack);
-          break;
+        //case BI.pp_defines: // pp_defines( X) -- preprocessor symbol definitions -- mainly useful for debugging in nested calls
+        //  t0 = term.Arg (0);
+        //  if (!t0.IsVar) return false;
+        //  t1 = ListTerm.EMPTYLIST;
+        //  //IO.WriteLine ("PrologParser.PpSymbols.count = {0}", PrologParser.PpSymbols.Count);
+        //  foreach (DictionaryEntry de in PrologParser.PpSymbols)
+        //    t1 = new CompoundTerm ((de.Key as string).ToAtom (), new Variable (), t1);
+        //  t0.Unify (t1, varStack);
+        //  break;
 
         case BI.undefineds:
           predTable.FindUndefineds ();
@@ -2582,7 +2673,7 @@ namespace Prolog
           break;
 
         // not operational yet, some next version
-        case BI.callstack: // callstack( S, L) -- S is string, L is last representation of current call stack
+        case BI.callstack: // callstack( S, L) -- S is string, L is list representation of current call stack
           //string str;
           //ListTerm lst;
           ////CallStack (out str, out lst);
@@ -2605,9 +2696,35 @@ namespace Prolog
             userSetShowStackTrace = false;
           else
             IO.Error (":- stacktrace: illegal argument '{0}'; use 'on' or 'off' instead", mode);
-  
+
           break;
 
+        case BI.ip_address: // return local IP-address
+          IPHostEntry host = Dns.GetHostEntry (Dns.GetHostName ());
+
+          foreach (IPAddress ip in host.AddressList)
+          {
+            if (ip.AddressFamily == AddressFamily.InterNetwork)
+            {
+              if (!term.Arg (0).Unify (new AtomTerm (ip.ToString ()), varStack))
+                return false;
+
+              if (term.Arity == 2)
+              {
+                string [] mask = ip.ToString ().Split (new char [] { '.' });
+                ListTerm fields = ListTerm.EMPTYLIST;
+
+                for (int i = mask.Length - 1; i >= 0; i--)
+                  fields = new ListTerm (new DecimalTerm (decimal.Parse (mask [i])), fields);
+
+                if (!term.Arg (1).Unify (fields, varStack))
+                  return false;
+              }
+
+              break;
+            }
+          }
+          break;
 
         case BI.environment: // environment( X, Y) -- unify Y with Atom value of environment variable X
           t0 = term.Arg (0);
@@ -2840,7 +2957,7 @@ namespace Prolog
       a = a.ToAtomic (out type);
 
       if (type == TermType.Number)
-        t2 = new DecimalTerm (decimal.Parse (a, Utils.CIC));
+        t2 = new DecimalTerm (decimal.Parse (a, CIC));
       else
         t2 = new AtomTerm (a);
 
@@ -2856,7 +2973,7 @@ namespace Prolog
       if (type == TermType.Number)
         try
         {
-          return new DecimalTerm (decimal.Parse (word, NumberStyles.Any, Utils.CIC));
+          return new DecimalTerm (decimal.Parse (word, NumberStyles.Any, CIC));
         }
         catch
         {
