@@ -42,12 +42,14 @@
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.lVSExpTerm = new System.Windows.Forms.Label();
             this.lHelp1 = new System.Windows.Forms.Label();
-            this.lvExamplesHist = new System.Windows.Forms.ListView();
+            this.lvVSHistory = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.bVSSendQuery = new System.Windows.Forms.Button();
-            this.tVSQuery = new System.Windows.Forms.TextBox();
+            this.tbVSQuery = new System.Windows.Forms.TextBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tbVSStatusOut = new System.Windows.Forms.TextBox();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.bVSReset = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -88,6 +90,7 @@
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Location = new System.Drawing.Point(12, 12);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -96,14 +99,15 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.bVSReset);
             this.tabPage1.Controls.Add(this.lVSLastCmdStatus);
             this.tabPage1.Controls.Add(this.lvVSSpecSpace);
             this.tabPage1.Controls.Add(this.lvVSGenSpace);
             this.tabPage1.Controls.Add(this.lVSExpTerm);
             this.tabPage1.Controls.Add(this.lHelp1);
-            this.tabPage1.Controls.Add(this.lvExamplesHist);
+            this.tabPage1.Controls.Add(this.lvVSHistory);
             this.tabPage1.Controls.Add(this.bVSSendQuery);
-            this.tabPage1.Controls.Add(this.tVSQuery);
+            this.tabPage1.Controls.Add(this.tbVSQuery);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
@@ -178,19 +182,19 @@
             this.lHelp1.TabIndex = 5;
             this.lHelp1.Text = "Probably is:";
             // 
-            // lvExamplesHist
+            // lvVSHistory
             // 
-            this.lvExamplesHist.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.lvVSHistory.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1});
-            this.lvExamplesHist.FullRowSelect = true;
-            this.lvExamplesHist.GridLines = true;
-            this.lvExamplesHist.Location = new System.Drawing.Point(6, 6);
-            this.lvExamplesHist.MultiSelect = false;
-            this.lvExamplesHist.Name = "lvExamplesHist";
-            this.lvExamplesHist.Size = new System.Drawing.Size(154, 191);
-            this.lvExamplesHist.TabIndex = 2;
-            this.lvExamplesHist.UseCompatibleStateImageBehavior = false;
-            this.lvExamplesHist.View = System.Windows.Forms.View.Details;
+            this.lvVSHistory.FullRowSelect = true;
+            this.lvVSHistory.GridLines = true;
+            this.lvVSHistory.Location = new System.Drawing.Point(6, 6);
+            this.lvVSHistory.MultiSelect = false;
+            this.lvVSHistory.Name = "lvVSHistory";
+            this.lvVSHistory.Size = new System.Drawing.Size(154, 191);
+            this.lvVSHistory.TabIndex = 2;
+            this.lvVSHistory.UseCompatibleStateImageBehavior = false;
+            this.lvVSHistory.View = System.Windows.Forms.View.Details;
             // 
             // columnHeader1
             // 
@@ -205,13 +209,14 @@
             this.bVSSendQuery.TabIndex = 1;
             this.bVSSendQuery.Text = "Wyślij";
             this.bVSSendQuery.UseVisualStyleBackColor = true;
+            this.bVSSendQuery.Click += new System.EventHandler(this.bVSSendQuery_Click);
             // 
-            // tVSQuery
+            // tbVSQuery
             // 
-            this.tVSQuery.Location = new System.Drawing.Point(175, 274);
-            this.tVSQuery.Name = "tVSQuery";
-            this.tVSQuery.Size = new System.Drawing.Size(167, 20);
-            this.tVSQuery.TabIndex = 0;
+            this.tbVSQuery.Location = new System.Drawing.Point(175, 274);
+            this.tbVSQuery.Name = "tbVSQuery";
+            this.tbVSQuery.Size = new System.Drawing.Size(167, 20);
+            this.tbVSQuery.TabIndex = 0;
             // 
             // tabPage2
             // 
@@ -236,6 +241,25 @@
             this.tbVSStatusOut.Size = new System.Drawing.Size(215, 376);
             this.tbVSStatusOut.TabIndex = 3;
             this.tbVSStatusOut.Text = "<status programu>";
+            // 
+            // tabPage3
+            // 
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Size = new System.Drawing.Size(541, 388);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "Explanation-based Learning";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // bVSReset
+            // 
+            this.bVSReset.Location = new System.Drawing.Point(460, 359);
+            this.bVSReset.Name = "bVSReset";
+            this.bVSReset.Size = new System.Drawing.Size(75, 23);
+            this.bVSReset.TabIndex = 10;
+            this.bVSReset.Text = "Reset";
+            this.bVSReset.UseVisualStyleBackColor = true;
+            this.bVSReset.Click += new System.EventHandler(this.bVSReset_Click);
             // 
             // SpaceGuessForm
             // 
@@ -266,16 +290,18 @@
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.Label lHelp1;
         private System.Windows.Forms.ColumnHeader columnHeader1;
-        public System.Windows.Forms.ListView lvExamplesHist;
+        public System.Windows.Forms.ListView lvVSHistory;
         public System.Windows.Forms.ListView lvVSSpecSpace;
         public System.Windows.Forms.ListView lvVSGenSpace;
         public System.Windows.Forms.TextBox tbVSRawQuery;
         public System.Windows.Forms.TextBox tbVSPrologOut;
         public System.Windows.Forms.Button bVSSendQuery;
-        public System.Windows.Forms.TextBox tVSQuery;
+        public System.Windows.Forms.TextBox tbVSQuery;
         public System.Windows.Forms.Label lVSLastCmdStatus;
         public System.Windows.Forms.Label lVSExpTerm;
         public System.Windows.Forms.TextBox tbVSStatusOut;
+        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.Button bVSReset;
     }
 }
 

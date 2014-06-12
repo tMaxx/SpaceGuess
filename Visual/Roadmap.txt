@@ -1,2 +1,16 @@
 ﻿?Klasa IO
 	wyjście zawsze na text box
+
+
+
+
+
+
+
+
+
+
+
+
+            //text, tytuł, buttony, ikona, ...
+            MessageBox.Show(this.tbVSRawQuery.Text);

@@ -9,15 +9,11 @@ namespace Visual.Class
 {
     class AlgoVersionSpace
     {
-        private static History hist = null;
-        private static ListView spaceGen = null;
-        private static ListView spaceSpec = null;
+        private static VSHistory hist = null;
 
-        public static void init(ref ListView general, ref ListView specific)
+        public static void init()
         {
-            hist = new History(ref SpaceGuessForm.self.lvExamplesHist);
-            spaceGen = general;
-            spaceSpec = specific;
+            //noop for now
         }
 
         public static void processRawInput(string cmd)
@@ -28,6 +24,15 @@ namespace Visual.Class
         public static void processInput(string cmd)
         {
 
+        }
+
+        public static void resetAll()
+        {
+            hist = new VSHistory();
+            SpaceGuessForm.self.tbVSPrologOut.Text = "";
+            SpaceGuessForm.self.tbVSStatusOut.Text = "";
+            SpaceGuessForm.self.lVSExpTerm.Text = "none";
+            SpaceGuessForm.self.lVSLastCmdStatus.Text = "none";
         }
     }
 }

@@ -26,20 +26,27 @@ namespace Visual
             InitializeComponent();
 
             //clean up
-            this.tbVSPrologOut.Text = "";
-            this.tbVSStatusOut.Text = "";
-            this.lVSExpTerm.Text = "none";
-            this.lVSLastCmdStatus.Text = "none";
-
             //init algos
-            AlgoVersionSpace.init(ref self.lvVSGenSpace, ref self.lvVSSpecSpace);
+            AlgoVersionSpace.init();
+            AlgoVersionSpace.resetAll();
             //AlgoExplanationLearning.init(ref 
         }
 
         private void bSendVSDirectQuery_Click(object sender, EventArgs e)
         {
-            //text, tytuł, buttony, ikona, ...
-            MessageBox.Show(this.tbVSRawQuery.Text);
+            AlgoVersionSpace.processRawInput(this.tbVSRawQuery.Text);
         }
+
+        private void bVSSendQuery_Click(object sender, EventArgs e)
+        {
+            AlgoVersionSpace.processInput(this.tbVSQuery.Text);
+        }
+
+        private void bVSReset_Click(object sender, EventArgs e)
+        {
+            AlgoVersionSpace.resetAll();
+        }
+
+
     }
 }
