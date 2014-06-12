@@ -35,6 +35,7 @@
             this.tbVSPrologOut = new System.Windows.Forms.TextBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.bVSReset = new System.Windows.Forms.Button();
             this.lVSLastCmdStatus = new System.Windows.Forms.Label();
             this.lvVSSpecSpace = new System.Windows.Forms.ListView();
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -49,7 +50,7 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tbVSStatusOut = new System.Windows.Forms.TextBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.bVSReset = new System.Windows.Forms.Button();
+            this.lHelp2 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -57,18 +58,18 @@
             // 
             // tbVSRawQuery
             // 
-            this.tbVSRawQuery.Location = new System.Drawing.Point(6, 362);
+            this.tbVSRawQuery.Location = new System.Drawing.Point(6, 393);
             this.tbVSRawQuery.Name = "tbVSRawQuery";
-            this.tbVSRawQuery.Size = new System.Drawing.Size(205, 20);
+            this.tbVSRawQuery.Size = new System.Drawing.Size(257, 20);
             this.tbVSRawQuery.TabIndex = 0;
             // 
             // bSendVSRawQuery
             // 
-            this.bSendVSRawQuery.Location = new System.Drawing.Point(217, 362);
+            this.bSendVSRawQuery.Location = new System.Drawing.Point(269, 393);
             this.bSendVSRawQuery.Name = "bSendVSRawQuery";
-            this.bSendVSRawQuery.Size = new System.Drawing.Size(97, 20);
+            this.bSendVSRawQuery.Size = new System.Drawing.Size(128, 29);
             this.bSendVSRawQuery.TabIndex = 1;
-            this.bSendVSRawQuery.Text = "Send query";
+            this.bSendVSRawQuery.Text = "Send prolog query";
             this.bSendVSRawQuery.UseVisualStyleBackColor = true;
             this.bSendVSRawQuery.Click += new System.EventHandler(this.bSendVSDirectQuery_Click);
             // 
@@ -82,7 +83,8 @@
             this.tbVSPrologOut.Multiline = true;
             this.tbVSPrologOut.Name = "tbVSPrologOut";
             this.tbVSPrologOut.ReadOnly = true;
-            this.tbVSPrologOut.Size = new System.Drawing.Size(308, 350);
+            this.tbVSPrologOut.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.tbVSPrologOut.Size = new System.Drawing.Size(391, 381);
             this.tbVSPrologOut.TabIndex = 2;
             this.tbVSPrologOut.Text = "<output prologa>";
             // 
@@ -94,11 +96,12 @@
             this.tabControl1.Location = new System.Drawing.Point(12, 12);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(549, 414);
+            this.tabControl1.Size = new System.Drawing.Size(697, 455);
             this.tabControl1.TabIndex = 3;
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.lHelp2);
             this.tabPage1.Controls.Add(this.bVSReset);
             this.tabPage1.Controls.Add(this.lVSLastCmdStatus);
             this.tabPage1.Controls.Add(this.lvVSSpecSpace);
@@ -111,15 +114,25 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(541, 388);
+            this.tabPage1.Size = new System.Drawing.Size(689, 429);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Version Space Search";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // bVSReset
+            // 
+            this.bVSReset.Location = new System.Drawing.Point(608, 400);
+            this.bVSReset.Name = "bVSReset";
+            this.bVSReset.Size = new System.Drawing.Size(75, 23);
+            this.bVSReset.TabIndex = 10;
+            this.bVSReset.Text = "Reset";
+            this.bVSReset.UseVisualStyleBackColor = true;
+            this.bVSReset.Click += new System.EventHandler(this.bVSReset_Click);
+            // 
             // lVSLastCmdStatus
             // 
             this.lVSLastCmdStatus.AutoSize = true;
-            this.lVSLastCmdStatus.Location = new System.Drawing.Point(12, 237);
+            this.lVSLastCmdStatus.Location = new System.Drawing.Point(409, 251);
             this.lVSLastCmdStatus.Name = "lVSLastCmdStatus";
             this.lVSLastCmdStatus.Size = new System.Drawing.Size(101, 13);
             this.lVSLastCmdStatus.TabIndex = 9;
@@ -131,10 +144,10 @@
             this.columnHeader3});
             this.lvVSSpecSpace.FullRowSelect = true;
             this.lvVSSpecSpace.GridLines = true;
-            this.lvVSSpecSpace.Location = new System.Drawing.Point(381, 6);
+            this.lvVSSpecSpace.Location = new System.Drawing.Point(491, 6);
             this.lvVSSpecSpace.MultiSelect = false;
             this.lvVSSpecSpace.Name = "lvVSSpecSpace";
-            this.lvVSSpecSpace.Size = new System.Drawing.Size(154, 191);
+            this.lvVSSpecSpace.Size = new System.Drawing.Size(192, 191);
             this.lvVSSpecSpace.TabIndex = 8;
             this.lvVSSpecSpace.UseCompatibleStateImageBehavior = false;
             this.lvVSSpecSpace.View = System.Windows.Forms.View.Details;
@@ -142,7 +155,7 @@
             // columnHeader3
             // 
             this.columnHeader3.Text = "Specific space";
-            this.columnHeader3.Width = 138;
+            this.columnHeader3.Width = 174;
             // 
             // lvVSGenSpace
             // 
@@ -150,10 +163,10 @@
             this.columnHeader2});
             this.lvVSGenSpace.FullRowSelect = true;
             this.lvVSGenSpace.GridLines = true;
-            this.lvVSGenSpace.Location = new System.Drawing.Point(221, 6);
+            this.lvVSGenSpace.Location = new System.Drawing.Point(292, 6);
             this.lvVSGenSpace.MultiSelect = false;
             this.lvVSGenSpace.Name = "lvVSGenSpace";
-            this.lvVSGenSpace.Size = new System.Drawing.Size(154, 191);
+            this.lvVSGenSpace.Size = new System.Drawing.Size(193, 191);
             this.lvVSGenSpace.TabIndex = 7;
             this.lvVSGenSpace.UseCompatibleStateImageBehavior = false;
             this.lvVSGenSpace.View = System.Windows.Forms.View.Details;
@@ -161,12 +174,12 @@
             // columnHeader2
             // 
             this.columnHeader2.Text = "General space";
-            this.columnHeader2.Width = 129;
+            this.columnHeader2.Width = 169;
             // 
             // lVSExpTerm
             // 
             this.lVSExpTerm.AutoSize = true;
-            this.lVSExpTerm.Location = new System.Drawing.Point(86, 204);
+            this.lVSExpTerm.Location = new System.Drawing.Point(368, 204);
             this.lVSExpTerm.Name = "lVSExpTerm";
             this.lVSExpTerm.Size = new System.Drawing.Size(219, 13);
             this.lVSExpTerm.TabIndex = 6;
@@ -176,7 +189,7 @@
             // 
             this.lHelp1.AutoSize = true;
             this.lHelp1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.lHelp1.Location = new System.Drawing.Point(7, 204);
+            this.lHelp1.Location = new System.Drawing.Point(289, 204);
             this.lHelp1.Name = "lHelp1";
             this.lHelp1.Size = new System.Drawing.Size(73, 13);
             this.lHelp1.TabIndex = 5;
@@ -191,7 +204,7 @@
             this.lvVSHistory.Location = new System.Drawing.Point(6, 6);
             this.lvVSHistory.MultiSelect = false;
             this.lvVSHistory.Name = "lvVSHistory";
-            this.lvVSHistory.Size = new System.Drawing.Size(154, 191);
+            this.lvVSHistory.Size = new System.Drawing.Size(248, 417);
             this.lvVSHistory.TabIndex = 2;
             this.lvVSHistory.UseCompatibleStateImageBehavior = false;
             this.lvVSHistory.View = System.Windows.Forms.View.Details;
@@ -200,21 +213,21 @@
             // columnHeader1
             // 
             this.columnHeader1.Text = "Examples history";
-            this.columnHeader1.Width = 131;
+            this.columnHeader1.Width = 219;
             // 
             // bVSSendQuery
             // 
-            this.bVSSendQuery.Location = new System.Drawing.Point(175, 300);
+            this.bVSSendQuery.Location = new System.Drawing.Point(412, 293);
             this.bVSSendQuery.Name = "bVSSendQuery";
             this.bVSSendQuery.Size = new System.Drawing.Size(166, 34);
             this.bVSSendQuery.TabIndex = 1;
-            this.bVSSendQuery.Text = "Wyślij";
+            this.bVSSendQuery.Text = "Dodaj kolejny przykład";
             this.bVSSendQuery.UseVisualStyleBackColor = true;
             this.bVSSendQuery.Click += new System.EventHandler(this.bVSSendQuery_Click);
             // 
             // tbVSQuery
             // 
-            this.tbVSQuery.Location = new System.Drawing.Point(175, 274);
+            this.tbVSQuery.Location = new System.Drawing.Point(412, 267);
             this.tbVSQuery.Name = "tbVSQuery";
             this.tbVSQuery.Size = new System.Drawing.Size(167, 20);
             this.tbVSQuery.TabIndex = 0;
@@ -228,18 +241,19 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(541, 388);
+            this.tabPage2.Size = new System.Drawing.Size(689, 429);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "VS Console";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // tbVSStatusOut
             // 
-            this.tbVSStatusOut.Location = new System.Drawing.Point(320, 6);
+            this.tbVSStatusOut.Location = new System.Drawing.Point(403, 3);
             this.tbVSStatusOut.Multiline = true;
             this.tbVSStatusOut.Name = "tbVSStatusOut";
             this.tbVSStatusOut.ReadOnly = true;
-            this.tbVSStatusOut.Size = new System.Drawing.Size(215, 376);
+            this.tbVSStatusOut.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.tbVSStatusOut.Size = new System.Drawing.Size(280, 420);
             this.tbVSStatusOut.TabIndex = 3;
             this.tbVSStatusOut.Text = "<status programu>";
             // 
@@ -252,21 +266,21 @@
             this.tabPage3.Text = "Explanation-based Learning";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
-            // bVSReset
+            // lHelp2
             // 
-            this.bVSReset.Location = new System.Drawing.Point(460, 359);
-            this.bVSReset.Name = "bVSReset";
-            this.bVSReset.Size = new System.Drawing.Size(75, 23);
-            this.bVSReset.TabIndex = 10;
-            this.bVSReset.Text = "Reset";
-            this.bVSReset.UseVisualStyleBackColor = true;
-            this.bVSReset.Click += new System.EventHandler(this.bVSReset_Click);
+            this.lHelp2.AutoSize = true;
+            this.lHelp2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.lHelp2.Location = new System.Drawing.Point(292, 251);
+            this.lHelp2.Name = "lHelp2";
+            this.lHelp2.Size = new System.Drawing.Size(111, 13);
+            this.lHelp2.TabIndex = 11;
+            this.lHelp2.Text = "Status wywołania:";
             // 
             // SpaceGuessForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(573, 438);
+            this.ClientSize = new System.Drawing.Size(721, 479);
             this.Controls.Add(this.tabControl1);
             this.Name = "SpaceGuessForm";
             this.Text = "SpaceGuess";
@@ -303,6 +317,7 @@
         public System.Windows.Forms.TextBox tbVSStatusOut;
         private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.Button bVSReset;
+        private System.Windows.Forms.Label lHelp2;
     }
 }
 

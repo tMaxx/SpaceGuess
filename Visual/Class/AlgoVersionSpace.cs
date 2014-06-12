@@ -24,18 +24,22 @@ namespace Visual.Class
             hist = new VSHistory();
             SpaceGuessForm.self.lVSExpTerm.Text = "none";
             SpaceGuessForm.self.lVSLastCmdStatus.Text = "none";
+            SpaceGuessForm.self.lvVSGenSpace.Items.Clear();
+            SpaceGuessForm.self.lvVSSpecSpace.Items.Clear();
+            SpaceGuessForm.self.lvVSHistory.Items.Clear();
+            SpaceGuessForm.self.tbVSQuery.Text = "";
             logProlog("---Engine reset---");
             logApp("---App reset---");
         }
 
         public static void logApp(string str)
         {
-            SpaceGuessForm.self.tbVSStatusOut.Text += "[VS] " + str + Environment.NewLine;
+            SpaceGuessForm.self.tbVSStatusOut.AppendText("[VS] " + str + Environment.NewLine);
         }
 
         public static void logProlog(string str)
         {
-            SpaceGuessForm.self.tbVSPrologOut.Text += "[VS] " + str + Environment.NewLine;
+            SpaceGuessForm.self.tbVSPrologOut.AppendText("[VS] " + str + Environment.NewLine);
         }
 
         public static void processRawInput(string cmd)
@@ -45,9 +49,13 @@ namespace Visual.Class
                 hist.pe.Query = cmd;
                 foreach (PrologEngine.ISolution s in hist.pe.SolutionIterator)
                 {
-                    logProlog((hist.pe.Error ? "err: " : "q: ") + cmd + Environment.NewLine + s + (s.IsLast ? "" : ";"));
+                    
+                    logProlog((hist.pe.Error ? "ERROR: " : "query: ") + cmd + Environment.NewLine + s + (s.IsLast ? "" : ";"));
                     if (hist.pe.Error)
-                        logApp("Error occured, check console to the left");
+                    {
+                        logApp("Error occured, check console");
+                        hist.pe.Error = false;
+                    }
 
                     if (s.IsLast) break;
                 }
