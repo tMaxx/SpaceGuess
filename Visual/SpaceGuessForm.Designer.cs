@@ -195,6 +195,7 @@
             this.lvVSHistory.TabIndex = 2;
             this.lvVSHistory.UseCompatibleStateImageBehavior = false;
             this.lvVSHistory.View = System.Windows.Forms.View.Details;
+            this.lvVSHistory.SelectedIndexChanged += new System.EventHandler(this.lvVSHistory_SelectedIndexChanged);
             // 
             // columnHeader1
             // 

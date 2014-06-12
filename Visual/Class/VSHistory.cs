@@ -35,6 +35,11 @@ namespace Visual.Class
             this.items = new List<VSHistoryItem>();
         }
 
+        public SolutionSet rawQuery(string cmd)
+        {
+            return this.pe.GetAllSolutions(null, cmd);
+        }
+
         //execute next query with optional removal of items
         public VSHistoryItem nextQuery(string cmd, int atpos = -1)
         {
@@ -72,6 +77,7 @@ namespace Visual.Class
             foreach (var itm in this.items)
                 SpaceGuessForm.self.lvVSHistory.Items.Add(itm.lvi);
 
+            //build from last
             if (atpos < 0)
                 atpos = this.items.Count - 1;
 

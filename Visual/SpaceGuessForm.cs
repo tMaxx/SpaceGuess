@@ -25,11 +25,10 @@ namespace Visual
             //import z this.Designer.cs
             InitializeComponent();
 
-            //clean up
             //init algos
             AlgoVersionSpace.init();
             AlgoVersionSpace.resetAll();
-            //AlgoExplanationLearning.init(ref 
+            //AlgoExplanationLearning.init();
         }
 
         private void bSendVSDirectQuery_Click(object sender, EventArgs e)
@@ -47,6 +46,15 @@ namespace Visual
             AlgoVersionSpace.resetAll();
         }
 
+        private void lvVSHistory_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ListView.SelectedIndexCollection indexes = this.lvVSHistory.SelectedIndices;
 
+            foreach (int i in indexes)
+            {
+                AlgoVersionSpace.selectIndexHistory(i);
+                break;
+            }
+        }
     }
 }
