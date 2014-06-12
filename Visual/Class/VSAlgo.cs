@@ -8,7 +8,7 @@ using Prolog;
 
 namespace Visual.Class
 {
-    class AlgoVersionSpace
+    class VSAlgo
     {
         private static VSHistory hist = null;
 
@@ -37,9 +37,14 @@ namespace Visual.Class
             SpaceGuessForm.self.tbVSStatusOut.AppendText("[VS] " + str + Environment.NewLine);
         }
 
-        public static void logProlog(string str)
+        public static void logProlog(string str, bool newline = true)
         {
-            SpaceGuessForm.self.tbVSPrologOut.AppendText("[VS] " + str + Environment.NewLine);
+            SpaceGuessForm.self.tbVSPrologOut.AppendText("[VS] " + str + (newline ? Environment.NewLine : ""));
+        }
+
+        public static void logPrologCont(string str)
+        {
+            SpaceGuessForm.self.tbVSPrologOut.AppendText(str + Environment.NewLine);
         }
 
         public static void processRawInput(string cmd)
@@ -47,10 +52,15 @@ namespace Visual.Class
             try
             {
                 hist.pe.Query = cmd;
+                //bool first = true;
+                logProlog((hist.pe.Error ? "ERROR: " : "query: ") + cmd, false);
                 foreach (PrologEngine.ISolution s in hist.pe.SolutionIterator)
                 {
-                    
-                    logProlog((hist.pe.Error ? "ERROR: " : "query: ") + cmd + Environment.NewLine + s + (s.IsLast ? "" : ";"));
+                    cmd = "";
+                    //foreach (PrologEngine.IVarValue v in s.VarValuesIterator)
+                    //    cmd += Environment.NewLine + v;
+                    logPrologCont(cmd + s + (s.IsLast ? "." : ";"));
+
                     if (hist.pe.Error)
                     {
                         logApp("Error occured, check console");
@@ -68,20 +78,6 @@ namespace Visual.Class
             {
                 hist.persist();
             }
-
-            //{
-            //    if (ss.HasError)
-            //        logApp("Query errors: " + ss.ErrMsg);
-
-            //    string buf = ss.Success + ":" + ss.Count + ":" + ss.Query + Environment.NewLine;
-
-            //    foreach (var single in ss.NextSolution)
-            //        foreach (Variable v in single.NextVariable)
-            //            buf += string.Format("{0} = {1}", v.Name, v.Value) + Environment.NewLine;
-
-            //    if (buf.Length > 0)
-            //        logProlog(buf);
-            //}
         }
 
         public static void processInput(string cmd)

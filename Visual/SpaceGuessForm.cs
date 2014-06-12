@@ -26,24 +26,24 @@ namespace Visual
             InitializeComponent();
 
             //init algos
-            AlgoVersionSpace.init();
-            AlgoVersionSpace.resetAll();
+            VSAlgo.init();
+            VSAlgo.resetAll();
             //AlgoExplanationLearning.init();
         }
 
-        private void bSendVSDirectQuery_Click(object sender, EventArgs e)
+        private void bSendVSRawQuery_Click(object sender, EventArgs e)
         {
-            AlgoVersionSpace.processRawInput(this.tbVSRawQuery.Text);
+            VSAlgo.processRawInput(this.tbVSRawQuery.Text);
         }
 
         private void bVSSendQuery_Click(object sender, EventArgs e)
         {
-            AlgoVersionSpace.processInput(this.tbVSQuery.Text);
+            VSAlgo.processInput(this.tbVSQuery.Text);
         }
 
         private void bVSReset_Click(object sender, EventArgs e)
         {
-            AlgoVersionSpace.resetAll();
+            VSAlgo.resetAll();
         }
 
         private void lvVSHistory_SelectedIndexChanged(object sender, EventArgs e)
@@ -52,9 +52,16 @@ namespace Visual
 
             foreach (int i in indexes)
             {
-                AlgoVersionSpace.selectIndexHistory(i);
+                VSAlgo.selectIndexHistory(i);
                 break;
             }
         }
+
+        private void tbVSRawQuery_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == Convert.ToChar(Keys.Return))
+                this.bSendVSRawQuery_Click(null, null);
+        }
+
     }
 }

@@ -35,6 +35,7 @@
             this.tbVSPrologOut = new System.Windows.Forms.TextBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.lHelp2 = new System.Windows.Forms.Label();
             this.bVSReset = new System.Windows.Forms.Button();
             this.lVSLastCmdStatus = new System.Windows.Forms.Label();
             this.lvVSSpecSpace = new System.Windows.Forms.ListView();
@@ -50,7 +51,6 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tbVSStatusOut = new System.Windows.Forms.TextBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.lHelp2 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -62,6 +62,7 @@
             this.tbVSRawQuery.Name = "tbVSRawQuery";
             this.tbVSRawQuery.Size = new System.Drawing.Size(257, 20);
             this.tbVSRawQuery.TabIndex = 0;
+            this.tbVSRawQuery.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tbVSRawQuery_KeyPress);
             // 
             // bSendVSRawQuery
             // 
@@ -71,7 +72,7 @@
             this.bSendVSRawQuery.TabIndex = 1;
             this.bSendVSRawQuery.Text = "Send prolog query";
             this.bSendVSRawQuery.UseVisualStyleBackColor = true;
-            this.bSendVSRawQuery.Click += new System.EventHandler(this.bSendVSDirectQuery_Click);
+            this.bSendVSRawQuery.Click += new System.EventHandler(this.bSendVSRawQuery_Click);
             // 
             // openFileDialog1
             // 
@@ -118,6 +119,16 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Version Space Search";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // lHelp2
+            // 
+            this.lHelp2.AutoSize = true;
+            this.lHelp2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.lHelp2.Location = new System.Drawing.Point(292, 251);
+            this.lHelp2.Name = "lHelp2";
+            this.lHelp2.Size = new System.Drawing.Size(111, 13);
+            this.lHelp2.TabIndex = 11;
+            this.lHelp2.Text = "Status wywołania:";
             // 
             // bVSReset
             // 
@@ -217,19 +228,20 @@
             // 
             // bVSSendQuery
             // 
-            this.bVSSendQuery.Location = new System.Drawing.Point(412, 293);
+            this.bVSSendQuery.Location = new System.Drawing.Point(412, 299);
             this.bVSSendQuery.Name = "bVSSendQuery";
-            this.bVSSendQuery.Size = new System.Drawing.Size(166, 34);
+            this.bVSSendQuery.Size = new System.Drawing.Size(209, 34);
             this.bVSSendQuery.TabIndex = 1;
-            this.bVSSendQuery.Text = "Dodaj kolejny przykład";
+            this.bVSSendQuery.Text = "Dodaj przykład";
             this.bVSSendQuery.UseVisualStyleBackColor = true;
             this.bVSSendQuery.Click += new System.EventHandler(this.bVSSendQuery_Click);
             // 
             // tbVSQuery
             // 
+            this.tbVSQuery.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.tbVSQuery.Location = new System.Drawing.Point(412, 267);
             this.tbVSQuery.Name = "tbVSQuery";
-            this.tbVSQuery.Size = new System.Drawing.Size(167, 20);
+            this.tbVSQuery.Size = new System.Drawing.Size(209, 26);
             this.tbVSQuery.TabIndex = 0;
             // 
             // tabPage2
@@ -261,20 +273,10 @@
             // 
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(541, 388);
+            this.tabPage3.Size = new System.Drawing.Size(689, 429);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Explanation-based Learning";
             this.tabPage3.UseVisualStyleBackColor = true;
-            // 
-            // lHelp2
-            // 
-            this.lHelp2.AutoSize = true;
-            this.lHelp2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.lHelp2.Location = new System.Drawing.Point(292, 251);
-            this.lHelp2.Name = "lHelp2";
-            this.lHelp2.Size = new System.Drawing.Size(111, 13);
-            this.lHelp2.TabIndex = 11;
-            this.lHelp2.Text = "Status wywołania:";
             // 
             // SpaceGuessForm
             // 
@@ -282,6 +284,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(721, 479);
             this.Controls.Add(this.tabControl1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
             this.Name = "SpaceGuessForm";
             this.Text = "SpaceGuess";
             this.tabControl1.ResumeLayout(false);

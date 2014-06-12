@@ -45,7 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class\AlgoExplanationLearning.cs" />
-    <Compile Include="Class\AlgoVersionSpace.cs" />
+    <Compile Include="Class\VSAlgo.cs" />
     <Compile Include="Class\VSHistory.cs" />
     <Compile Include="SpaceGuessForm.cs">
       <SubType>Form</SubType>
