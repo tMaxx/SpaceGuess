@@ -39,6 +39,8 @@ generalize_set([Hypothesis | Rest], [Hypothesis | Updated_rest], Instance) :-
 
 
 %process from general: generalization
+process(true, G, S, UG, US) :-
+	UG is G, US is S, true.
 process(positive(Instance), [ ], N, [Instance], N).
 process(positive(Instance), H, N, Updated_H, N) :-
 	generalize_set(H, Gen_H, Instance),

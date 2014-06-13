@@ -34,7 +34,7 @@
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.tbVSPrologOut = new System.Windows.Forms.TextBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tabVersionSpace = new System.Windows.Forms.TabPage();
             this.lHelp2 = new System.Windows.Forms.Label();
             this.bVSReset = new System.Windows.Forms.Button();
             this.lVSLastCmdStatus = new System.Windows.Forms.Label();
@@ -48,12 +48,17 @@
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.bVSSendQuery = new System.Windows.Forms.Button();
             this.tbVSQuery = new System.Windows.Forms.TextBox();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.tabVSConsole = new System.Windows.Forms.TabPage();
             this.tbVSStatusOut = new System.Windows.Forms.TextBox();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.tabExpLearning = new System.Windows.Forms.TabPage();
+            this.bVSClearHistorySelection = new System.Windows.Forms.Button();
+            this.tabVisualizer = new System.Windows.Forms.TabPage();
+            this.pbViz = new System.Windows.Forms.PictureBox();
             this.tabControl1.SuspendLayout();
-            this.tabPage1.SuspendLayout();
-            this.tabPage2.SuspendLayout();
+            this.tabVersionSpace.SuspendLayout();
+            this.tabVSConsole.SuspendLayout();
+            this.tabVisualizer.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbViz)).BeginInit();
             this.SuspendLayout();
             // 
             // tbVSRawQuery
@@ -91,34 +96,36 @@
             // 
             // tabControl1
             // 
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Controls.Add(this.tabPage3);
+            this.tabControl1.Controls.Add(this.tabVersionSpace);
+            this.tabControl1.Controls.Add(this.tabVSConsole);
+            this.tabControl1.Controls.Add(this.tabExpLearning);
+            this.tabControl1.Controls.Add(this.tabVisualizer);
             this.tabControl1.Location = new System.Drawing.Point(12, 12);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(697, 455);
             this.tabControl1.TabIndex = 3;
             // 
-            // tabPage1
+            // tabVersionSpace
             // 
-            this.tabPage1.Controls.Add(this.lHelp2);
-            this.tabPage1.Controls.Add(this.bVSReset);
-            this.tabPage1.Controls.Add(this.lVSLastCmdStatus);
-            this.tabPage1.Controls.Add(this.lvVSSpecSpace);
-            this.tabPage1.Controls.Add(this.lvVSGenSpace);
-            this.tabPage1.Controls.Add(this.lVSExpTerm);
-            this.tabPage1.Controls.Add(this.lHelp1);
-            this.tabPage1.Controls.Add(this.lvVSHistory);
-            this.tabPage1.Controls.Add(this.bVSSendQuery);
-            this.tabPage1.Controls.Add(this.tbVSQuery);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(689, 429);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Version Space Search";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            this.tabVersionSpace.Controls.Add(this.bVSClearHistorySelection);
+            this.tabVersionSpace.Controls.Add(this.lHelp2);
+            this.tabVersionSpace.Controls.Add(this.bVSReset);
+            this.tabVersionSpace.Controls.Add(this.lVSLastCmdStatus);
+            this.tabVersionSpace.Controls.Add(this.lvVSSpecSpace);
+            this.tabVersionSpace.Controls.Add(this.lvVSGenSpace);
+            this.tabVersionSpace.Controls.Add(this.lVSExpTerm);
+            this.tabVersionSpace.Controls.Add(this.lHelp1);
+            this.tabVersionSpace.Controls.Add(this.lvVSHistory);
+            this.tabVersionSpace.Controls.Add(this.bVSSendQuery);
+            this.tabVersionSpace.Controls.Add(this.tbVSQuery);
+            this.tabVersionSpace.Location = new System.Drawing.Point(4, 22);
+            this.tabVersionSpace.Name = "tabVersionSpace";
+            this.tabVersionSpace.Padding = new System.Windows.Forms.Padding(3);
+            this.tabVersionSpace.Size = new System.Drawing.Size(689, 429);
+            this.tabVersionSpace.TabIndex = 0;
+            this.tabVersionSpace.Text = "Version Space Search";
+            this.tabVersionSpace.UseVisualStyleBackColor = true;
             // 
             // lHelp2
             // 
@@ -215,7 +222,7 @@
             this.lvVSHistory.Location = new System.Drawing.Point(6, 6);
             this.lvVSHistory.MultiSelect = false;
             this.lvVSHistory.Name = "lvVSHistory";
-            this.lvVSHistory.Size = new System.Drawing.Size(248, 417);
+            this.lvVSHistory.Size = new System.Drawing.Size(248, 390);
             this.lvVSHistory.TabIndex = 2;
             this.lvVSHistory.UseCompatibleStateImageBehavior = false;
             this.lvVSHistory.View = System.Windows.Forms.View.Details;
@@ -244,19 +251,19 @@
             this.tbVSQuery.Size = new System.Drawing.Size(209, 26);
             this.tbVSQuery.TabIndex = 0;
             // 
-            // tabPage2
+            // tabVSConsole
             // 
-            this.tabPage2.Controls.Add(this.tbVSStatusOut);
-            this.tabPage2.Controls.Add(this.tbVSPrologOut);
-            this.tabPage2.Controls.Add(this.bSendVSRawQuery);
-            this.tabPage2.Controls.Add(this.tbVSRawQuery);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(689, 429);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "VS Console";
-            this.tabPage2.UseVisualStyleBackColor = true;
+            this.tabVSConsole.Controls.Add(this.tbVSStatusOut);
+            this.tabVSConsole.Controls.Add(this.tbVSPrologOut);
+            this.tabVSConsole.Controls.Add(this.bSendVSRawQuery);
+            this.tabVSConsole.Controls.Add(this.tbVSRawQuery);
+            this.tabVSConsole.Location = new System.Drawing.Point(4, 22);
+            this.tabVSConsole.Name = "tabVSConsole";
+            this.tabVSConsole.Padding = new System.Windows.Forms.Padding(3);
+            this.tabVSConsole.Size = new System.Drawing.Size(689, 429);
+            this.tabVSConsole.TabIndex = 1;
+            this.tabVSConsole.Text = "Konsola";
+            this.tabVSConsole.UseVisualStyleBackColor = true;
             // 
             // tbVSStatusOut
             // 
@@ -269,14 +276,43 @@
             this.tbVSStatusOut.TabIndex = 3;
             this.tbVSStatusOut.Text = "<status programu>";
             // 
-            // tabPage3
+            // tabExpLearning
             // 
-            this.tabPage3.Location = new System.Drawing.Point(4, 22);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(689, 429);
-            this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "Explanation-based Learning";
-            this.tabPage3.UseVisualStyleBackColor = true;
+            this.tabExpLearning.Location = new System.Drawing.Point(4, 22);
+            this.tabExpLearning.Name = "tabExpLearning";
+            this.tabExpLearning.Size = new System.Drawing.Size(689, 429);
+            this.tabExpLearning.TabIndex = 2;
+            this.tabExpLearning.Text = "Explanation-based Learning";
+            this.tabExpLearning.UseVisualStyleBackColor = true;
+            // 
+            // bVSClearHistorySelection
+            // 
+            this.bVSClearHistorySelection.Location = new System.Drawing.Point(7, 402);
+            this.bVSClearHistorySelection.Name = "bVSClearHistorySelection";
+            this.bVSClearHistorySelection.Size = new System.Drawing.Size(125, 20);
+            this.bVSClearHistorySelection.TabIndex = 12;
+            this.bVSClearHistorySelection.Text = "Wyczyść zaznaczenie";
+            this.bVSClearHistorySelection.UseVisualStyleBackColor = true;
+            this.bVSClearHistorySelection.Click += new System.EventHandler(this.bVSClearHistorySelection_Click);
+            // 
+            // tabVisualizer
+            // 
+            this.tabVisualizer.Controls.Add(this.pbViz);
+            this.tabVisualizer.Location = new System.Drawing.Point(4, 22);
+            this.tabVisualizer.Name = "tabVisualizer";
+            this.tabVisualizer.Size = new System.Drawing.Size(689, 429);
+            this.tabVisualizer.TabIndex = 3;
+            this.tabVisualizer.Text = "Wizualizacje";
+            this.tabVisualizer.UseVisualStyleBackColor = true;
+            // 
+            // pbViz
+            // 
+            this.pbViz.Location = new System.Drawing.Point(3, 3);
+            this.pbViz.Name = "pbViz";
+            this.pbViz.Size = new System.Drawing.Size(685, 425);
+            this.pbViz.TabIndex = 0;
+            this.pbViz.TabStop = false;
+            this.pbViz.Paint += new System.Windows.Forms.PaintEventHandler(this.pbViz_Paint);
             // 
             // SpaceForm
             // 
@@ -289,10 +325,12 @@
             this.Name = "SpaceForm";
             this.Text = "SpaceGuess";
             this.tabControl1.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
-            this.tabPage1.PerformLayout();
-            this.tabPage2.ResumeLayout(false);
-            this.tabPage2.PerformLayout();
+            this.tabVersionSpace.ResumeLayout(false);
+            this.tabVersionSpace.PerformLayout();
+            this.tabVSConsole.ResumeLayout(false);
+            this.tabVSConsole.PerformLayout();
+            this.tabVisualizer.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pbViz)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -303,8 +341,8 @@
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.TabPage tabVersionSpace;
+        private System.Windows.Forms.TabPage tabVSConsole;
         private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.Label lHelp1;
@@ -319,9 +357,12 @@
         public System.Windows.Forms.Label lVSLastCmdStatus;
         public System.Windows.Forms.Label lVSExpTerm;
         public System.Windows.Forms.TextBox tbVSStatusOut;
-        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.TabPage tabExpLearning;
         private System.Windows.Forms.Button bVSReset;
         private System.Windows.Forms.Label lHelp2;
+        private System.Windows.Forms.Button bVSClearHistorySelection;
+        private System.Windows.Forms.TabPage tabVisualizer;
+        private System.Windows.Forms.PictureBox pbViz;
     }
 }
 
