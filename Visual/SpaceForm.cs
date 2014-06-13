@@ -11,11 +11,11 @@ using Visual.Class;
 
 namespace Visual
 {
-    public partial class SpaceGuessForm : Form
+    public partial class SpaceForm : Form
     {
-        public static SpaceGuessForm self = null;
+        public static SpaceForm self = null;
 
-        public SpaceGuessForm()
+        public SpaceForm()
         {
             if (self == null)
                 self = this;

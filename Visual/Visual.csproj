@@ -45,18 +45,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class\AlgoExplanationLearning.cs" />
+    <Compile Include="Class\SpaceIO.cs" />
     <Compile Include="Class\VSAlgo.cs" />
     <Compile Include="Class\VSHistory.cs" />
-    <Compile Include="SpaceGuessForm.cs">
+    <Compile Include="SpaceForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SpaceGuessForm.Designer.cs">
-      <DependentUpon>SpaceGuessForm.cs</DependentUpon>
+    <Compile Include="SpaceForm.Designer.cs">
+      <DependentUpon>SpaceForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="SpaceGuessForm.resx">
-      <DependentUpon>SpaceGuessForm.cs</DependentUpon>
+    <EmbeddedResource Include="SpaceForm.resx">
+      <DependentUpon>SpaceForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

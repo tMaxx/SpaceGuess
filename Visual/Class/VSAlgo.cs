@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Text.RegularExpressions;
 using Prolog;
 
 namespace Visual.Class
@@ -11,40 +12,41 @@ namespace Visual.Class
     class VSAlgo
     {
         private static VSHistory hist = null;
+        private static Regex pnrx = new Regex(@"^[ ]*((positive)|(negative))\(.*$");
 
         public static void init()
         {
-            SpaceGuessForm.self.tbVSPrologOut.Text = "";
-            SpaceGuessForm.self.tbVSStatusOut.Text = "";
+            SpaceForm.self.tbVSPrologOut.Text = "";
+            SpaceForm.self.tbVSStatusOut.Text = "";
             logApp("App init");
         }
 
         public static void resetAll()
         {
             hist = new VSHistory();
-            SpaceGuessForm.self.lVSExpTerm.Text = "none";
-            SpaceGuessForm.self.lVSLastCmdStatus.Text = "none";
-            SpaceGuessForm.self.lvVSGenSpace.Items.Clear();
-            SpaceGuessForm.self.lvVSSpecSpace.Items.Clear();
-            SpaceGuessForm.self.lvVSHistory.Items.Clear();
-            SpaceGuessForm.self.tbVSQuery.Text = "";
+            SpaceForm.self.lVSExpTerm.Text = "none";
+            SpaceForm.self.lVSLastCmdStatus.Text = "none";
+            SpaceForm.self.lvVSGenSpace.Items.Clear();
+            SpaceForm.self.lvVSSpecSpace.Items.Clear();
+            SpaceForm.self.lvVSHistory.Items.Clear();
+            SpaceForm.self.tbVSQuery.Text = "";
             logProlog("---Engine reset---");
             logApp("---App reset---");
         }
 
         public static void logApp(string str)
         {
-            SpaceGuessForm.self.tbVSStatusOut.AppendText("[VS] " + str + Environment.NewLine);
+            SpaceForm.self.tbVSStatusOut.AppendText("[VS] " + str + Environment.NewLine);
         }
 
         public static void logProlog(string str, bool newline = true)
         {
-            SpaceGuessForm.self.tbVSPrologOut.AppendText("[VS] " + str + (newline ? Environment.NewLine : ""));
+            SpaceForm.self.tbVSPrologOut.AppendText("[VS] " + str + (newline ? Environment.NewLine : ""));
         }
 
         public static void logPrologCont(string str)
         {
-            SpaceGuessForm.self.tbVSPrologOut.AppendText(str + Environment.NewLine);
+            SpaceForm.self.tbVSPrologOut.AppendText(str + Environment.NewLine);
         }
 
         public static void processRawInput(string cmd)
@@ -82,6 +84,12 @@ namespace Visual.Class
 
         public static void processInput(string cmd)
         { //bind from VS main
+            if (!pnrx.IsMatch(cmd))
+            {
+                SpaceForm.self.lVSLastCmdStatus.Text = "przykład nie jest pozytywny ani negatywny";
+                return;
+            }
+            SpaceForm.self.lVSLastCmdStatus.Text = "pending...";
 
         }
 

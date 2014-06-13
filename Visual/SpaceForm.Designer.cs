@@ -1,6 +1,6 @@
 ﻿namespace Visual
 {
-    partial class SpaceGuessForm
+    partial class SpaceForm
     {
         /// <summary>
         /// Required designer variable.

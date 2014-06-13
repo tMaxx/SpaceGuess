@@ -514,7 +514,14 @@ namespace Prolog
     public BracketTable WrapTable { get { return wrapTable; } }
     public BracketTable AltListTable { get { return altListTable; } }
     public PredicateTable Ps { get { return predTable; } }
-    public string Query { get { return query; } set { query = value.Trim (); } }
+    public string Query { 
+        get { return query; } 
+        set { 
+            query = value.Trim ();
+            if (!query.EndsWith("."))
+                query += ".";
+        } 
+    }
 
 
     static PrologEngine ()
