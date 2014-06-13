@@ -18,19 +18,18 @@ namespace Visual.Class
         {
             SpaceForm.self.tbVSPrologOut.Text = "";
             SpaceForm.self.tbVSStatusOut.Text = "";
-            logApp("App init");
+            logApp("---App init---");
         }
 
         public static void resetAll()
         {
             hist = new VSHistory();
-            SpaceForm.self.lVSExpTerm.Text = "none";
-            SpaceForm.self.lVSLastCmdStatus.Text = "none";
+            SpaceForm.self.lVSExpTerm.Text = "brak";
+            SpaceForm.self.lVSLastCmdStatus.Text = "wpisz wyrażenie poniżej :)";
             SpaceForm.self.lvVSGenSpace.Items.Clear();
             SpaceForm.self.lvVSSpecSpace.Items.Clear();
             SpaceForm.self.lvVSHistory.Items.Clear();
             SpaceForm.self.tbVSQuery.Text = "";
-            logProlog("---Engine reset---");
             logApp("---App reset---");
         }
 
@@ -58,10 +57,9 @@ namespace Visual.Class
                 logProlog((hist.pe.Error ? "ERROR: " : "query: ") + cmd, false);
                 foreach (PrologEngine.ISolution s in hist.pe.SolutionIterator)
                 {
-                    cmd = "";
                     //foreach (PrologEngine.IVarValue v in s.VarValuesIterator)
-                    //    cmd += Environment.NewLine + v;
-                    logPrologCont(cmd + s + (s.IsLast ? "." : ";"));
+                    //    v.ToString();
+                    logPrologCont(s + (s.IsLast ? "." : ";"));
 
                     if (hist.pe.Error)
                     {
@@ -89,7 +87,8 @@ namespace Visual.Class
                 SpaceForm.self.lVSLastCmdStatus.Text = "przykład nie jest pozytywny ani negatywny";
                 return;
             }
-            SpaceForm.self.lVSLastCmdStatus.Text = "pending...";
+            SpaceForm.self.lVSLastCmdStatus.Text = "przetwarzanie...";
+            hist.pe.Query = cmd;
 
         }
 

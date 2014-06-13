@@ -109,7 +109,7 @@ process(Input, G, P, G, P,_) :-
 %END OF specify
 
 
-%generalization: main
+%repl for auto procesing
 candidate_elim([G],[S],_) :-
 	covers(G,S),covers(S,G),
 	write('target concept is: '), write(G),nl.

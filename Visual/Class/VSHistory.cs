@@ -44,7 +44,15 @@ namespace Visual.Class
         private void resetEngine()
         {
             this.pe = new PrologEngine(new SpaceIO());
-            this.pe.Consult(@"..\..\..\MLAiP_VersionSpace.pl");
+            try
+            { //launched in /bin/debug|release
+                this.pe.Consult(@"../../vs_source.pl");
+            }
+            catch (Exception)
+            { //standalone program
+                this.pe.Consult(@"./vs_source.pl");
+            }
+            VSAlgo.logProlog("---Engine reset---");
         }
 
         public void persist()
@@ -52,10 +60,10 @@ namespace Visual.Class
             this.pe.PersistCommandHistory();
         }
 
-        public SolutionSet rawQuery(string cmd)
-        {
-            return this.pe.GetAllSolutions(null, cmd);
-        }
+        //public SolutionSet rawQuery(string cmd)
+        //{
+        //    return this.pe.GetAllSolutions(null, cmd);
+        //}
 
         //execute next query with optional removal of items
         public VSHistoryItem nextQuery(string cmd, int atpos = -1)

@@ -124,7 +124,7 @@
             // 
             this.lHelp2.AutoSize = true;
             this.lHelp2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.lHelp2.Location = new System.Drawing.Point(292, 251);
+            this.lHelp2.Location = new System.Drawing.Point(274, 251);
             this.lHelp2.Name = "lHelp2";
             this.lHelp2.Size = new System.Drawing.Size(111, 13);
             this.lHelp2.TabIndex = 11;
@@ -143,7 +143,7 @@
             // lVSLastCmdStatus
             // 
             this.lVSLastCmdStatus.AutoSize = true;
-            this.lVSLastCmdStatus.Location = new System.Drawing.Point(409, 251);
+            this.lVSLastCmdStatus.Location = new System.Drawing.Point(391, 251);
             this.lVSLastCmdStatus.Name = "lVSLastCmdStatus";
             this.lVSLastCmdStatus.Size = new System.Drawing.Size(101, 13);
             this.lVSLastCmdStatus.TabIndex = 9;
@@ -155,18 +155,18 @@
             this.columnHeader3});
             this.lvVSSpecSpace.FullRowSelect = true;
             this.lvVSSpecSpace.GridLines = true;
-            this.lvVSSpecSpace.Location = new System.Drawing.Point(491, 6);
+            this.lvVSSpecSpace.Location = new System.Drawing.Point(483, 6);
             this.lvVSSpecSpace.MultiSelect = false;
             this.lvVSSpecSpace.Name = "lvVSSpecSpace";
-            this.lvVSSpecSpace.Size = new System.Drawing.Size(192, 191);
+            this.lvVSSpecSpace.Size = new System.Drawing.Size(200, 200);
             this.lvVSSpecSpace.TabIndex = 8;
             this.lvVSSpecSpace.UseCompatibleStateImageBehavior = false;
             this.lvVSSpecSpace.View = System.Windows.Forms.View.Details;
             // 
             // columnHeader3
             // 
-            this.columnHeader3.Text = "Specific space";
-            this.columnHeader3.Width = 174;
+            this.columnHeader3.Text = "Przestrzeń szczegółowa";
+            this.columnHeader3.Width = 191;
             // 
             // lvVSGenSpace
             // 
@@ -174,23 +174,23 @@
             this.columnHeader2});
             this.lvVSGenSpace.FullRowSelect = true;
             this.lvVSGenSpace.GridLines = true;
-            this.lvVSGenSpace.Location = new System.Drawing.Point(292, 6);
+            this.lvVSGenSpace.Location = new System.Drawing.Point(277, 6);
             this.lvVSGenSpace.MultiSelect = false;
             this.lvVSGenSpace.Name = "lvVSGenSpace";
-            this.lvVSGenSpace.Size = new System.Drawing.Size(193, 191);
+            this.lvVSGenSpace.Size = new System.Drawing.Size(200, 200);
             this.lvVSGenSpace.TabIndex = 7;
             this.lvVSGenSpace.UseCompatibleStateImageBehavior = false;
             this.lvVSGenSpace.View = System.Windows.Forms.View.Details;
             // 
             // columnHeader2
             // 
-            this.columnHeader2.Text = "General space";
-            this.columnHeader2.Width = 169;
+            this.columnHeader2.Text = "Przestrzeń ogólna";
+            this.columnHeader2.Width = 188;
             // 
             // lVSExpTerm
             // 
             this.lVSExpTerm.AutoSize = true;
-            this.lVSExpTerm.Location = new System.Drawing.Point(368, 204);
+            this.lVSExpTerm.Location = new System.Drawing.Point(418, 209);
             this.lVSExpTerm.Name = "lVSExpTerm";
             this.lVSExpTerm.Size = new System.Drawing.Size(219, 13);
             this.lVSExpTerm.TabIndex = 6;
@@ -200,11 +200,11 @@
             // 
             this.lHelp1.AutoSize = true;
             this.lHelp1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.lHelp1.Location = new System.Drawing.Point(289, 204);
+            this.lHelp1.Location = new System.Drawing.Point(274, 209);
             this.lHelp1.Name = "lHelp1";
-            this.lHelp1.Size = new System.Drawing.Size(73, 13);
+            this.lHelp1.Size = new System.Drawing.Size(138, 13);
             this.lHelp1.TabIndex = 5;
-            this.lHelp1.Text = "Probably is:";
+            this.lHelp1.Text = "Przewidywany element:";
             // 
             // lvVSHistory
             // 
@@ -223,12 +223,12 @@
             // 
             // columnHeader1
             // 
-            this.columnHeader1.Text = "Examples history";
+            this.columnHeader1.Text = "Historia przykładów";
             this.columnHeader1.Width = 219;
             // 
             // bVSSendQuery
             // 
-            this.bVSSendQuery.Location = new System.Drawing.Point(412, 299);
+            this.bVSSendQuery.Location = new System.Drawing.Point(394, 299);
             this.bVSSendQuery.Name = "bVSSendQuery";
             this.bVSSendQuery.Size = new System.Drawing.Size(209, 34);
             this.bVSSendQuery.TabIndex = 1;
@@ -239,7 +239,7 @@
             // tbVSQuery
             // 
             this.tbVSQuery.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.tbVSQuery.Location = new System.Drawing.Point(412, 267);
+            this.tbVSQuery.Location = new System.Drawing.Point(394, 267);
             this.tbVSQuery.Name = "tbVSQuery";
             this.tbVSQuery.Size = new System.Drawing.Size(209, 26);
             this.tbVSQuery.TabIndex = 0;
@@ -278,7 +278,7 @@
             this.tabPage3.Text = "Explanation-based Learning";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
-            // SpaceGuessForm
+            // SpaceForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -286,7 +286,7 @@
             this.Controls.Add(this.tabControl1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
-            this.Name = "SpaceGuessForm";
+            this.Name = "SpaceForm";
             this.Text = "SpaceGuess";
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);

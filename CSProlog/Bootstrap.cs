@@ -549,7 +549,7 @@ namespace Prolog
 
 % Ivan Bratko, ""PROLOG Programming for Artificial Intelligence"", example at 3rd edition 2001, ch.21.1 p.560
 
-       sentence( Number) --> (noun_phrase(Number), verb_phrase(Number)).
+       /*sentence( Number) --> (noun_phrase(Number), verb_phrase(Number)).
        verb_phrase( Number) --> verb(Number), noun_phrase(Number).
        noun_phrase( Number) --> determiner(Number), noun(Number).
        determiner( singular) --> [a].
@@ -563,14 +563,14 @@ namespace Prolog
        verb( singular) --> [hates].
        verb( plural) --> [scare].
        verb( plural) --> [hate].
-       verb( plural) --> [hate];[love].
+       verb( plural) --> [hate];[love].*/
 
 % TALK (Fernando Pereira, Stuart Shieber), ""Prolog and Natural Language Analysis"", pp. 149+
 
        % A PDF-version of this book (obtained from Internet after googling
        % ""Fernando Pereira TALK-program"") can be found in the TALK directory.
 
-       talk :- ['TALK\\talk'].
+       %talk :- ['TALK\\talk'].
 
        % Start the program by entering 'go.', end by entering an empty line.
        %
@@ -588,7 +588,7 @@ namespace Prolog
        % The CHAT-software is copyrighted !!!  (although I do not think Fernando
        % Pereira still cares -- unfortunately he never responded to mails)
 
-       chat :- consult([
+       /*chat :- consult([
         'chat-80\\xgrun',     % XG (eXtended Grammar)
         'chat-80\\newg',      % clone + lex
         'chat-80\\clotab',    % attachment tables
@@ -610,7 +610,7 @@ namespace Prolog
         'chat-80\\borders',   % ...
         'chat-80\\ndtabl',    % relation info
         'chat-80\\newtop']).  % top level
-
+*/
        % also required for CHAT:
 
        keysort(L, S) :- sort(L, S).

@@ -11,6 +11,7 @@ namespace Visual.Class
         public override string ReadLine()
         {
             throw new NotImplementedException();
+            
         }
 
         public override int ReadChar()

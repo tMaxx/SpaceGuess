@@ -48,10 +48,9 @@ namespace Visual
 
         private void lvVSHistory_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ListView.SelectedIndexCollection indexes = this.lvVSHistory.SelectedIndices;
-
-            foreach (int i in indexes)
+            foreach (int i in this.lvVSHistory.SelectedIndices)
             {
+                //only first, please
                 VSAlgo.selectIndexHistory(i);
                 break;
             }
