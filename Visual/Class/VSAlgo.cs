@@ -12,6 +12,12 @@ namespace Visual.Class
 	class VSAlgo
 	{
 		private static VSHistory hist = null;
+		private static bool errorOccured = false;
+		public static bool Error
+		{
+			get { return errorOccured; }
+			set { errorOccured = false; }
+		}
 		private static Regex posnegRx = new Regex(@"^[ ]*((positive)|(negative))\(.*$");
 		private static Regex negRx = new Regex(@"^[ ]*(negative)\(.*$");
 
@@ -19,6 +25,8 @@ namespace Visual.Class
 		{
 			SpaceForm.self.tbVSPrologOut.Text = "";
 			SpaceForm.self.tbVSStatusOut.Text = "";
+			SpaceForm.self.tbVSConceptSpace.Text = "[[small, medium, large]," + Environment.NewLine
+				+ "[red, blue, green]," + Environment.NewLine + "[ball, brick, cube]]";
 			logApp("---App init---");
 		}
 
@@ -49,12 +57,28 @@ namespace Visual.Class
 			SpaceForm.self.tbVSPrologOut.AppendText(str + Environment.NewLine);
 		}
 
+		public static void setUserStatus(string str)
+		{
+			SpaceForm.self.lVSLastCmdStatus.Text = str;
+		}
+
+		public static void reportError(string usererr, string prolog = null, string app = null)
+		{
+			errorOccured = true;
+			if (prolog != null)
+				logProlog("ERROR: " + prolog);
+			if (app != null)
+				logApp("ERROR: " + app);
+			if (usererr != null)
+				setUserStatus("błąd: " + usererr);
+		}
+
 		public static void processRawInput(string cmd)
 		{ //bind from VS debug page, pass-through
 			try
 			{
 				hist.pe.Query = cmd;
-				//bool first = true;
+
 				logProlog((hist.pe.Error ? "ERROR: " : "query: ") + cmd, false);
 				foreach (PrologEngine.ISolution s in hist.pe.SolutionIterator)
 				{
@@ -65,7 +89,7 @@ namespace Visual.Class
 					if (hist.pe.Error)
 					{
 						logApp("Error occured, check console");
-						hist.pe.Error = false;
+						hist.pe.clearError();
 					}
 
 					if (s.IsLast) break;
@@ -83,23 +107,23 @@ namespace Visual.Class
 
 		public static void processInput(string cmd)
 		{ //bind from VS main
+			cmd = cmd.Trim();
 			if (!posnegRx.IsMatch(cmd))
 			{
-				SpaceForm.self.lVSLastCmdStatus.Text = "przykład nie jest pozytywny ani negatywny";
+				reportError("przykład nie jest pozytywny ani negatywny");
 				return;
 			}
-			SpaceForm.self.lVSLastCmdStatus.Text = "przetwarzanie...";
+			setUserStatus("przetwarzanie...");
+
 			VSHistoryItem vhi;
 
 			vhi = hist.nextQuery(cmd);
 
-
-
-			if (negRx.IsMatch(cmd))
+			if (!errorOccured)
 			{
-
+				setUserStatus("dodano przykład");
+				hist.buildLists(-1);
 			}
-			hist.buildLists(-1);
 		}
 
 		public static void selectIndexHistory(int i)

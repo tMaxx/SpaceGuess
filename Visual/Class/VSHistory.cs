@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Prolog;
 using System.Windows.Forms;
+using System.Text.RegularExpressions;
 
 namespace Visual.Class
 {
@@ -31,15 +29,8 @@ namespace Visual.Class
 	{
 		public PrologEngine pe;
 
-		protected VSHistoryItem nminus1;
-		protected List<VSHistoryItem> items;
-		
-		protected bool lasterr = false;
-		public bool lastError { get {
-			bool e = this.lasterr;
-			this.lasterr = false;
-			return e; 
-		} }
+		protected readonly VSHistoryItem nminus1;
+		public List<VSHistoryItem> items;
 
 		public string types;
 
@@ -52,12 +43,7 @@ namespace Visual.Class
 			this.nminus1 = new VSHistoryItem("true");
 			this.nminus1.gen = "[_,_,_]";
 			this.nminus1.spec = "[]";
-			this.types = "[[small, medium, large],[red, blue, green],[ball, brick, cube]]";
-		}
-
-		public VSHistory(string conceptSpace) : this()
-		{
-			this.types = conceptSpace;
+			this.types = Regex.Replace(SpaceForm.self.tbVSConceptSpace.Text, @"\s+", "");
 		}
 
 		private void resetEngine()
@@ -78,7 +64,7 @@ namespace Visual.Class
 		{
 			this.pe.PersistCommandHistory();
 		}
-		
+
 		protected string buildQuery(string cmd, int atpos = -1)
 		{
 			VSHistoryItem prev;
@@ -91,8 +77,10 @@ namespace Visual.Class
 					atpos = this.items.Count - 1;
 				prev = this.items[atpos];
 			}
-			
-			return "process("+cmd+", " + prev.gen + ", " + prev.spec + ", UpdatedG, UpdatedS, " + this.types + ").";
+			if (cmd.EndsWith("."))
+				cmd.TrimEnd('.');
+
+			return "process(" + cmd + ", " + prev.gen + ", " + prev.spec + ", UpdatedG, UpdatedS, " + this.types + ").";
 		}
 		
 		//execute next query with optional removal of items
@@ -103,7 +91,6 @@ namespace Visual.Class
 			if (atpos >= 0)
 			{
 				this.items.RemoveRange(atpos, (this.items.Count - atpos));
-				//catch (ArgumentException) { /*noop*/ }
 
 				this.resetEngine();
 				//rebuild history
@@ -114,33 +101,47 @@ namespace Visual.Class
 					foreach (PrologEngine.ISolution s in this.pe.SolutionIterator)
 						if (this.pe.Error)
 						{
-							VSAlgo.logApp("History rewind error: " + s);
-							this.pe.Error = false;
-							this.lasterr = true;
+							VSAlgo.reportError("niepowodzenie w odtwarzaniu historii; sprawdź konsolę",
+								"History rewind error on item " + i + ": " + s,
+								"History rewind error on item " + i);
+							this.pe.clearError();
 						}
 					this.persist();
 				}
 			}
-			this.pe.Query = cmd;
+
+			this.pe.Query = this.buildQuery(cmd, atpos);
+			bool first = true;
 			foreach (PrologEngine.ISolution s in this.pe.SolutionIterator)
 				if (this.pe.Error)
 				{
-					VSAlgo.logApp("History rewind error: " + s);
-					this.pe.Error = false;
-					this.lasterr = true;
+					VSAlgo.reportError("Błąd przy zatwierdzaniu; sprawdź konsolę",
+						"History commit error: " + s,
+						"History commit error");
+					this.pe.clearError();
 				}
-				else
+				else if (first)
 				{
-					//todo: get updated G&S
 					foreach (PrologEngine.IVarValue vv in s.VarValuesIterator)
 					{
-
+						if (vv.Name == "UpdatedG")
+							hi.gen = vv.Value.ToString();
+						else if (vv.Name == "UpdatedS")
+							hi.spec = vv.Value.ToString();
 					}
-					break; //end after first result
+					//don't crawl through other results
+					first = false;
 				}
 			this.persist();
 
-			this.items.Add(hi);
+			//add colors
+			if (Regex.IsMatch(cmd, @"^[ ]*(negative)\(.*$"))
+				hi.lviCmd.ForeColor = System.Drawing.Color.DarkRed;
+			else
+				hi.lviCmd.ForeColor = System.Drawing.Color.DarkGreen;
+
+			if (!VSAlgo.Error)
+				this.items.Add(hi);
 			return hi;
 		}
 

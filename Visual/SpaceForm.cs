@@ -49,12 +49,13 @@ namespace Visual
 
 		private void lvVSHistory_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			foreach (int i in this.lvVSHistory.SelectedIndices)
-			{
-				//only first, please
-				VSAlgo.selectIndexHistory(i);
-				break;
-			}
+			if (this.lvVSHistory.SelectedIndices.Count > 0)
+				foreach (int i in this.lvVSHistory.SelectedIndices)
+				{
+					//only first, please
+					VSAlgo.selectIndexHistory(i);
+					break;
+				}
 		}
 
 		private void tbVSRawQuery_KeyPress(object sender, KeyPressEventArgs e)
@@ -74,6 +75,15 @@ namespace Visual
 			pen.StartCap = LineCap.ArrowAnchor;
 			pen.EndCap = LineCap.RoundAnchor;
 			e.Graphics.DrawLine(pen, 20, 175, 300, 175);
+		}
+
+		private void bVSRelockSpace_Click(object sender, EventArgs e)
+		{
+			this.tbVSConceptSpace.Enabled = !this.tbVSConceptSpace.Enabled;
+			if (this.tbVSConceptSpace.Enabled == false)
+				MessageBox.Show("Po zmianie definicji przestrzeni konceptualnej "
+					+ "wymagany jest reset algorytmu za pomocą przycisku w prawej dolnej części okna",
+					"Wymagany reset algorytmu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 		}
 
 	}

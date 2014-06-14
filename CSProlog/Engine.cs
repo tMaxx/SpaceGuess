@@ -509,7 +509,13 @@ namespace Prolog
     static int UnifyDelta (int refUnifyCount) { return unifyCount - refUnifyCount; }
     #endregion
 
-    public bool Error { get { return error; } set { error = false; } }
+    public bool Error { get { return error; }}
+
+	public void clearError()
+	{
+		this.error = false;
+	}
+
     public OperatorTable OpTable { get { return opTable; } }
     public BracketTable WrapTable { get { return wrapTable; } }
     public BracketTable AltListTable { get { return altListTable; } }
