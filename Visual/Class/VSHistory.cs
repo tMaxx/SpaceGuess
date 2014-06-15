@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Prolog;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace Visual.Class
 {
@@ -31,13 +32,18 @@ namespace Visual.Class
 
 	class VSHistory
 	{
+		//instancja engine'a
 		public PrologEngine pe;
 
+		//element inicjujacy
 		protected readonly VSHistoryItem nminus1;
+		//kolekcja wszytskich elementów używanych do wyświetlania
 		public List<VSHistoryItem> items;
 
-		public string types;
+		//typy - słownik dopuszczalnych elementów w definicji instancji
+		public readonly string types;
 
+		//regex do wywalania spacji
 		public static Regex wspaceRx = new Regex(@"\s+");
 
 		//constructor
@@ -48,9 +54,12 @@ namespace Visual.Class
 
 			string cmd = "true";
 			this.nminus1 = new VSHistoryItem(ref cmd);
-			this.nminus1.gen = "[[_,_,_]]";
-			this.nminus1.spec = "[]";
+
 			this.types = wspaceRx.Replace(SpaceForm.self.tbVSConceptSpace.Text, "");
+			cmd = String.Concat(Enumerable.Repeat("_,", countOccurences("],[", this.types)));
+
+			this.nminus1.gen = "[[" + cmd + "_]]";
+			this.nminus1.spec = "[]";
 		}
 
 		private void resetEngine()
@@ -217,7 +226,7 @@ namespace Visual.Class
 			//build from last
 			VSAlgo.selectHistoryItem(atpos);
 
-			this.buildSpaceLists(atpos);
+			//this.buildSpaceLists(atpos);
 			buildLocked = false;
 		}
 
@@ -237,6 +246,8 @@ namespace Visual.Class
 				SpaceForm.self.lvVSSpecSpace.Items.Add(itm);
 		}
 
+		///////////////////////////////////////////////////////////////Additional functions
+
 		//src:http://stackoverflow.com/a/713355
 		static bool ArraysEqual<T>(T[] a1, T[] a2)
 		{
@@ -255,6 +266,12 @@ namespace Visual.Class
 				if (!comparer.Equals(a1[i], a2[i])) return false;
 			}
 			return true;
+		}
+
+		//src: http://stackoverflow.com/a/542001
+		static int countOccurences(string needle, string haystack)
+		{
+			return (haystack.Length - haystack.Replace(needle, "").Length) / needle.Length;
 		}
 	}
 }
