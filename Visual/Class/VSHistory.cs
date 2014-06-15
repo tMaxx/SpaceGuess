@@ -198,9 +198,13 @@ namespace Visual.Class
 				bs = this.setLists(hi.spec, ref hi.listSpec);
 				bg = this.setLists(hi.gen, ref hi.listGen);
 
+				VSAlgo.setProposed(null);
 				//add colors
 				if (ArraysEqual<string>(bs, bg))
+				{
 					hi.lviCmd.ForeColor = System.Drawing.Color.Yellow;
+					VSAlgo.setProposed(hi.lviCmd.Text);
+				}
 				if (Regex.IsMatch(cmd, @"^[ ]*(negative)\(.*$"))
 					hi.lviCmd.ForeColor = System.Drawing.Color.DarkRed;
 				else

@@ -32,13 +32,20 @@ namespace Visual.Class
 		public static void resetAll()
 		{
 			hist = new VSHistory();
-			SpaceForm.self.lVSExpTerm.Text = "brak";
+			setProposed(null);
 			SpaceForm.self.lVSLastCmdStatus.Text = "wpisz wyrażenie poniżej";
 			SpaceForm.self.lvVSGenSpace.Items.Clear();
 			SpaceForm.self.lvVSSpecSpace.Items.Clear();
 			SpaceForm.self.lvVSHistory.Items.Clear();
 			SpaceForm.self.tbVSQuery.Text = "positive([small,red,ball])";
 			logApp("---App reset---");
+		}
+
+		public static void setProposed(string str)
+		{
+			if (str == null)
+				str = "brak";
+			SpaceForm.self.lVSExpTerm.Text = str;
 		}
 
 		public static void logApp(string str)
