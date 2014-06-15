@@ -50,15 +50,6 @@ namespace Visual
 		private int selected = -1;
 		private void lvVSHistory_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			//if (this.lvVSHistory.SelectedIndices.Count <= 0)
-			//{
-			//	if (this.lvVSHistory.Items.Count > 0
-			//		&& !this.lvVSHistory.Items[this.lvVSHistory.Items.Count - 1].Selected)
-			//	{
-			//		this.lvVSHistory.SelectedItems.Clear();
-			//		this.lvVSHistory.Items[this.lvVSHistory.Items.Count - 1].Selected = true;
-			//	}
-			//}
 			if (this.lvVSHistory.Items.Count == 0)
 				return;
 
@@ -88,6 +79,7 @@ namespace Visual
 
 		private void pbViz_Paint(object sender, PaintEventArgs e)
 		{
+			//temporary
 			Pen pen = new Pen(Color.FromArgb(255, 0, 0, 255), 8);
 			pen.StartCap = LineCap.ArrowAnchor;
 			pen.EndCap = LineCap.RoundAnchor;
