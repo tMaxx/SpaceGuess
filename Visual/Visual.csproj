@@ -44,7 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class\AlgoExplanationLearning.cs" />
+    <Compile Include="Class\ELAlgo.cs" />
     <Compile Include="Class\SpaceIO.cs" />
     <Compile Include="Class\VSAlgo.cs" />
     <Compile Include="Class\VSHistory.cs" />
@@ -78,7 +78,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="vs_source.pl" />
+    <None Include="source.pl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

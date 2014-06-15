@@ -26,7 +26,7 @@ namespace Visual.Class
 			SpaceForm.self.tbVSStatusOut.Text = "";
 			SpaceForm.self.tbVSConceptSpace.Text = "[[small, medium, large]," + Environment.NewLine
 				+ "[red, blue, green]," + Environment.NewLine + "[ball, brick, cube]]";
-			logApp("---App init---");
+			logApp("---Init---");
 		}
 
 		public static void resetAll()
@@ -38,7 +38,7 @@ namespace Visual.Class
 			SpaceForm.self.lvVSSpecSpace.Items.Clear();
 			SpaceForm.self.lvVSHistory.Items.Clear();
 			SpaceForm.self.tbVSQuery.Text = "positive([small,red,ball])";
-			logApp("---App reset---");
+			logApp("---Reset---");
 		}
 
 		public static void setProposed(string str)

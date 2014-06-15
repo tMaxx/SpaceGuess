@@ -65,27 +65,7 @@ namespace Visual.Class
 		private void resetEngine()
 		{
 			this.pe = new PrologEngine(new SpaceIO());
-			try
-			{ //launched in /bin/debug|release
-				this.pe.Consult(@"../../source.pl");
-			}
-			catch
-			{ //standalone program
-				try
-				{
-					this.pe.Consult(@"./source.pl");
-				}
-				catch
-				{
-					MessageBox.Show("Nie znaleziono pliku z kodem źródłowym algorytmów."
-						+ Environment.NewLine + Environment.NewLine
-						+ "Należy go umieścić w katalogu razem z plikiem wykonywalnym aplikacji, w pliku o nazwie 'source.pl'."
-						+ Environment.NewLine
-						+ "Bez powyższego pliku aplikacja nie może kontynuować działania.", "Nie znaleziono pliku źródłowego",
-						MessageBoxButtons.OK, MessageBoxIcon.Error);
-					Environment.Exit(1);
-				}
-			}
+			SpaceIO.loadSource(ref pe);
 			VSAlgo.logProlog("---Engine reset---");
 		}
 

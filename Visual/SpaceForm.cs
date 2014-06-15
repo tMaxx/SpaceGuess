@@ -29,7 +29,8 @@ namespace Visual
 			//init algos
 			VSAlgo.init();
 			VSAlgo.resetAll();
-			//AlgoExplanationLearning.init();
+			ELAlgo.init();
+			ELAlgo.resetAll();
 		}
 
 		private void bSendVSRawQuery_Click(object sender, EventArgs e)
@@ -99,6 +100,26 @@ namespace Visual
 		{
 			if (e.KeyChar == Convert.ToChar(Keys.Return))
 				this.bVSSendQuery_Click(null, null);
+		}
+
+		private void bELResetAll_Click(object sender, EventArgs e)
+		{
+			ELAlgo.resetAll();
+		}
+
+		private void bELExtractRule_Click(object sender, EventArgs e)
+		{
+			ELAlgo.execQuery(SpaceForm.self.tbELRuleInput.Text);
+		}
+
+		private void bELSaveDomTheory_Click(object sender, EventArgs e)
+		{
+			this.tbELDomainTheory.Enabled = !this.tbELDomainTheory.Enabled;
+			//if (this.tbELDomainTheory.Enabled == false)
+				//MessageBox.Show("Po zmianie definicji przestrzeni konceptualnej "
+					//+ "wymagany jest reset algorytmu za pomocą przycisku w prawej dolnej części okna",
+					//"Wymagany reset algorytmu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
 		}
 
 	}
