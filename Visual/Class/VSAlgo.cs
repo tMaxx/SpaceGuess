@@ -19,7 +19,6 @@ namespace Visual.Class
 			set { errorOccured = false; }
 		}
 		private static Regex posnegRx = new Regex(@"^[ ]*((positive)|(negative))\(.*$");
-		private static Regex negRx = new Regex(@"^[ ]*(negative)\(.*$");
 
 		public static void init()
 		{
@@ -34,11 +33,11 @@ namespace Visual.Class
 		{
 			hist = new VSHistory();
 			SpaceForm.self.lVSExpTerm.Text = "brak";
-			SpaceForm.self.lVSLastCmdStatus.Text = "wpisz wyrażenie poniżej :)";
+			SpaceForm.self.lVSLastCmdStatus.Text = "wpisz wyrażenie poniżej";
 			SpaceForm.self.lvVSGenSpace.Items.Clear();
 			SpaceForm.self.lvVSSpecSpace.Items.Clear();
 			SpaceForm.self.lvVSHistory.Items.Clear();
-			SpaceForm.self.tbVSQuery.Text = "";
+			SpaceForm.self.tbVSQuery.Text = "positive([small,red,ball])";
 			logApp("---App reset---");
 		}
 
@@ -62,15 +61,24 @@ namespace Visual.Class
 			SpaceForm.self.lVSLastCmdStatus.Text = str;
 		}
 
+		public static void log(string usererr, string prolog = null, string app = null)
+		{
+			if (prolog != null)
+				logProlog(prolog);
+			if (app != null)
+				logApp(app);
+			if (usererr != null)
+				setUserStatus(usererr);
+		}
+
 		public static void reportError(string usererr, string prolog = null, string app = null)
 		{
 			errorOccured = true;
-			if (prolog != null)
-				logProlog("ERROR: " + prolog);
-			if (app != null)
-				logApp("ERROR: " + app);
-			if (usererr != null)
-				setUserStatus("błąd: " + usererr);
+			log(
+				usererr == null ? null : "błąd: " + usererr,
+				prolog == null ? null : "ERROR: " + prolog,
+				app == null ? null : "ERROR: " + app
+			);
 		}
 
 		public static void processRawInput(string cmd)
@@ -82,8 +90,6 @@ namespace Visual.Class
 				logProlog((hist.pe.Error ? "ERROR: " : "query: ") + cmd, false);
 				foreach (PrologEngine.ISolution s in hist.pe.SolutionIterator)
 				{
-					//foreach (PrologEngine.IVarValue v in s.VarValuesIterator)
-					//	v.ToString();
 					logPrologCont(s + (s.IsLast ? "." : ";"));
 
 					if (hist.pe.Error)
@@ -113,11 +119,10 @@ namespace Visual.Class
 				reportError("przykład nie jest pozytywny ani negatywny");
 				return;
 			}
+			errorOccured = false;
 			setUserStatus("przetwarzanie...");
 
-			VSHistoryItem vhi;
-
-			vhi = hist.nextQuery(cmd);
+			hist.nextQuery(cmd);
 
 			if (!errorOccured)
 			{
@@ -126,9 +131,27 @@ namespace Visual.Class
 			}
 		}
 
+		public static void selectHistoryItem(int i = -1)
+		{
+			if (i < 0)
+			{
+				i = SpaceForm.self.lvVSHistory.Items.Count;
+				if (i == 0)
+					return;
+				i--;
+			}
+			SpaceForm.self.lvVSHistory.SelectedItems.Clear();
+			SpaceForm.self.lvVSHistory.Items[i].Selected = true;
+		}
+
 		public static void selectIndexHistory(int i)
 		{
 			hist.buildLists(i);
+		}
+
+		public static void selectSpaceLists(int i)
+		{
+			hist.buildSpaceLists(i);
 		}
 	}
 }

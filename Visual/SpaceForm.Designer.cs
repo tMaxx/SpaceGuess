@@ -168,8 +168,10 @@
 			// 
 			this.lvVSSpecSpace.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.colSpecific});
+			this.lvVSSpecSpace.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
 			this.lvVSSpecSpace.FullRowSelect = true;
 			this.lvVSSpecSpace.GridLines = true;
+			this.lvVSSpecSpace.HideSelection = false;
 			this.lvVSSpecSpace.Location = new System.Drawing.Point(483, 6);
 			this.lvVSSpecSpace.MultiSelect = false;
 			this.lvVSSpecSpace.Name = "lvVSSpecSpace";
@@ -187,8 +189,10 @@
 			// 
 			this.lvVSGenSpace.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.colGeneral});
+			this.lvVSGenSpace.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
 			this.lvVSGenSpace.FullRowSelect = true;
 			this.lvVSGenSpace.GridLines = true;
+			this.lvVSGenSpace.HideSelection = false;
 			this.lvVSGenSpace.Location = new System.Drawing.Point(277, 6);
 			this.lvVSGenSpace.MultiSelect = false;
 			this.lvVSGenSpace.Name = "lvVSGenSpace";
@@ -225,8 +229,10 @@
 			// 
 			this.lvVSHistory.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.colHistory});
+			this.lvVSHistory.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
 			this.lvVSHistory.FullRowSelect = true;
 			this.lvVSHistory.GridLines = true;
+			this.lvVSHistory.HideSelection = false;
 			this.lvVSHistory.Location = new System.Drawing.Point(6, 152);
 			this.lvVSHistory.MultiSelect = false;
 			this.lvVSHistory.Name = "lvVSHistory";
@@ -258,6 +264,7 @@
 			this.tbVSQuery.Name = "tbVSQuery";
 			this.tbVSQuery.Size = new System.Drawing.Size(209, 26);
 			this.tbVSQuery.TabIndex = 0;
+			this.tbVSQuery.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tbVSQuery_KeyPress);
 			// 
 			// tabVSConsole
 			// 

@@ -47,15 +47,32 @@ namespace Visual
 			VSAlgo.resetAll();
 		}
 
+		private int selected = -1;
 		private void lvVSHistory_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (this.lvVSHistory.SelectedIndices.Count > 0)
-				foreach (int i in this.lvVSHistory.SelectedIndices)
-				{
-					//only first, please
-					VSAlgo.selectIndexHistory(i);
-					break;
-				}
+			//if (this.lvVSHistory.SelectedIndices.Count <= 0)
+			//{
+			//	if (this.lvVSHistory.Items.Count > 0
+			//		&& !this.lvVSHistory.Items[this.lvVSHistory.Items.Count - 1].Selected)
+			//	{
+			//		this.lvVSHistory.SelectedItems.Clear();
+			//		this.lvVSHistory.Items[this.lvVSHistory.Items.Count - 1].Selected = true;
+			//	}
+			//}
+			if (this.lvVSHistory.Items.Count == 0)
+				return;
+
+			foreach (int i in this.lvVSHistory.SelectedIndices)
+			{
+				selected = i;
+				//only first, please
+				break;
+			}
+
+			if (this.lvVSHistory.SelectedItems.Count == 0)
+				selected = this.lvVSHistory.Items.Count - 1;
+
+			VSAlgo.selectSpaceLists(selected);
 		}
 
 		private void tbVSRawQuery_KeyPress(object sender, KeyPressEventArgs e)
@@ -84,6 +101,12 @@ namespace Visual
 				MessageBox.Show("Po zmianie definicji przestrzeni konceptualnej "
 					+ "wymagany jest reset algorytmu za pomocą przycisku w prawej dolnej części okna",
 					"Wymagany reset algorytmu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+		}
+
+		private void tbVSQuery_KeyPress(object sender, KeyPressEventArgs e)
+		{
+			if (e.KeyChar == Convert.ToChar(Keys.Return))
+				this.bVSSendQuery_Click(null, null);
 		}
 
 	}
