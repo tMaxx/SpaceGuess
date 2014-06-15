@@ -36,7 +36,7 @@ namespace Visual.Class
 		public PrologEngine pe;
 
 		//element inicjujacy
-		protected readonly VSHistoryItem nminus1;
+		protected readonly VSHistoryItem initial;
 		//kolekcja wszytskich elementów używanych do wyświetlania
 		public List<VSHistoryItem> items;
 
@@ -53,13 +53,13 @@ namespace Visual.Class
 			this.resetEngine();
 
 			string cmd = "true";
-			this.nminus1 = new VSHistoryItem(ref cmd);
+			this.initial = new VSHistoryItem(ref cmd);
 
 			this.types = wspaceRx.Replace(SpaceForm.self.tbVSConceptSpace.Text, "");
 			cmd = String.Concat(Enumerable.Repeat("_,", countOccurences("],[", this.types)));
 
-			this.nminus1.gen = "[[" + cmd + "_]]";
-			this.nminus1.spec = "[]";
+			this.initial.gen = "[[" + cmd + "_]]";
+			this.initial.spec = "[]";
 		}
 
 		private void resetEngine()
@@ -67,19 +67,19 @@ namespace Visual.Class
 			this.pe = new PrologEngine(new SpaceIO());
 			try
 			{ //launched in /bin/debug|release
-				this.pe.Consult(@"../../vs_source.pl");
+				this.pe.Consult(@"../../source.pl");
 			}
 			catch
 			{ //standalone program
 				try
 				{
-					this.pe.Consult(@"./vs_source.pl");
+					this.pe.Consult(@"./source.pl");
 				}
 				catch
 				{
-					MessageBox.Show("Nie znaleziono pliku z kodem źródłowym algorytmu Version Space."
+					MessageBox.Show("Nie znaleziono pliku z kodem źródłowym algorytmów."
 						+ Environment.NewLine + Environment.NewLine
-						+ "Należy go umieścić w katalogu razem z plikiem wykonywalnym aplikacji, w pliku o nazwie 'vs_source.pl'."
+						+ "Należy go umieścić w katalogu razem z plikiem wykonywalnym aplikacji, w pliku o nazwie 'source.pl'."
 						+ Environment.NewLine
 						+ "Bez powyższego pliku aplikacja nie może kontynuować działania.", "Nie znaleziono pliku źródłowego",
 						MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -122,7 +122,7 @@ namespace Visual.Class
 			VSHistoryItem prev;
 
 			if (this.items.Count == 0)
-				prev = this.nminus1;
+				prev = this.initial;
 			else
 			{
 				if (atpos < 0) //newest

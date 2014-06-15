@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Visual.Class
 {
@@ -11,7 +12,6 @@ namespace Visual.Class
 		public override string ReadLine()
 		{
 			throw new NotImplementedException();
-			
 		}
 
 		public override int ReadChar()
@@ -41,6 +41,31 @@ namespace Visual.Class
 
 		public override void Reset()
 		{
+		}
+
+		public static void loadSource(ref Prolog.PrologEngine pe)
+		{
+			try
+			{ //launched in /bin/debug|release
+				pe.Consult(@"../../source.pl");
+			}
+			catch
+			{ //standalone program
+				try
+				{
+					pe.Consult(@"./source.pl");
+				}
+				catch
+				{
+					MessageBox.Show("Nie znaleziono pliku z kodem źródłowym algorytmów."
+						+ Environment.NewLine + Environment.NewLine
+						+ "Należy go umieścić w katalogu razem z plikiem wykonywalnym aplikacji, w pliku o nazwie 'source.pl'."
+						+ Environment.NewLine
+						+ "Bez powyższego pliku aplikacja nie może kontynuować działania.", "Nie znaleziono pliku źródłowego",
+						MessageBoxButtons.OK, MessageBoxIcon.Error);
+					Environment.Exit(1);
+				}
+			}
 		}
 	}
 }

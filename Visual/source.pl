@@ -1,25 +1,5 @@
 % Candidate Elimination Algorithm
 
-%run_candidate_elim :- candidate_elim([[_,_,_]], [], 
-%	[[small, medium, large], [red, blue, green], [ball, brick, cube]]).
-
-% Candidate_elim implements a top level read-process loop
-% It prints out the current G set 
-% the S set
-%
-% and calls process to process the input.
-%candidate_elim([G],[S],_) :-
-%	covers(G,S),covers(S,G),
-%	write("target concept is "), write(G),nl.
-
-%candidate_elim(G, S, Types) :-
-%	write("G= "), write(G),nl,
-%	write("S= "), write(S),nl,
-%	write("Enter Instance "),
-%	read(Instance),
-%	process(Instance, G, S, Updated_G, Updated_S, Types),
-%	candidate_elim(Updated_G, Updated_S, Types).
-
 % Process takes the instance, 
 %	a set of concepts, G and 
 %	and a set of concepts, S
@@ -121,3 +101,44 @@ covers(T1, T2).
 
 delete(X, L, Goal, New_L) :-
 	(bagof(X, (member(X, L), not(Goal)), New_L);New_L = []).  
+
+
+% PROLOG EBG
+
+ebg(Goal, Gen_goal, (Gen_goal :- Premise)) :- 
+	prolog_ebg(Goal, Gen_goal, _, Gen_proof),
+	extract_support(Gen_proof, Premise).
+
+prolog_ebg(A, GenA, A, GenA) :- not(list(A)), clause(A, [true]).
+
+prolog_ebg([],[],[],[]).
+
+prolog_ebg([A|B], [GenA|GenB], [AProof| BProof], [GenAProof|GenBProof]) :-
+   prolog_ebg(A, GenA, AProof, GenAProof),
+   prolog_ebg(B, GenB, BProof,GenBProof).
+
+prolog_ebg(A, GenA, [A :- Proof], [GenA :- GenProof]) :-
+   clause(GenA, GenB), 
+   duplicate((GenA:-GenB), (A:-B)),
+   prolog_ebg(B, GenB, Proof, GenProof).
+
+% The purpose of copy2 is to get a new copy of an expression 
+% with all new variables.
+duplicate(Old, New) :- assert('$marker'(Old)), 
+                       retract('$marker'(New)).
+
+% Extract support walks down a proof tree and returns the sequence of the
+% highest level operational nodes, as defined by the predicate "operational"
+
+extract_support(Proof, Proof) :- operational(Proof).
+extract_support([Proof],(R)):-extract_support(Proof,R).
+extract_support([AProof| BProof], (A,B)) :-
+   extract_support(AProof, A),
+   extract_support(BProof, B).
+extract_support([A :- _], A) :- operational(A).
+extract_support([_ :- Proof], B) :- extract_support(Proof, B).
+
+% A neat exercise would be to build a predicate, make_rule, that calls prolog_ebg to
+% generate the generalized tree and extract_support to get the operational nodes and
+% constructs a rule of the form:
+%     top_level_goal :- sequence of operational nodes

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Visual.Class
 {
-	class AlgoExplanationLearning
+	class ELAlgo
 	{
 	}
 }
