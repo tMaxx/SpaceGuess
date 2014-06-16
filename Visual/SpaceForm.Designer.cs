@@ -33,6 +33,8 @@
 			this.tbVSPrologOut = new System.Windows.Forms.TextBox();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabVersionSpace = new System.Windows.Forms.TabPage();
+			this.bVSRelockSpace = new System.Windows.Forms.Button();
+			this.tbVSConceptSpace = new System.Windows.Forms.TextBox();
 			this.bVSClearHistorySelection = new System.Windows.Forms.Button();
 			this.lHelp2 = new System.Windows.Forms.Label();
 			this.bVSReset = new System.Windows.Forms.Button();
@@ -50,18 +52,18 @@
 			this.tabVSConsole = new System.Windows.Forms.TabPage();
 			this.tbVSStatusOut = new System.Windows.Forms.TextBox();
 			this.tabExpLearning = new System.Windows.Forms.TabPage();
+			this.bELResetAll = new System.Windows.Forms.Button();
+			this.tbELOutput = new System.Windows.Forms.TextBox();
+			this.bELExtractRule = new System.Windows.Forms.Button();
+			this.lHelp6 = new System.Windows.Forms.Label();
+			this.tbELRuleInput = new System.Windows.Forms.TextBox();
+			this.lHelp5 = new System.Windows.Forms.Label();
+			this.bELSaveDomTheory = new System.Windows.Forms.Button();
+			this.tbELDomainTheory = new System.Windows.Forms.TextBox();
 			this.tabVisualizer = new System.Windows.Forms.TabPage();
 			this.pbViz = new System.Windows.Forms.PictureBox();
-			this.tbVSConceptSpace = new System.Windows.Forms.TextBox();
-			this.bVSRelockSpace = new System.Windows.Forms.Button();
-			this.tbELDomainTheory = new System.Windows.Forms.TextBox();
-			this.bELSaveDomTheory = new System.Windows.Forms.Button();
-			this.lHelp5 = new System.Windows.Forms.Label();
-			this.tbELRuleInput = new System.Windows.Forms.TextBox();
-			this.lHelp6 = new System.Windows.Forms.Label();
-			this.bELExtractRule = new System.Windows.Forms.Button();
-			this.tbELOutput = new System.Windows.Forms.TextBox();
-			this.bELResetAll = new System.Windows.Forms.Button();
+			this.lHelp8 = new System.Windows.Forms.Label();
+			this.lELStatus = new System.Windows.Forms.Label();
 			this.tabControl1.SuspendLayout();
 			this.tabVersionSpace.SuspendLayout();
 			this.tabVSConsole.SuspendLayout();
@@ -133,6 +135,26 @@
 			this.tabVersionSpace.TabIndex = 0;
 			this.tabVersionSpace.Text = "Version Space Search";
 			this.tabVersionSpace.UseVisualStyleBackColor = true;
+			// 
+			// bVSRelockSpace
+			// 
+			this.bVSRelockSpace.Location = new System.Drawing.Point(6, 98);
+			this.bVSRelockSpace.Name = "bVSRelockSpace";
+			this.bVSRelockSpace.Size = new System.Drawing.Size(124, 23);
+			this.bVSRelockSpace.TabIndex = 14;
+			this.bVSRelockSpace.Text = "Zablokuj/odblokuj";
+			this.bVSRelockSpace.UseVisualStyleBackColor = true;
+			this.bVSRelockSpace.Click += new System.EventHandler(this.bVSRelockSpace_Click);
+			// 
+			// tbVSConceptSpace
+			// 
+			this.tbVSConceptSpace.Enabled = false;
+			this.tbVSConceptSpace.Location = new System.Drawing.Point(6, 6);
+			this.tbVSConceptSpace.Multiline = true;
+			this.tbVSConceptSpace.Name = "tbVSConceptSpace";
+			this.tbVSConceptSpace.Size = new System.Drawing.Size(248, 86);
+			this.tbVSConceptSpace.TabIndex = 13;
+			this.tbVSConceptSpace.Text = "<wektory przestrzeni konceptowej>";
 			// 
 			// bVSClearHistorySelection
 			// 
@@ -302,6 +324,8 @@
 			// 
 			// tabExpLearning
 			// 
+			this.tabExpLearning.Controls.Add(this.lHelp8);
+			this.tabExpLearning.Controls.Add(this.lELStatus);
 			this.tabExpLearning.Controls.Add(this.bELResetAll);
 			this.tabExpLearning.Controls.Add(this.tbELOutput);
 			this.tabExpLearning.Controls.Add(this.bELExtractRule);
@@ -316,6 +340,83 @@
 			this.tabExpLearning.TabIndex = 2;
 			this.tabExpLearning.Text = "Explanation-based Learning";
 			this.tabExpLearning.UseVisualStyleBackColor = true;
+			// 
+			// bELResetAll
+			// 
+			this.bELResetAll.Location = new System.Drawing.Point(592, 405);
+			this.bELResetAll.Name = "bELResetAll";
+			this.bELResetAll.Size = new System.Drawing.Size(96, 23);
+			this.bELResetAll.TabIndex = 7;
+			this.bELResetAll.Text = "Reset";
+			this.bELResetAll.UseVisualStyleBackColor = true;
+			this.bELResetAll.Click += new System.EventHandler(this.bELResetAll_Click);
+			// 
+			// tbELOutput
+			// 
+			this.tbELOutput.Location = new System.Drawing.Point(251, 122);
+			this.tbELOutput.Multiline = true;
+			this.tbELOutput.Name = "tbELOutput";
+			this.tbELOutput.ReadOnly = true;
+			this.tbELOutput.Size = new System.Drawing.Size(435, 275);
+			this.tbELOutput.TabIndex = 6;
+			// 
+			// bELExtractRule
+			// 
+			this.bELExtractRule.Location = new System.Drawing.Point(354, 54);
+			this.bELExtractRule.Name = "bELExtractRule";
+			this.bELExtractRule.Size = new System.Drawing.Size(209, 27);
+			this.bELExtractRule.TabIndex = 5;
+			this.bELExtractRule.Text = "Wyprowadź regułę";
+			this.bELExtractRule.UseVisualStyleBackColor = true;
+			this.bELExtractRule.Click += new System.EventHandler(this.bELExtractRule_Click);
+			// 
+			// lHelp6
+			// 
+			this.lHelp6.AutoSize = true;
+			this.lHelp6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+			this.lHelp6.Location = new System.Drawing.Point(248, 28);
+			this.lHelp6.Name = "lHelp6";
+			this.lHelp6.Size = new System.Drawing.Size(100, 16);
+			this.lHelp6.TabIndex = 4;
+			this.lHelp6.Text = "Podaj obiekt:";
+			// 
+			// tbELRuleInput
+			// 
+			this.tbELRuleInput.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+			this.tbELRuleInput.Location = new System.Drawing.Point(354, 22);
+			this.tbELRuleInput.Name = "tbELRuleInput";
+			this.tbELRuleInput.Size = new System.Drawing.Size(209, 26);
+			this.tbELRuleInput.TabIndex = 3;
+			// 
+			// lHelp5
+			// 
+			this.lHelp5.AutoSize = true;
+			this.lHelp5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+			this.lHelp5.Location = new System.Drawing.Point(0, 3);
+			this.lHelp5.Name = "lHelp5";
+			this.lHelp5.Size = new System.Drawing.Size(127, 16);
+			this.lHelp5.TabIndex = 2;
+			this.lHelp5.Text = "Teoria dziedziny:";
+			// 
+			// bELSaveDomTheory
+			// 
+			this.bELSaveDomTheory.Location = new System.Drawing.Point(3, 403);
+			this.bELSaveDomTheory.Name = "bELSaveDomTheory";
+			this.bELSaveDomTheory.Size = new System.Drawing.Size(141, 23);
+			this.bELSaveDomTheory.TabIndex = 1;
+			this.bELSaveDomTheory.Text = "Zablokuj/odblokuj";
+			this.bELSaveDomTheory.UseVisualStyleBackColor = true;
+			this.bELSaveDomTheory.Click += new System.EventHandler(this.bELSaveDomTheory_Click);
+			// 
+			// tbELDomainTheory
+			// 
+			this.tbELDomainTheory.Enabled = false;
+			this.tbELDomainTheory.Location = new System.Drawing.Point(3, 22);
+			this.tbELDomainTheory.Multiline = true;
+			this.tbELDomainTheory.Name = "tbELDomainTheory";
+			this.tbELDomainTheory.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+			this.tbELDomainTheory.Size = new System.Drawing.Size(210, 375);
+			this.tbELDomainTheory.TabIndex = 0;
 			// 
 			// tabVisualizer
 			// 
@@ -336,101 +437,24 @@
 			this.pbViz.TabStop = false;
 			this.pbViz.Paint += new System.Windows.Forms.PaintEventHandler(this.pbViz_Paint);
 			// 
-			// tbVSConceptSpace
+			// lHelp8
 			// 
-			this.tbVSConceptSpace.Enabled = false;
-			this.tbVSConceptSpace.Location = new System.Drawing.Point(6, 6);
-			this.tbVSConceptSpace.Multiline = true;
-			this.tbVSConceptSpace.Name = "tbVSConceptSpace";
-			this.tbVSConceptSpace.Size = new System.Drawing.Size(248, 86);
-			this.tbVSConceptSpace.TabIndex = 13;
-			this.tbVSConceptSpace.Text = "<wektory przestrzeni konceptowej>";
+			this.lHelp8.AutoSize = true;
+			this.lHelp8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+			this.lHelp8.Location = new System.Drawing.Point(248, 84);
+			this.lHelp8.Name = "lHelp8";
+			this.lHelp8.Size = new System.Drawing.Size(111, 13);
+			this.lHelp8.TabIndex = 13;
+			this.lHelp8.Text = "Status wywołania:";
 			// 
-			// bVSRelockSpace
+			// lELStatus
 			// 
-			this.bVSRelockSpace.Location = new System.Drawing.Point(6, 98);
-			this.bVSRelockSpace.Name = "bVSRelockSpace";
-			this.bVSRelockSpace.Size = new System.Drawing.Size(124, 23);
-			this.bVSRelockSpace.TabIndex = 14;
-			this.bVSRelockSpace.Text = "Zablokuj/odblokuj";
-			this.bVSRelockSpace.UseVisualStyleBackColor = true;
-			this.bVSRelockSpace.Click += new System.EventHandler(this.bVSRelockSpace_Click);
-			// 
-			// tbELDomainTheory
-			// 
-			this.tbELDomainTheory.Location = new System.Drawing.Point(3, 22);
-			this.tbELDomainTheory.Multiline = true;
-			this.tbELDomainTheory.Name = "tbELDomainTheory";
-			this.tbELDomainTheory.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.tbELDomainTheory.Size = new System.Drawing.Size(210, 375);
-			this.tbELDomainTheory.TabIndex = 0;
-			// 
-			// bELSaveDomTheory
-			// 
-			this.bELSaveDomTheory.Location = new System.Drawing.Point(3, 403);
-			this.bELSaveDomTheory.Name = "bELSaveDomTheory";
-			this.bELSaveDomTheory.Size = new System.Drawing.Size(141, 23);
-			this.bELSaveDomTheory.TabIndex = 1;
-			this.bELSaveDomTheory.Text = "Zablokuj/odblokuj";
-			this.bELSaveDomTheory.UseVisualStyleBackColor = true;
-			this.bELSaveDomTheory.Click += new System.EventHandler(this.bELSaveDomTheory_Click);
-			// 
-			// lHelp5
-			// 
-			this.lHelp5.AutoSize = true;
-			this.lHelp5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-			this.lHelp5.Location = new System.Drawing.Point(0, 3);
-			this.lHelp5.Name = "lHelp5";
-			this.lHelp5.Size = new System.Drawing.Size(127, 16);
-			this.lHelp5.TabIndex = 2;
-			this.lHelp5.Text = "Teoria dziedziny:";
-			// 
-			// tbELRuleInput
-			// 
-			this.tbELRuleInput.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-			this.tbELRuleInput.Location = new System.Drawing.Point(354, 22);
-			this.tbELRuleInput.Name = "tbELRuleInput";
-			this.tbELRuleInput.Size = new System.Drawing.Size(209, 26);
-			this.tbELRuleInput.TabIndex = 3;
-			// 
-			// lHelp6
-			// 
-			this.lHelp6.AutoSize = true;
-			this.lHelp6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-			this.lHelp6.Location = new System.Drawing.Point(248, 28);
-			this.lHelp6.Name = "lHelp6";
-			this.lHelp6.Size = new System.Drawing.Size(100, 16);
-			this.lHelp6.TabIndex = 4;
-			this.lHelp6.Text = "Podaj obiekt:";
-			// 
-			// bELExtractRule
-			// 
-			this.bELExtractRule.Location = new System.Drawing.Point(354, 54);
-			this.bELExtractRule.Name = "bELExtractRule";
-			this.bELExtractRule.Size = new System.Drawing.Size(209, 27);
-			this.bELExtractRule.TabIndex = 5;
-			this.bELExtractRule.Text = "Wyprowadź regułę";
-			this.bELExtractRule.UseVisualStyleBackColor = true;
-			this.bELExtractRule.Click += new System.EventHandler(this.bELExtractRule_Click);
-			// 
-			// tbELOutput
-			// 
-			this.tbELOutput.Location = new System.Drawing.Point(251, 101);
-			this.tbELOutput.Multiline = true;
-			this.tbELOutput.Name = "tbELOutput";
-			this.tbELOutput.ReadOnly = true;
-			this.tbELOutput.Size = new System.Drawing.Size(435, 296);
-			this.tbELOutput.TabIndex = 6;
-			// 
-			// bELResetAll
-			// 
-			this.bELResetAll.Location = new System.Drawing.Point(592, 405);
-			this.bELResetAll.Name = "bELResetAll";
-			this.bELResetAll.Size = new System.Drawing.Size(96, 23);
-			this.bELResetAll.TabIndex = 7;
-			this.bELResetAll.Text = "Reset";
-			this.bELResetAll.UseVisualStyleBackColor = true;
-			this.bELResetAll.Click += new System.EventHandler(this.bELResetAll_Click);
+			this.lELStatus.AutoSize = true;
+			this.lELStatus.Location = new System.Drawing.Point(365, 84);
+			this.lELStatus.Name = "lELStatus";
+			this.lELStatus.Size = new System.Drawing.Size(101, 13);
+			this.lELStatus.TabIndex = 12;
+			this.lELStatus.Text = "<status wywołania>";
 			// 
 			// SpaceForm
 			// 
@@ -491,6 +515,8 @@
 		private System.Windows.Forms.Button bELResetAll;
 		public System.Windows.Forms.TextBox tbELDomainTheory;
 		public System.Windows.Forms.TextBox tbELOutput;
+		private System.Windows.Forms.Label lHelp8;
+		public System.Windows.Forms.Label lELStatus;
     }
 }
 
