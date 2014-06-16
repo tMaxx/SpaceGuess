@@ -65,6 +65,7 @@ namespace Visual.Class
 
 		public static void setUserStatus(string str)
 		{
+			SpaceForm.self.Refresh();
 			SpaceForm.self.lVSLastCmdStatus.Text = str;
 		}
 

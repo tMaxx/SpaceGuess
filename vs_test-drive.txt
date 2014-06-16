@@ -1,0 +1,5 @@
+﻿positive([small, red, ball]).
+negative([large, green, cube]).
+negative([small, blue, brick]).
+positive([small, green, ball]).
+positive([large, red, ball]). 

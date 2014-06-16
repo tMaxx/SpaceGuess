@@ -174,22 +174,39 @@ namespace Visual.Class
 			if (!VSAlgo.Error)
 			{
 				string[] bs, bg;
+				bool solved = false;
 
 				bs = this.setLists(hi.spec, ref hi.listSpec);
 				bg = this.setLists(hi.gen, ref hi.listGen);
 
 				VSAlgo.setProposed(null);
-				//add colors
-				if (ArraysEqual<string>(bs, bg))
-				{
-					hi.lviCmd.ForeColor = System.Drawing.Color.Yellow;
-					VSAlgo.setProposed(hi.lviCmd.Text);
-				}
-				if (Regex.IsMatch(cmd, @"^[ ]*(negative)\(.*$"))
-					hi.lviCmd.ForeColor = System.Drawing.Color.DarkRed;
-				else
-					hi.lviCmd.ForeColor = System.Drawing.Color.DarkGreen;
+				hi.lviCmd.ForeColor = System.Drawing.Color.Yellow;
 
+				this.pe.Query = "covers_both(" + hi.gen + ", " + hi.spec + ")";
+				foreach (PrologEngine.ISolution s in this.pe.SolutionIterator)
+					if (this.pe.Error)
+					{
+						VSAlgo.reportError("nieudane sprawdzenie pokrycia; sprawdź konsolę",
+							"Cover test error: " + s,
+							"Cover test error");
+						this.pe.clearError();
+					}
+					else if (solved = s.Solved)
+					{
+						SpaceForm.self.lvVSHistory.SelectedItems.Clear();
+						VSAlgo.setProposed(hi.listGen[0].Text);
+					}
+					else
+						break;
+
+				//add colors
+				if (!solved)
+				{
+					if (Regex.IsMatch(cmd, @"^[ ]*(negative)\(.*$"))
+						hi.lviCmd.ForeColor = System.Drawing.Color.DarkRed;
+					else
+						hi.lviCmd.ForeColor = System.Drawing.Color.DarkGreen;
+				}
 				this.items.Add(hi);
 			}
 		}

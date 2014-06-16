@@ -95,6 +95,9 @@ covers([H1|T1], [H2|T2]) :-
 	atom(H1), atom(H2), H1 = H2,
 covers(T1, T2).
 
+covers_both([A], [B]) :-
+	covers(A, B), covers(B, A).
+
 % delete(Element, List1, Goal, List2) :- List2 contains all bindings
 %	of Element to a member of List1 except those that cause 
 %	Goal to succeed
