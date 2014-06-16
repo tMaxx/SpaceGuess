@@ -142,7 +142,6 @@ operational(concave(_)).";
 					logProlog("exec: " + cmd);
 					item = new ELItem();
 					foreach (PrologEngine.IVarValue vv in s.VarValuesIterator)
-					{
 						switch (vv.Name)
 						{
 							case "X":
@@ -158,7 +157,7 @@ operational(concave(_)).";
 								item.rule = pred + '(' + item.x + ')' + vv.Value.ToString();
 								break;
 						}
-					}
+					break;
 				} 
 				else
 				{

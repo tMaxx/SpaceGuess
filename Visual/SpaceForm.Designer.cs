@@ -49,7 +49,7 @@
 			this.colHistory = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.bVSSendQuery = new System.Windows.Forms.Button();
 			this.tbVSQuery = new System.Windows.Forms.TextBox();
-			this.tabVSConsole = new System.Windows.Forms.TabPage();
+			this.tabConsole = new System.Windows.Forms.TabPage();
 			this.tbVSStatusOut = new System.Windows.Forms.TextBox();
 			this.tabExpLearning = new System.Windows.Forms.TabPage();
 			this.bELResetAll = new System.Windows.Forms.Button();
@@ -66,7 +66,7 @@
 			this.lELStatus = new System.Windows.Forms.Label();
 			this.tabControl1.SuspendLayout();
 			this.tabVersionSpace.SuspendLayout();
-			this.tabVSConsole.SuspendLayout();
+			this.tabConsole.SuspendLayout();
 			this.tabExpLearning.SuspendLayout();
 			this.tabVisualizer.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.pbViz)).BeginInit();
@@ -104,8 +104,8 @@
 			// tabControl1
 			// 
 			this.tabControl1.Controls.Add(this.tabVersionSpace);
-			this.tabControl1.Controls.Add(this.tabVSConsole);
 			this.tabControl1.Controls.Add(this.tabExpLearning);
+			this.tabControl1.Controls.Add(this.tabConsole);
 			this.tabControl1.Controls.Add(this.tabVisualizer);
 			this.tabControl1.Location = new System.Drawing.Point(12, 12);
 			this.tabControl1.Name = "tabControl1";
@@ -297,19 +297,19 @@
 			this.tbVSQuery.TabIndex = 0;
 			this.tbVSQuery.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tbVSQuery_KeyPress);
 			// 
-			// tabVSConsole
+			// tabConsole
 			// 
-			this.tabVSConsole.Controls.Add(this.tbVSStatusOut);
-			this.tabVSConsole.Controls.Add(this.tbVSPrologOut);
-			this.tabVSConsole.Controls.Add(this.bSendVSRawQuery);
-			this.tabVSConsole.Controls.Add(this.tbVSRawQuery);
-			this.tabVSConsole.Location = new System.Drawing.Point(4, 22);
-			this.tabVSConsole.Name = "tabVSConsole";
-			this.tabVSConsole.Padding = new System.Windows.Forms.Padding(3);
-			this.tabVSConsole.Size = new System.Drawing.Size(689, 429);
-			this.tabVSConsole.TabIndex = 1;
-			this.tabVSConsole.Text = "Konsola";
-			this.tabVSConsole.UseVisualStyleBackColor = true;
+			this.tabConsole.Controls.Add(this.tbVSStatusOut);
+			this.tabConsole.Controls.Add(this.tbVSPrologOut);
+			this.tabConsole.Controls.Add(this.bSendVSRawQuery);
+			this.tabConsole.Controls.Add(this.tbVSRawQuery);
+			this.tabConsole.Location = new System.Drawing.Point(4, 22);
+			this.tabConsole.Name = "tabConsole";
+			this.tabConsole.Padding = new System.Windows.Forms.Padding(3);
+			this.tabConsole.Size = new System.Drawing.Size(689, 429);
+			this.tabConsole.TabIndex = 1;
+			this.tabConsole.Text = "Konsola";
+			this.tabConsole.UseVisualStyleBackColor = true;
 			// 
 			// tbVSStatusOut
 			// 
@@ -469,8 +469,8 @@
 			this.tabControl1.ResumeLayout(false);
 			this.tabVersionSpace.ResumeLayout(false);
 			this.tabVersionSpace.PerformLayout();
-			this.tabVSConsole.ResumeLayout(false);
-			this.tabVSConsole.PerformLayout();
+			this.tabConsole.ResumeLayout(false);
+			this.tabConsole.PerformLayout();
 			this.tabExpLearning.ResumeLayout(false);
 			this.tabExpLearning.PerformLayout();
 			this.tabVisualizer.ResumeLayout(false);
@@ -484,7 +484,7 @@
 		private System.Windows.Forms.Button bSendVSRawQuery;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabVersionSpace;
-        private System.Windows.Forms.TabPage tabVSConsole;
+        private System.Windows.Forms.TabPage tabConsole;
         private System.Windows.Forms.ColumnHeader colSpecific;
         private System.Windows.Forms.ColumnHeader colGeneral;
         private System.Windows.Forms.Label lHelp1;
