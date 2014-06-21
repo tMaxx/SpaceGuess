@@ -31,6 +31,15 @@ namespace Visual
 			VSAlgo.resetAll();
 			ELAlgo.init();
 			ELAlgo.resetAll();
+
+			//FIXME removing this tab for now
+			SpaceForm.self.tcTabs.TabPages.Remove(SpaceForm.self.tabVisualizer);
+			SpaceForm.Bump();
+		}
+
+		public static void Bump()
+		{
+			self.Refresh();
 		}
 
 		private void bSendVSRawQuery_Click(object sender, EventArgs e)
@@ -89,8 +98,8 @@ namespace Visual
 
 		private void bVSRelockSpace_Click(object sender, EventArgs e)
 		{
-			this.tbVSConceptSpace.Enabled = !this.tbVSConceptSpace.Enabled;
-			if (this.tbVSConceptSpace.Enabled == false)
+			this.tbVSConceptSpace.ReadOnly = !this.tbVSConceptSpace.ReadOnly;
+			if (this.tbVSConceptSpace.ReadOnly == true)
 				MessageBox.Show("Po zmianie definicji przestrzeni konceptualnej "
 					+ "wymagany jest reset algorytmu za pomocą przycisku w prawej dolnej części okna",
 					"Wymagany reset algorytmu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -114,8 +123,9 @@ namespace Visual
 
 		private void bELSaveDomTheory_Click(object sender, EventArgs e)
 		{
-			this.tbELDomainTheory.Enabled = !this.tbELDomainTheory.Enabled;
-			//if (this.tbELDomainTheory.Enabled == false)
+			this.tbELDomainTheory.ReadOnly = !this.tbELDomainTheory.ReadOnly;
+			//TODO: show approp. message
+			//if (this.tbELDomainTheory.ReadOnly == false)
 				//MessageBox.Show("Po zmianie definicji przestrzeni konceptualnej "
 					//+ "wymagany jest reset algorytmu za pomocą przycisku w prawej dolnej części okna",
 					//"Wymagany reset algorytmu", MessageBoxButtons.OK, MessageBoxIcon.Warning);

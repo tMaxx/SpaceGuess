@@ -75,13 +75,12 @@ namespace Visual.Class
 		}
 
 		public readonly static Regex anonVar = new Regex(@"_[0-9]+");
-		protected string[] setLists(string str, ref List<ListViewItem> l)
+		protected void setLists(string str, ref List<ListViewItem> l)
 		{
 			str = wspaceRx.Replace(str, "");
 			if (str == "[]" || str == "" || str == "[[]]")
 			{
 				l.Add(new ListViewItem("<pusta>"));
-				return new string[] { "<pusta>" };
 			}
 			else
 			{
@@ -93,7 +92,6 @@ namespace Visual.Class
 					buf[i] = anonVar.Replace(buf[i].Replace(",", ", "), "<?>");
 					l.Add(new ListViewItem(buf[i]));
 				}
-				return buf;
 			}
 		}
 
@@ -173,11 +171,10 @@ namespace Visual.Class
 
 			if (!VSAlgo.Error)
 			{
-				string[] bs, bg;
 				bool solved = false;
 
-				bs = this.setLists(hi.spec, ref hi.listSpec);
-				bg = this.setLists(hi.gen, ref hi.listGen);
+				this.setLists(hi.spec, ref hi.listSpec);
+				this.setLists(hi.gen, ref hi.listGen);
 
 				VSAlgo.setProposed(null);
 				hi.lviCmd.ForeColor = System.Drawing.Color.Yellow;

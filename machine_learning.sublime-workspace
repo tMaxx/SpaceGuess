@@ -526,6 +526,15 @@
 				"buffer_size": 1384,
 				"line_ending": "Windows"
 			}
+		},
+		{
+			"contents": "for (double i = tmp, prev = tmp; i < scope.RightLimit; i += period)\n{\n  //tmp: value at current i-point\n  calc.SetVariable('x', i);\n\n  tmp = calc.Value;\n\n  diff = Math.Abs(tmp - prev);\n  if (diff >= error) //add sample\n  {\n      //if error is high enough, resample last\n      if (subsample > 0 && (diff >= (2.0*error)))\n      {\n          diff = period / (subsample + 1);\n          for (double j = Math.Max(scope.LeftLimit, (i - (subsample * period)));\n              j < i;\n              j += diff)\n          {\n              calc.SetVariable('x', j);\n              list.Add(new Point(j, calc.Value));\n          }\n      }\n      list.Add(new Point(i, tmp));\n\n      prev = tmp;\n  }\n}",
+			"settings":
+			{
+				"buffer_size": 679,
+				"line_ending": "Unix",
+				"name": "for (double i = tmp, prev = tmp; i < scope.RightLi"
+			}
 		}
 	],
 	"build_system": "Packages/C++11/C++11.sublime-build",
@@ -769,11 +778,14 @@
 	},
 	"file_history":
 	[
+		"/home/miki/Dropbox/var/todo.txt",
+		"/home/miki/Dropbox/Projects/SpaceGuess/Visual/Class/AlgoVersionSpace.cs",
+		"/home/miki/Dropbox/Projects/SpaceGuess/Visual/Class/History.cs",
+		"/home/miki/Dropbox/Projects/SpaceGuess/Visual/Class/AlgoExplanationLearning.cs",
 		"/home/miki/Dropbox/Projects/SpaceGuess/MLAiP_ExplanationBased.pl",
 		"/home/miki/Dropbox/Projects/SpaceGuess/MLAiP_VersionSpace.pl",
 		"/home/miki/Dropbox/Projects/SpaceGuess/phil.pl",
 		"/home/miki/Dropbox/Projects/SpaceGuess/test.pl",
-		"/home/miki/Dropbox/var/todo.txt",
 		"/home/miki/.config/sublime-text-3/Packages/Prolog/support/Prolog.tmLanguage",
 		"/home/miki/Dropbox/Projects/r3v/mod/tmx/static/res/script.js",
 		"/home/miki/Dropbox/Projects/r3v/index.php",
@@ -893,10 +905,7 @@
 		"/home/miki/Dropbox/Projects/r3v/mod/scssphp/tests/inputs/filter_effects.scss",
 		"/home/miki/.config/sublime-text-3/Packages/All Autocomplete/all_views_completions.py",
 		"/home/miki/.config/sublime-text-3/Packages/Theme - Spacegray/Spacegray.sublime-theme",
-		"/home/miki/Dropbox/Projects/r3v/sys/r3v/Form.php",
-		"/home/miki/Dropbox/Projects/r3v/sys/r3v/Mail.php",
-		"/home/miki/Dropbox/Projects/r3v/sys/r3v/User/Obj.php",
-		"/home/miki/Dropbox/Projects/r3v/sys/r3v/DB/Instanceable.php"
+		"/home/miki/Dropbox/Projects/r3v/sys/r3v/Form.php"
 	],
 	"find":
 	{
@@ -1129,7 +1138,7 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 1,
 			"sheets":
 			[
 				{
@@ -1154,26 +1163,30 @@
 							"BracketHighlighterBusy": false,
 							"bh_regions":
 							[
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
 								"bh_regex",
 								"bh_regex_center",
 								"bh_regex_open",
 								"bh_regex_close",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
 								"bh_double_quote",
 								"bh_double_quote_center",
 								"bh_double_quote_open",
 								"bh_double_quote_close",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
 								"bh_default",
 								"bh_default_center",
 								"bh_default_open",
@@ -1182,6 +1195,78 @@
 								"bh_tag_center",
 								"bh_tag_open",
 								"bh_tag_close",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close"
+							],
+							"syntax": "Packages/C#/C#.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 679,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"auto_name": "for (double i = tmp, prev = tmp; i < scope.RightLi",
+							"bh_regions":
+							[
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
 								"bh_square",
 								"bh_square_center",
 								"bh_square_open",
@@ -1189,13 +1274,9 @@
 								"bh_unmatched",
 								"bh_unmatched_center",
 								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close"
+								"bh_unmatched_close"
 							],
-							"syntax": "Packages/C#/C#.tmLanguage"
+							"syntax": "Packages/Text/Plain text.tmLanguage"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,

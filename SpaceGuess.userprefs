@@ -1,9 +1,11 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Visual/Program.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Visual/SpaceForm.cs">
     <Files>
-      <File FileName="Visual/Program.cs" Line="2" Column="8" />
+      <File FileName="Visual/Program.cs" Line="1" Column="1" />
       <File FileName="Visual/Properties/AssemblyInfo.cs" Line="1" Column="1" />
+      <File FileName="Visual/SpaceForm.cs" Line="86" Column="17" />
+      <File FileName="Visual/Class/VSHistory.cs" Line="101" Column="4" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

@@ -31,7 +31,7 @@
 			this.tbVSRawQuery = new System.Windows.Forms.TextBox();
 			this.bSendVSRawQuery = new System.Windows.Forms.Button();
 			this.tbVSPrologOut = new System.Windows.Forms.TextBox();
-			this.tabControl1 = new System.Windows.Forms.TabControl();
+			this.tcTabs = new System.Windows.Forms.TabControl();
 			this.tabVersionSpace = new System.Windows.Forms.TabPage();
 			this.bVSRelockSpace = new System.Windows.Forms.Button();
 			this.tbVSConceptSpace = new System.Windows.Forms.TextBox();
@@ -64,7 +64,7 @@
 			this.pbViz = new System.Windows.Forms.PictureBox();
 			this.lHelp8 = new System.Windows.Forms.Label();
 			this.lELStatus = new System.Windows.Forms.Label();
-			this.tabControl1.SuspendLayout();
+			this.tcTabs.SuspendLayout();
 			this.tabVersionSpace.SuspendLayout();
 			this.tabConsole.SuspendLayout();
 			this.tabExpLearning.SuspendLayout();
@@ -101,17 +101,17 @@
 			this.tbVSPrologOut.TabIndex = 2;
 			this.tbVSPrologOut.Text = "<output prologa>";
 			// 
-			// tabControl1
+			// tcTabs
 			// 
-			this.tabControl1.Controls.Add(this.tabVersionSpace);
-			this.tabControl1.Controls.Add(this.tabExpLearning);
-			this.tabControl1.Controls.Add(this.tabConsole);
-			this.tabControl1.Controls.Add(this.tabVisualizer);
-			this.tabControl1.Location = new System.Drawing.Point(12, 12);
-			this.tabControl1.Name = "tabControl1";
-			this.tabControl1.SelectedIndex = 0;
-			this.tabControl1.Size = new System.Drawing.Size(697, 455);
-			this.tabControl1.TabIndex = 3;
+			this.tcTabs.Controls.Add(this.tabVersionSpace);
+			this.tcTabs.Controls.Add(this.tabExpLearning);
+			this.tcTabs.Controls.Add(this.tabConsole);
+			this.tcTabs.Controls.Add(this.tabVisualizer);
+			this.tcTabs.Location = new System.Drawing.Point(12, 12);
+			this.tcTabs.Name = "tcTabs";
+			this.tcTabs.SelectedIndex = 0;
+			this.tcTabs.Size = new System.Drawing.Size(697, 455);
+			this.tcTabs.TabIndex = 3;
 			// 
 			// tabVersionSpace
 			// 
@@ -148,10 +148,10 @@
 			// 
 			// tbVSConceptSpace
 			// 
-			this.tbVSConceptSpace.Enabled = false;
 			this.tbVSConceptSpace.Location = new System.Drawing.Point(6, 6);
 			this.tbVSConceptSpace.Multiline = true;
 			this.tbVSConceptSpace.Name = "tbVSConceptSpace";
+			this.tbVSConceptSpace.ReadOnly = true;
 			this.tbVSConceptSpace.Size = new System.Drawing.Size(248, 86);
 			this.tbVSConceptSpace.TabIndex = 13;
 			this.tbVSConceptSpace.Text = "<wektory przestrzeni konceptowej>";
@@ -410,10 +410,10 @@
 			// 
 			// tbELDomainTheory
 			// 
-			this.tbELDomainTheory.Enabled = false;
 			this.tbELDomainTheory.Location = new System.Drawing.Point(3, 22);
 			this.tbELDomainTheory.Multiline = true;
 			this.tbELDomainTheory.Name = "tbELDomainTheory";
+			this.tbELDomainTheory.ReadOnly = true;
 			this.tbELDomainTheory.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
 			this.tbELDomainTheory.Size = new System.Drawing.Size(210, 375);
 			this.tbELDomainTheory.TabIndex = 0;
@@ -461,12 +461,12 @@
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(721, 479);
-			this.Controls.Add(this.tabControl1);
+			this.Controls.Add(this.tcTabs);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.MaximizeBox = false;
 			this.Name = "SpaceForm";
 			this.Text = "SpaceGuess";
-			this.tabControl1.ResumeLayout(false);
+			this.tcTabs.ResumeLayout(false);
 			this.tabVersionSpace.ResumeLayout(false);
 			this.tabVersionSpace.PerformLayout();
 			this.tabConsole.ResumeLayout(false);
@@ -482,7 +482,7 @@
         #endregion
 
 		private System.Windows.Forms.Button bSendVSRawQuery;
-        private System.Windows.Forms.TabControl tabControl1;
+		public System.Windows.Forms.TabControl tcTabs;
         private System.Windows.Forms.TabPage tabVersionSpace;
         private System.Windows.Forms.TabPage tabConsole;
         private System.Windows.Forms.ColumnHeader colSpecific;

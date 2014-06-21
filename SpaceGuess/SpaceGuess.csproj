@@ -3,8 +3,6 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProductVersion>12.0.0</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{48EF1FCE-B9E2-4EC5-AFAD-C68037D46A5F}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>SpaceGuess</RootNamespace>
@@ -39,7 +37,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CSProlog\CSProlog.csproj">
-      <Project>{721e06ef-2be2-44bf-a0b7-bbe163a29f26}</Project>
+      <Project>{721E06EF-2BE2-44BF-A0B7-BBE163A29F26}</Project>
       <Name>CSProlog</Name>
     </ProjectReference>
   </ItemGroup>
