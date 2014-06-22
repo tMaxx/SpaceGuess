@@ -80,20 +80,6 @@ namespace Visual.Class
 
 		protected static void resetEngine()
 		{
-			///PlEngine.PlThreadDestroyEngine();
-			//P/lEngine.PlThreadAttachEngine();
-			//if (ELAlgo.previous != null)
-			//{ //retract all :D
-			//	string prev = ELAlgo.previous;
-			//	ELAlgo.previous = null;
-			//	prev = VSHistory.wspaceRx.Replace(prev, "");
-			//	foreach (string s in prev.Split('.'))
-			//	{
-			//		if (s.Length > 0 && !s.StartsWith(":-"))
-			//			PlQuery.PlCall("retractall((" + s.TrimEnd('.') + "))");
-			//	}
-			//}
-
 			SpaceForm.self.tbELOutput.Text = "";
 		}
 
@@ -106,13 +92,6 @@ namespace Visual.Class
 				+ Environment.NewLine + "liftable(Y) :- light(Y), part(Y, handle)."
 				+ Environment.NewLine + "light(A):- small(A)."
 				+ Environment.NewLine + "light(A):- made_of(A, feathers)." + Environment.NewLine
-				//+ Environment.NewLine + ":- dynamic(small/1)."
-				//+ Environment.NewLine + ":- dynamic(owns/2)."
-				//+ Environment.NewLine + ":- dynamic(part/2)."
-				//+ Environment.NewLine + ":- dynamic(points_up/1)."
-				//+ Environment.NewLine + ":- dynamic(concave/1)."
-				//+ Environment.NewLine + ":- dynamic(operational/1)."
-				//+ Environment.NewLine + ":- dynamic(color/2)." + Environment.NewLine
 				+ Environment.NewLine + "small(obj1)."
 				+ Environment.NewLine + "owns(bob, obj1)."
 				+ Environment.NewLine + "part(obj1, handle)."
@@ -131,11 +110,13 @@ namespace Visual.Class
 			logApp("---Reset---");
 		}
 
-		private static void extractParts(string cmd, out string pred, out string body)
+		private static uint extractParts(string cmd, out string pred, out string body)
 		{
 			int at = cmd.IndexOf('(');
 			pred = cmd.Substring(0, at);
 			body = cmd.Substring(at + 1, cmd.Length - at - 2);
+			at = VSHistory.countOccurences(",", body);
+			return (uint)at;
 		}
 
 		private static string buildQuery(string pred, string body)
@@ -195,7 +176,7 @@ namespace Visual.Class
 			if (!bumpTmpFile())
 			{
 				Status = "błąd przy zapisie stanu teorii";
-				//return;
+				return;
 			}
 
 			Status = "wykonywanie polecenia...";
@@ -207,7 +188,6 @@ namespace Visual.Class
 					item = new ELItem();
 					foreach (PlQueryVariables v in q.SolutionVariables)
 					{
-						//item.x = ;
 						item.proof = v["Proof"].ToString();
 						item.genProof = v["GenProof"].ToString();
 						item.rule = pred + '(' + v["X"].ToString() + ") :- " + v["RuleBody"] + '.';
@@ -220,6 +200,7 @@ namespace Visual.Class
 			{
 				Status = "wystąpił błąd; sprawdź konsolę";
 				logProlog("ERROR: could not solve: " + e.ToString());
+				return;
 			}
 
 			Status = "drukowanie...";

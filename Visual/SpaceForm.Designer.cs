@@ -50,6 +50,7 @@
 			this.bVSSendQuery = new System.Windows.Forms.Button();
 			this.tbVSQuery = new System.Windows.Forms.TextBox();
 			this.tabExpLearning = new System.Windows.Forms.TabPage();
+			this.bELSaveFactToDT = new System.Windows.Forms.Button();
 			this.lHelp8 = new System.Windows.Forms.Label();
 			this.lELStatus = new System.Windows.Forms.Label();
 			this.bELResetAll = new System.Windows.Forms.Button();
@@ -62,15 +63,10 @@
 			this.tbELDomainTheory = new System.Windows.Forms.TextBox();
 			this.tabConsole = new System.Windows.Forms.TabPage();
 			this.tbVSStatusOut = new System.Windows.Forms.TextBox();
-			this.tabVisualizer = new System.Windows.Forms.TabPage();
-			this.pbViz = new System.Windows.Forms.PictureBox();
-			this.bELSaveFactToDT = new System.Windows.Forms.Button();
 			this.tcTabs.SuspendLayout();
 			this.tabVersionSpace.SuspendLayout();
 			this.tabExpLearning.SuspendLayout();
 			this.tabConsole.SuspendLayout();
-			this.tabVisualizer.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.pbViz)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// tbVSRawQuery
@@ -107,7 +103,6 @@
 			this.tcTabs.Controls.Add(this.tabVersionSpace);
 			this.tcTabs.Controls.Add(this.tabExpLearning);
 			this.tcTabs.Controls.Add(this.tabConsole);
-			this.tcTabs.Controls.Add(this.tabVisualizer);
 			this.tcTabs.Location = new System.Drawing.Point(12, 12);
 			this.tcTabs.Name = "tcTabs";
 			this.tcTabs.SelectedIndex = 0;
@@ -318,6 +313,16 @@
 			this.tabExpLearning.Text = "Explanation-based Learning";
 			this.tabExpLearning.UseVisualStyleBackColor = true;
 			// 
+			// bELSaveFactToDT
+			// 
+			this.bELSaveFactToDT.Location = new System.Drawing.Point(251, 403);
+			this.bELSaveFactToDT.Name = "bELSaveFactToDT";
+			this.bELSaveFactToDT.Size = new System.Drawing.Size(169, 22);
+			this.bELSaveFactToDT.TabIndex = 14;
+			this.bELSaveFactToDT.Text = "Dodaj fakt do teorii dziedziny";
+			this.bELSaveFactToDT.UseVisualStyleBackColor = true;
+			this.bELSaveFactToDT.Click += new System.EventHandler(this.bELSaveFactToDT_Click);
+			// 
 			// lHelp8
 			// 
 			this.lHelp8.AutoSize = true;
@@ -440,35 +445,6 @@
 			this.tbVSStatusOut.Text = "<status programu>";
 			this.tbVSStatusOut.Visible = false;
 			// 
-			// tabVisualizer
-			// 
-			this.tabVisualizer.Controls.Add(this.pbViz);
-			this.tabVisualizer.Location = new System.Drawing.Point(4, 22);
-			this.tabVisualizer.Name = "tabVisualizer";
-			this.tabVisualizer.Size = new System.Drawing.Size(689, 429);
-			this.tabVisualizer.TabIndex = 3;
-			this.tabVisualizer.Text = "Wizualizacje";
-			this.tabVisualizer.UseVisualStyleBackColor = true;
-			// 
-			// pbViz
-			// 
-			this.pbViz.Location = new System.Drawing.Point(3, 3);
-			this.pbViz.Name = "pbViz";
-			this.pbViz.Size = new System.Drawing.Size(685, 425);
-			this.pbViz.TabIndex = 0;
-			this.pbViz.TabStop = false;
-			this.pbViz.Paint += new System.Windows.Forms.PaintEventHandler(this.pbViz_Paint);
-			// 
-			// bELSaveFactToDT
-			// 
-			this.bELSaveFactToDT.Location = new System.Drawing.Point(251, 403);
-			this.bELSaveFactToDT.Name = "bELSaveFactToDT";
-			this.bELSaveFactToDT.Size = new System.Drawing.Size(169, 22);
-			this.bELSaveFactToDT.TabIndex = 14;
-			this.bELSaveFactToDT.Text = "Zapisz fakt do teorii dziedziny";
-			this.bELSaveFactToDT.UseVisualStyleBackColor = true;
-			this.bELSaveFactToDT.Click += new System.EventHandler(this.bELSaveFactToDT_Click);
-			// 
 			// SpaceForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -486,8 +462,6 @@
 			this.tabExpLearning.PerformLayout();
 			this.tabConsole.ResumeLayout(false);
 			this.tabConsole.PerformLayout();
-			this.tabVisualizer.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.pbViz)).EndInit();
 			this.ResumeLayout(false);
 
         }
@@ -515,9 +489,7 @@
         private System.Windows.Forms.TabPage tabExpLearning;
         private System.Windows.Forms.Button bVSReset;
         private System.Windows.Forms.Label lHelp2;
-        private System.Windows.Forms.Button bVSClearHistorySelection;
-        private System.Windows.Forms.TabPage tabVisualizer;
-        private System.Windows.Forms.PictureBox pbViz;
+		private System.Windows.Forms.Button bVSClearHistorySelection;
 		private System.Windows.Forms.Button bVSRelockSpace;
 		public System.Windows.Forms.TextBox tbVSConceptSpace;
 		private System.Windows.Forms.Button bELExtractRule;

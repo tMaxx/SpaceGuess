@@ -267,7 +267,7 @@ namespace Visual.Class
 		}
 
 		//src: http://stackoverflow.com/a/542001
-		static int countOccurences(string needle, string haystack)
+		public static int countOccurences(string needle, string haystack)
 		{
 			return (haystack.Length - haystack.Replace(needle, "").Length) / needle.Length;
 		}

@@ -43,8 +43,6 @@ namespace Visual
 				SpaceForm.self.tcTabs.TabPages.Remove(SpaceForm.self.tabExpLearning);
 			}
 
-			//FIXME removing this tab for now
-			SpaceForm.self.tcTabs.TabPages.Remove(SpaceForm.self.tabVisualizer);
 			SpaceForm.Bump();
 		}
 		~SpaceForm()
@@ -64,7 +62,10 @@ namespace Visual
 
 		private void bVSSendQuery_Click(object sender, EventArgs e)
 		{
-			VSAlgo.processInput(this.tbVSQuery.Text);
+			if (this.tbVSConceptSpace.ReadOnly)
+				VSAlgo.processInput(this.tbVSQuery.Text);
+			else
+				this.lVSLastCmdStatus.Text = "najpierw zablokuj definicję przestrzeni konceptowej";
 		}
 
 		private void bVSReset_Click(object sender, EventArgs e)
@@ -102,15 +103,6 @@ namespace Visual
 			this.lvVSHistory.SelectedIndices.Clear();
 		}
 
-		private void pbViz_Paint(object sender, PaintEventArgs e)
-		{
-			//temporary
-			Pen pen = new Pen(Color.FromArgb(255, 0, 0, 255), 8);
-			pen.StartCap = LineCap.ArrowAnchor;
-			pen.EndCap = LineCap.RoundAnchor;
-			e.Graphics.DrawLine(pen, 20, 175, 300, 175);
-		}
-
 		private void bVSRelockSpace_Click(object sender, EventArgs e)
 		{
 			this.tbVSConceptSpace.ReadOnly = !this.tbVSConceptSpace.ReadOnly;
@@ -139,9 +131,6 @@ namespace Visual
 		private void bELSaveDomTheory_Click(object sender, EventArgs e)
 		{
 			this.tbELDomainTheory.ReadOnly = !this.tbELDomainTheory.ReadOnly;
-			//previous was not yet used, readonly set before
-			//if (ELAlgo.previous == null && !this.tbELDomainTheory.ReadOnly)
-			//	ELAlgo.previous = this.tbELDomainTheory.Text;
 		}
 
 		private void bELSaveFactToDT_Click(object sender, EventArgs e)
