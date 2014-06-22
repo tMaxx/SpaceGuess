@@ -64,6 +64,7 @@
 			this.tbVSStatusOut = new System.Windows.Forms.TextBox();
 			this.tabVisualizer = new System.Windows.Forms.TabPage();
 			this.pbViz = new System.Windows.Forms.PictureBox();
+			this.bELSaveFactToDT = new System.Windows.Forms.Button();
 			this.tcTabs.SuspendLayout();
 			this.tabVersionSpace.SuspendLayout();
 			this.tabExpLearning.SuspendLayout();
@@ -299,6 +300,7 @@
 			// 
 			// tabExpLearning
 			// 
+			this.tabExpLearning.Controls.Add(this.bELSaveFactToDT);
 			this.tabExpLearning.Controls.Add(this.lHelp8);
 			this.tabExpLearning.Controls.Add(this.lELStatus);
 			this.tabExpLearning.Controls.Add(this.bELResetAll);
@@ -457,6 +459,16 @@
 			this.pbViz.TabStop = false;
 			this.pbViz.Paint += new System.Windows.Forms.PaintEventHandler(this.pbViz_Paint);
 			// 
+			// bELSaveFactToDT
+			// 
+			this.bELSaveFactToDT.Location = new System.Drawing.Point(251, 403);
+			this.bELSaveFactToDT.Name = "bELSaveFactToDT";
+			this.bELSaveFactToDT.Size = new System.Drawing.Size(169, 22);
+			this.bELSaveFactToDT.TabIndex = 14;
+			this.bELSaveFactToDT.Text = "Zapisz fakt do teorii dziedziny";
+			this.bELSaveFactToDT.UseVisualStyleBackColor = true;
+			this.bELSaveFactToDT.Click += new System.EventHandler(this.bELSaveFactToDT_Click);
+			// 
 			// SpaceForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -518,6 +530,7 @@
 		public System.Windows.Forms.TextBox tbELOutput;
 		private System.Windows.Forms.Label lHelp8;
 		public System.Windows.Forms.Label lELStatus;
+		private System.Windows.Forms.Button bELSaveFactToDT;
     }
 }
 

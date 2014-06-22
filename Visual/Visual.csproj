@@ -90,13 +90,13 @@
     <Content Include="Roadmap.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CSProlog3.2\CSProlog3.2.csproj">
-      <Project>{f0e89d16-2b76-4529-921a-8bc2250bb6ea}</Project>
-      <Name>CSProlog3.2</Name>
-    </ProjectReference>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadata Include="Service References\" />
+    <ProjectReference Include="..\CSProlog4.0\CSProlog4.0.csproj">
+      <Project>{721e06ef-2be2-44bf-a0b7-bbe163a29f26}</Project>
+      <Name>CSProlog4.0</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

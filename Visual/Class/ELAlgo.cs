@@ -12,7 +12,7 @@ namespace Visual.Class
 {
 	class ELItem
 	{
-		public string x,
+		public string
 			proof,
 			genProof,
 			rule;
@@ -20,7 +20,6 @@ namespace Visual.Class
 
 	class ELAlgo
 	{
-		private static PrologEngine pe;
 		private static ELItem item = null;
 		public static string previous = null;
 		private static string DomTh
@@ -81,34 +80,39 @@ namespace Visual.Class
 
 		protected static void resetEngine()
 		{
-			PlEngine.PlThreadDestroyEngine();
-			PlEngine.PlThreadAttachEngine();
-			if (ELAlgo.previous != null)
-			{ //retract all :D
-				string prev = ELAlgo.previous;
-				string[] buf = {};
-				ELAlgo.previous = null;
-				prev = VSHistory.wspaceRx.Replace(prev, "");
-				foreach (string s in prev.Split('.'))
-				{
-					PlQuery.PlCall("retract((" + s.TrimEnd('.') + "))");
-				}
-			}
+			///PlEngine.PlThreadDestroyEngine();
+			//P/lEngine.PlThreadAttachEngine();
+			//if (ELAlgo.previous != null)
+			//{ //retract all :D
+			//	string prev = ELAlgo.previous;
+			//	ELAlgo.previous = null;
+			//	prev = VSHistory.wspaceRx.Replace(prev, "");
+			//	foreach (string s in prev.Split('.'))
+			//	{
+			//		if (s.Length > 0 && !s.StartsWith(":-"))
+			//			PlQuery.PlCall("retractall((" + s.TrimEnd('.') + "))");
+			//	}
+			//}
 
 			SpaceForm.self.tbELOutput.Text = "";
-			//pe = new PrologEngine(new SpaceIO("[EL:csp] "));
-			//SpaceIO.loadSource(ref pe);
 		}
 
 		public static void resetAll()
 		{
 			resetEngine();
 			item = null;
-			SpaceForm.self.tbELDomainTheory.Text = "cup(X) :- liftable(X), holds_liquid(X)."
+			DomTh = "cup(X) :- liftable(X), holds_liquid(X)."
 				+ Environment.NewLine + "holds_liquid(Z) :- part(Z, W), concave(W), points_up(W)."
 				+ Environment.NewLine + "liftable(Y) :- light(Y), part(Y, handle)."
 				+ Environment.NewLine + "light(A):- small(A)."
 				+ Environment.NewLine + "light(A):- made_of(A, feathers)." + Environment.NewLine
+				//+ Environment.NewLine + ":- dynamic(small/1)."
+				//+ Environment.NewLine + ":- dynamic(owns/2)."
+				//+ Environment.NewLine + ":- dynamic(part/2)."
+				//+ Environment.NewLine + ":- dynamic(points_up/1)."
+				//+ Environment.NewLine + ":- dynamic(concave/1)."
+				//+ Environment.NewLine + ":- dynamic(operational/1)."
+				//+ Environment.NewLine + ":- dynamic(color/2)." + Environment.NewLine
 				+ Environment.NewLine + "small(obj1)."
 				+ Environment.NewLine + "owns(bob, obj1)."
 				+ Environment.NewLine + "part(obj1, handle)."
@@ -131,15 +135,47 @@ namespace Visual.Class
 		{
 			int at = cmd.IndexOf('(');
 			pred = cmd.Substring(0, at);
-			body = cmd.Substring(at+1, cmd.Length - at - 2);
+			body = cmd.Substring(at + 1, cmd.Length - at - 2);
 		}
 
 		private static string buildQuery(string pred, string body)
 		{
-			return "prolog_ebg(" + pred + '(' + body + "), " + pred + "(X), Proof, GenProof).";//, extract_support(GenProof, RuleBody).";
+			return "prolog_ebg(" + pred + '(' + body + "), " + pred + "(X), Proof, GenProof), extract_support(GenProof, RuleBody).";
 		}
 
-		internal static void execQuery(string cmd) {
+		internal static string tmpFile = null;
+		internal static bool bumpTmpFile()
+		{
+			bool first = tmpFile == null;
+			if (first)
+				tmpFile = Path.GetTempFileName();
+
+			using (StreamWriter outfile = new StreamWriter(tmpFile, false))
+			{
+				outfile.Write(DomTh);
+			}
+
+			try
+			{
+				if (first)
+					return PlQuery.PlCall("consult('" + tmpFile.Replace(@"\", "/") + "')");
+				else
+					return PlQuery.PlCall("make");
+			}
+			catch (Exception e)
+			{
+				logApp("Error while bumping tmpfile: " + e.ToString());
+				return false;
+			}
+		}
+		public static void finish()
+		{
+			PlEngine.PlCleanup();
+			File.Delete(tmpFile);
+		}
+
+		internal static void execQuery(string cmd)
+		{
 			Status = "przygotowywanie polecenia...";
 			cmd = VSHistory.wspaceRx.Replace(cmd.Trim(), "");
 			if (cmd.EndsWith("."))
@@ -154,77 +190,58 @@ namespace Visual.Class
 			resetEngine();
 
 			Status = "przygotowywanie teorii...";
+			logProlog("commiting theory...");
 
-			string tmppath = Path.GetTempFileName();
-			using (StreamWriter outfile = new StreamWriter(tmppath))
+			if (!bumpTmpFile())
 			{
-				outfile.Write(DomTh);
+				Status = "błąd przy zapisie stanu teorii";
+				//return;
 			}
-			if (!PlQuery.PlCall("consult('" + tmppath.Replace(@"\", "/") + "')."))
-			{
-				logApp("Error consulting file: " + tmppath);
-				Status = "wystąpił błąd; nie można załadować teorii";
-				return;
-			}
-			//pe.Consult(tmppath);
-			File.Delete(tmppath); //posprzątaj po sobie
 
 			Status = "wykonywanie polecenia...";
-			//pe.Query = cmd;
-			using (PlQuery q = new PlQuery(cmd))
+
+			try
 			{
-				foreach (PlQueryVariables v in q.SolutionVariables)
+				using (PlQuery q = new PlQuery(cmd))
 				{
-					item.x = "" + v["X"];
-					item.proof = "" + v["Proof"];
-					item.genProof = "" + v["GenProof"];
-					item.rule = pred + '(' + item.x + ')' + v["RuleBody"];
-					break;
+					item = new ELItem();
+					foreach (PlQueryVariables v in q.SolutionVariables)
+					{
+						//item.x = ;
+						item.proof = v["Proof"].ToString();
+						item.genProof = v["GenProof"].ToString();
+						item.rule = pred + '(' + v["X"].ToString() + ") :- " + v["RuleBody"] + '.';
+						break;
+					}
+					logProlog("exec: " + cmd + Environment.NewLine + q.ToString());
 				}
 			}
-
-			PrologEngine.ISolution s = pe.GetFirstSolution(cmd);
-			if (pe.Error)
+			catch (Exception e)
 			{
 				Status = "wystąpił błąd; sprawdź konsolę";
-				logApp("ERROR: could not solve");
-				logProlog("ERROR: " + s);
-				pe.clearError();
-				return;
+				logProlog("ERROR: could not solve: " + e.ToString());
 			}
-			else if (s.Solved)
-			{
-				logProlog("exec: " + cmd);
-				item = new ELItem();
-				foreach (PrologEngine.IVarValue vv in s.VarValuesIterator)
-					switch (vv.Name)
-					{
-						case "X":
-							item.x = vv.Value.ToString();
-							break;
-						case "Proof":
-							item.proof = vv.Value.ToString();
-							break;
-						case "GenProof":
-							item.genProof = vv.Value.ToString();
-							break;
-						case "RuleBody":
-							item.rule = pred + '(' + item.x + ')' + vv.Value.ToString();
-							break;
-					}
-				logProlog("exec: " + s);
-			}
-			else
-			{
-				Status = "błąd: brak rozwiązań";
-				logProlog("not solved: " + s);
-				return;
-			}
+
 			Status = "drukowanie...";
 
-
+			SpaceForm.self.tbELOutput.Text = "Zapytanie:" + Environment.NewLine + cmd + Environment.NewLine + Environment.NewLine
+				+ "Dowód:" + Environment.NewLine + item.proof + Environment.NewLine + Environment.NewLine
+				+ "Dowód ogólny:" + Environment.NewLine + item.genProof
+				+ Environment.NewLine + Environment.NewLine + Environment.NewLine
+				+ "***Nowa reguła obiektu***:" + Environment.NewLine + item.rule;
 
 			Status = "zakończono";
+		}
+
+		internal static void addDerivedFact()
+		{
+			if (item == null)
+				Status = "brak faktu do zapisu!";
+			else
+			{
+				Status = "fakt dodany do teorii dziedziny";
+				DomTh += Environment.NewLine + Environment.NewLine + item.rule;
+			}
 		}
 	}
 }

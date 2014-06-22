@@ -47,6 +47,10 @@ namespace Visual
 			SpaceForm.self.tcTabs.TabPages.Remove(SpaceForm.self.tabVisualizer);
 			SpaceForm.Bump();
 		}
+		~SpaceForm()
+		{
+			ELAlgo.finish();
+		}
 
 		public static void Bump()
 		{
@@ -136,8 +140,13 @@ namespace Visual
 		{
 			this.tbELDomainTheory.ReadOnly = !this.tbELDomainTheory.ReadOnly;
 			//previous was not yet used, readonly set before
-			if (ELAlgo.previous == null && !this.tbELDomainTheory.ReadOnly)
-				ELAlgo.previous = this.tbELDomainTheory.Text;
+			//if (ELAlgo.previous == null && !this.tbELDomainTheory.ReadOnly)
+			//	ELAlgo.previous = this.tbELDomainTheory.Text;
+		}
+
+		private void bELSaveFactToDT_Click(object sender, EventArgs e)
+		{
+			ELAlgo.addDerivedFact();
 		}
 
 	}

@@ -74,7 +74,7 @@ namespace Visual.Class
 			this.pe.PersistCommandHistory();
 		}
 
-		public readonly static Regex anonVar = new Regex(@"_[0-9]+");
+		public readonly static Regex anonVar = new Regex(@"_G?[0-9]+");
 		protected void setLists(string str, ref List<ListViewItem> l)
 		{
 			str = wspaceRx.Replace(str, "");
