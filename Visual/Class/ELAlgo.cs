@@ -73,7 +73,7 @@ namespace Visual.Class
 				}
 				PlQuery.PlCall("consult('"
 					+ (File.Exists("./source.pl") ? "./source.pl" : "../../source.pl")
-					+ "').");
+					+ "')");
 			}
 
 			logApp("---Init---");
@@ -86,7 +86,13 @@ namespace Visual.Class
 			if (ELAlgo.previous != null)
 			{ //retract all :D
 				string prev = ELAlgo.previous;
+				string[] buf = {};
 				ELAlgo.previous = null;
+				prev = VSHistory.wspaceRx.Replace(prev, "");
+				foreach (string s in prev.Split('.'))
+				{
+					PlQuery.PlCall("retract((" + s.TrimEnd('.') + "))");
+				}
 			}
 
 			SpaceForm.self.tbELOutput.Text = "";
