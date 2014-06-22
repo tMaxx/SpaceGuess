@@ -50,12 +50,12 @@ namespace Visual.Class
 
 		public static void logApp(string str)
 		{
-			SpaceForm.self.tbVSStatusOut.AppendText("[VS] " + str + Environment.NewLine);
+			SpaceForm.self.tbVSPrologOut.AppendText("[VS:app] " + str + Environment.NewLine);
 		}
 
 		public static void logProlog(string str, bool newline = true)
 		{
-			SpaceForm.self.tbVSPrologOut.AppendText("[VS] " + str + (newline ? Environment.NewLine : ""));
+			SpaceForm.self.tbVSPrologOut.AppendText("[VS:prolog] " + str + (newline ? Environment.NewLine : ""));
 		}
 
 		public static void logPrologCont(string str)

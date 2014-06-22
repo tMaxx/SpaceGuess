@@ -64,7 +64,7 @@ namespace Visual.Class
 
 		private void resetEngine()
 		{
-			this.pe = new PrologEngine(new SpaceIO());
+			this.pe = new PrologEngine(new SpaceIO("[VS:csp] "));
 			SpaceIO.loadSource(ref pe);
 			VSAlgo.logProlog("---Engine reset---");
 		}

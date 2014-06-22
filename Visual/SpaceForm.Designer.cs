@@ -49,9 +49,9 @@
 			this.colHistory = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.bVSSendQuery = new System.Windows.Forms.Button();
 			this.tbVSQuery = new System.Windows.Forms.TextBox();
-			this.tabConsole = new System.Windows.Forms.TabPage();
-			this.tbVSStatusOut = new System.Windows.Forms.TextBox();
 			this.tabExpLearning = new System.Windows.Forms.TabPage();
+			this.lHelp8 = new System.Windows.Forms.Label();
+			this.lELStatus = new System.Windows.Forms.Label();
 			this.bELResetAll = new System.Windows.Forms.Button();
 			this.tbELOutput = new System.Windows.Forms.TextBox();
 			this.bELExtractRule = new System.Windows.Forms.Button();
@@ -60,14 +60,14 @@
 			this.lHelp5 = new System.Windows.Forms.Label();
 			this.bELSaveDomTheory = new System.Windows.Forms.Button();
 			this.tbELDomainTheory = new System.Windows.Forms.TextBox();
+			this.tabConsole = new System.Windows.Forms.TabPage();
+			this.tbVSStatusOut = new System.Windows.Forms.TextBox();
 			this.tabVisualizer = new System.Windows.Forms.TabPage();
 			this.pbViz = new System.Windows.Forms.PictureBox();
-			this.lHelp8 = new System.Windows.Forms.Label();
-			this.lELStatus = new System.Windows.Forms.Label();
 			this.tcTabs.SuspendLayout();
 			this.tabVersionSpace.SuspendLayout();
-			this.tabConsole.SuspendLayout();
 			this.tabExpLearning.SuspendLayout();
+			this.tabConsole.SuspendLayout();
 			this.tabVisualizer.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.pbViz)).BeginInit();
 			this.SuspendLayout();
@@ -297,31 +297,6 @@
 			this.tbVSQuery.TabIndex = 0;
 			this.tbVSQuery.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tbVSQuery_KeyPress);
 			// 
-			// tabConsole
-			// 
-			this.tabConsole.Controls.Add(this.tbVSStatusOut);
-			this.tabConsole.Controls.Add(this.tbVSPrologOut);
-			this.tabConsole.Controls.Add(this.bSendVSRawQuery);
-			this.tabConsole.Controls.Add(this.tbVSRawQuery);
-			this.tabConsole.Location = new System.Drawing.Point(4, 22);
-			this.tabConsole.Name = "tabConsole";
-			this.tabConsole.Padding = new System.Windows.Forms.Padding(3);
-			this.tabConsole.Size = new System.Drawing.Size(689, 429);
-			this.tabConsole.TabIndex = 1;
-			this.tabConsole.Text = "Konsola";
-			this.tabConsole.UseVisualStyleBackColor = true;
-			// 
-			// tbVSStatusOut
-			// 
-			this.tbVSStatusOut.Location = new System.Drawing.Point(403, 3);
-			this.tbVSStatusOut.Multiline = true;
-			this.tbVSStatusOut.Name = "tbVSStatusOut";
-			this.tbVSStatusOut.ReadOnly = true;
-			this.tbVSStatusOut.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.tbVSStatusOut.Size = new System.Drawing.Size(280, 420);
-			this.tbVSStatusOut.TabIndex = 3;
-			this.tbVSStatusOut.Text = "<status programu>";
-			// 
 			// tabExpLearning
 			// 
 			this.tabExpLearning.Controls.Add(this.lHelp8);
@@ -340,6 +315,25 @@
 			this.tabExpLearning.TabIndex = 2;
 			this.tabExpLearning.Text = "Explanation-based Learning";
 			this.tabExpLearning.UseVisualStyleBackColor = true;
+			// 
+			// lHelp8
+			// 
+			this.lHelp8.AutoSize = true;
+			this.lHelp8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+			this.lHelp8.Location = new System.Drawing.Point(248, 84);
+			this.lHelp8.Name = "lHelp8";
+			this.lHelp8.Size = new System.Drawing.Size(111, 13);
+			this.lHelp8.TabIndex = 13;
+			this.lHelp8.Text = "Status wywołania:";
+			// 
+			// lELStatus
+			// 
+			this.lELStatus.AutoSize = true;
+			this.lELStatus.Location = new System.Drawing.Point(365, 84);
+			this.lELStatus.Name = "lELStatus";
+			this.lELStatus.Size = new System.Drawing.Size(101, 13);
+			this.lELStatus.TabIndex = 12;
+			this.lELStatus.Text = "<status wywołania>";
 			// 
 			// bELResetAll
 			// 
@@ -418,6 +412,32 @@
 			this.tbELDomainTheory.Size = new System.Drawing.Size(210, 375);
 			this.tbELDomainTheory.TabIndex = 0;
 			// 
+			// tabConsole
+			// 
+			this.tabConsole.Controls.Add(this.tbVSStatusOut);
+			this.tabConsole.Controls.Add(this.tbVSPrologOut);
+			this.tabConsole.Controls.Add(this.bSendVSRawQuery);
+			this.tabConsole.Controls.Add(this.tbVSRawQuery);
+			this.tabConsole.Location = new System.Drawing.Point(4, 22);
+			this.tabConsole.Name = "tabConsole";
+			this.tabConsole.Padding = new System.Windows.Forms.Padding(3);
+			this.tabConsole.Size = new System.Drawing.Size(689, 429);
+			this.tabConsole.TabIndex = 1;
+			this.tabConsole.Text = "Konsola";
+			this.tabConsole.UseVisualStyleBackColor = true;
+			// 
+			// tbVSStatusOut
+			// 
+			this.tbVSStatusOut.Location = new System.Drawing.Point(403, 3);
+			this.tbVSStatusOut.Multiline = true;
+			this.tbVSStatusOut.Name = "tbVSStatusOut";
+			this.tbVSStatusOut.ReadOnly = true;
+			this.tbVSStatusOut.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+			this.tbVSStatusOut.Size = new System.Drawing.Size(280, 420);
+			this.tbVSStatusOut.TabIndex = 3;
+			this.tbVSStatusOut.Text = "<status programu>";
+			this.tbVSStatusOut.Visible = false;
+			// 
 			// tabVisualizer
 			// 
 			this.tabVisualizer.Controls.Add(this.pbViz);
@@ -437,25 +457,6 @@
 			this.pbViz.TabStop = false;
 			this.pbViz.Paint += new System.Windows.Forms.PaintEventHandler(this.pbViz_Paint);
 			// 
-			// lHelp8
-			// 
-			this.lHelp8.AutoSize = true;
-			this.lHelp8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-			this.lHelp8.Location = new System.Drawing.Point(248, 84);
-			this.lHelp8.Name = "lHelp8";
-			this.lHelp8.Size = new System.Drawing.Size(111, 13);
-			this.lHelp8.TabIndex = 13;
-			this.lHelp8.Text = "Status wywołania:";
-			// 
-			// lELStatus
-			// 
-			this.lELStatus.AutoSize = true;
-			this.lELStatus.Location = new System.Drawing.Point(365, 84);
-			this.lELStatus.Name = "lELStatus";
-			this.lELStatus.Size = new System.Drawing.Size(101, 13);
-			this.lELStatus.TabIndex = 12;
-			this.lELStatus.Text = "<status wywołania>";
-			// 
 			// SpaceForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -469,10 +470,10 @@
 			this.tcTabs.ResumeLayout(false);
 			this.tabVersionSpace.ResumeLayout(false);
 			this.tabVersionSpace.PerformLayout();
-			this.tabConsole.ResumeLayout(false);
-			this.tabConsole.PerformLayout();
 			this.tabExpLearning.ResumeLayout(false);
 			this.tabExpLearning.PerformLayout();
+			this.tabConsole.ResumeLayout(false);
+			this.tabConsole.PerformLayout();
 			this.tabVisualizer.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.pbViz)).EndInit();
 			this.ResumeLayout(false);

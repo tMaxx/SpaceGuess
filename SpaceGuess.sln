@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
-VisualStudioVersion = 12.0.30110.0
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpaceGuess", "SpaceGuess\SpaceGuess.csproj", "{48EF1FCE-B9E2-4EC5-AFAD-C68037D46A5F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSProlog", "CSProlog\CSProlog.csproj", "{721E06EF-2BE2-44BF-A0B7-BBE163A29F26}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visual", "Visual\Visual.csproj", "{E91337D2-E43D-4053-A265-3232047B888F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSProlog4.0", "CSProlog4.0\CSProlog4.0.csproj", "{721E06EF-2BE2-44BF-A0B7-BBE163A29F26}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSProlog3.2", "CSProlog3.2\CSProlog3.2.csproj", "{F0E89D16-2B76-4529-921A-8BC2250BB6EA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,23 +40,6 @@ Global
 		{48EF1FCE-B9E2-4EC5-AFAD-C68037D46A5F}.Release|Mixed Platforms.Build.0 = Release|x86
 		{48EF1FCE-B9E2-4EC5-AFAD-C68037D46A5F}.Release|x86.ActiveCfg = Release|x86
 		{48EF1FCE-B9E2-4EC5-AFAD-C68037D46A5F}.Release|x86.Build.0 = Release|x86
-		{721E06EF-2BE2-44BF-A0B7-BBE163A29F26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{721E06EF-2BE2-44BF-A0B7-BBE163A29F26}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{721E06EF-2BE2-44BF-A0B7-BBE163A29F26}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{721E06EF-2BE2-44BF-A0B7-BBE163A29F26}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{721E06EF-2BE2-44BF-A0B7-BBE163A29F26}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{721E06EF-2BE2-44BF-A0B7-BBE163A29F26}.Debug|x86.Build.0 = Debug|Any CPU
-		{721E06EF-2BE2-44BF-A0B7-BBE163A29F26}.LibraryRelease|Any CPU.ActiveCfg = LibraryRelease|Any CPU
-		{721E06EF-2BE2-44BF-A0B7-BBE163A29F26}.LibraryRelease|Any CPU.Build.0 = LibraryRelease|Any CPU
-		{721E06EF-2BE2-44BF-A0B7-BBE163A29F26}.LibraryRelease|Mixed Platforms.ActiveCfg = LibraryRelease|Any CPU
-		{721E06EF-2BE2-44BF-A0B7-BBE163A29F26}.LibraryRelease|Mixed Platforms.Build.0 = LibraryRelease|Any CPU
-		{721E06EF-2BE2-44BF-A0B7-BBE163A29F26}.LibraryRelease|x86.ActiveCfg = LibraryRelease|Any CPU
-		{721E06EF-2BE2-44BF-A0B7-BBE163A29F26}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{721E06EF-2BE2-44BF-A0B7-BBE163A29F26}.Release|Any CPU.Build.0 = Release|Any CPU
-		{721E06EF-2BE2-44BF-A0B7-BBE163A29F26}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{721E06EF-2BE2-44BF-A0B7-BBE163A29F26}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{721E06EF-2BE2-44BF-A0B7-BBE163A29F26}.Release|x86.ActiveCfg = Release|Any CPU
-		{721E06EF-2BE2-44BF-A0B7-BBE163A29F26}.Release|x86.Build.0 = Release|Any CPU
 		{E91337D2-E43D-4053-A265-3232047B888F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E91337D2-E43D-4053-A265-3232047B888F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E91337D2-E43D-4053-A265-3232047B888F}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -70,6 +55,39 @@ Global
 		{E91337D2-E43D-4053-A265-3232047B888F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{E91337D2-E43D-4053-A265-3232047B888F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{E91337D2-E43D-4053-A265-3232047B888F}.Release|x86.ActiveCfg = Release|Any CPU
+		{721E06EF-2BE2-44BF-A0B7-BBE163A29F26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{721E06EF-2BE2-44BF-A0B7-BBE163A29F26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{721E06EF-2BE2-44BF-A0B7-BBE163A29F26}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{721E06EF-2BE2-44BF-A0B7-BBE163A29F26}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{721E06EF-2BE2-44BF-A0B7-BBE163A29F26}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{721E06EF-2BE2-44BF-A0B7-BBE163A29F26}.LibraryRelease|Any CPU.ActiveCfg = LibraryRelease|Any CPU
+		{721E06EF-2BE2-44BF-A0B7-BBE163A29F26}.LibraryRelease|Any CPU.Build.0 = LibraryRelease|Any CPU
+		{721E06EF-2BE2-44BF-A0B7-BBE163A29F26}.LibraryRelease|Mixed Platforms.ActiveCfg = LibraryRelease|Any CPU
+		{721E06EF-2BE2-44BF-A0B7-BBE163A29F26}.LibraryRelease|Mixed Platforms.Build.0 = LibraryRelease|Any CPU
+		{721E06EF-2BE2-44BF-A0B7-BBE163A29F26}.LibraryRelease|x86.ActiveCfg = LibraryRelease|Any CPU
+		{721E06EF-2BE2-44BF-A0B7-BBE163A29F26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{721E06EF-2BE2-44BF-A0B7-BBE163A29F26}.Release|Any CPU.Build.0 = Release|Any CPU
+		{721E06EF-2BE2-44BF-A0B7-BBE163A29F26}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{721E06EF-2BE2-44BF-A0B7-BBE163A29F26}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{721E06EF-2BE2-44BF-A0B7-BBE163A29F26}.Release|x86.ActiveCfg = Release|Any CPU
+		{F0E89D16-2B76-4529-921A-8BC2250BB6EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F0E89D16-2B76-4529-921A-8BC2250BB6EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F0E89D16-2B76-4529-921A-8BC2250BB6EA}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{F0E89D16-2B76-4529-921A-8BC2250BB6EA}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{F0E89D16-2B76-4529-921A-8BC2250BB6EA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F0E89D16-2B76-4529-921A-8BC2250BB6EA}.LibraryRelease|Any CPU.ActiveCfg = LibraryRelease|Any CPU
+		{F0E89D16-2B76-4529-921A-8BC2250BB6EA}.LibraryRelease|Any CPU.Build.0 = LibraryRelease|Any CPU
+		{F0E89D16-2B76-4529-921A-8BC2250BB6EA}.LibraryRelease|Mixed Platforms.ActiveCfg = LibraryRelease|Any CPU
+		{F0E89D16-2B76-4529-921A-8BC2250BB6EA}.LibraryRelease|Mixed Platforms.Build.0 = LibraryRelease|Any CPU
+		{F0E89D16-2B76-4529-921A-8BC2250BB6EA}.LibraryRelease|x86.ActiveCfg = LibraryRelease|Any CPU
+		{F0E89D16-2B76-4529-921A-8BC2250BB6EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F0E89D16-2B76-4529-921A-8BC2250BB6EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F0E89D16-2B76-4529-921A-8BC2250BB6EA}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{F0E89D16-2B76-4529-921A-8BC2250BB6EA}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{F0E89D16-2B76-4529-921A-8BC2250BB6EA}.Release|x86.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Visual\Visual.csproj
@@ -77,8 +95,33 @@ Global
 		$0.DotNetNamingPolicy = $1
 		$1.DirectoryNamespaceAssociation = None
 		$1.ResourceNamePolicy = FileFormatDefault
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
+		$0.TextStylePolicy = $4
+		$2.inheritsSet = null
+		$2.scope = text/x-csharp
+		$0.CSharpFormattingPolicy = $3
+		$3.IndentSwitchBody = True
+		$3.NamespaceBraceStyle = EndOfLine
+		$3.ClassBraceStyle = EndOfLine
+		$3.InterfaceBraceStyle = EndOfLine
+		$3.StructBraceStyle = EndOfLine
+		$3.EnumBraceStyle = EndOfLine
+		$3.MethodBraceStyle = EndOfLine
+		$3.ConstructorBraceStyle = EndOfLine
+		$3.DestructorBraceStyle = EndOfLine
+		$3.BeforeMethodDeclarationParentheses = False
+		$3.BeforeMethodCallParentheses = False
+		$3.BeforeConstructorDeclarationParentheses = False
+		$3.BeforeDelegateDeclarationParentheses = False
+		$3.AfterDelegateDeclarationParameterComma = True
+		$3.NewParentheses = False
+		$3.SpacesBeforeBrackets = False
+		$3.inheritsSet = Mono
+		$3.inheritsScope = text/x-csharp
+		$3.scope = text/x-csharp
+		$4.FileWidth = 120
+		$4.TabsToSpaces = False
+		$4.inheritsSet = VisualStudio
+		$4.inheritsScope = text/plain
+		$4.scope = text/plain
 	EndGlobalSection
 EndGlobal

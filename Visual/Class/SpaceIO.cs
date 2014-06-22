@@ -9,6 +9,13 @@ namespace Visual.Class
 {
 	class SpaceIO : Prolog.BasicIo
 	{
+		readonly protected string prepend;
+
+		public SpaceIO(string pre) : base()
+		{
+			this.prepend = pre;
+		}
+
 		public override string ReadLine()
 		{
 			throw new NotImplementedException();
@@ -26,7 +33,7 @@ namespace Visual.Class
 
 		public override void WriteLine(string s)
 		{
-			SpaceForm.self.tbVSPrologOut.AppendText(s + Environment.NewLine);
+			SpaceForm.self.tbVSPrologOut.AppendText(this.prepend + s + Environment.NewLine);
 		}
 
 		public override void WriteLine()

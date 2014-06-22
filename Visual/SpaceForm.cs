@@ -29,8 +29,19 @@ namespace Visual
 			//init algos
 			VSAlgo.init();
 			VSAlgo.resetAll();
-			ELAlgo.init();
-			ELAlgo.resetAll();
+			try
+			{
+				ELAlgo.init();
+				ELAlgo.resetAll();
+			}
+			catch (Exception e)
+			{
+				MessageBox.Show("Nie można zainicjalizować modułu SWI-Prolog. Algorytm EBL będzie niedostępny."
+					+ Environment.NewLine + Environment.NewLine + "Szczegóły: " + e.ToString(),
+					"Błąd inicjalizacji", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				ELAlgo.logApp("Błąd inicjalizacji, algorytm będzie niedostępny");
+				SpaceForm.self.tcTabs.TabPages.Remove(SpaceForm.self.tabExpLearning);
+			}
 
 			//FIXME removing this tab for now
 			SpaceForm.self.tcTabs.TabPages.Remove(SpaceForm.self.tabVisualizer);
@@ -102,7 +113,7 @@ namespace Visual
 			if (this.tbVSConceptSpace.ReadOnly == true)
 				MessageBox.Show("Po zmianie definicji przestrzeni konceptualnej "
 					+ "wymagany jest reset algorytmu za pomocą przycisku w prawej dolnej części okna",
-					"Wymagany reset algorytmu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					"Wymagany reset algorytmu", MessageBoxButtons.OK, MessageBoxIcon.Information);
 		}
 
 		private void tbVSQuery_KeyPress(object sender, KeyPressEventArgs e)
@@ -124,12 +135,9 @@ namespace Visual
 		private void bELSaveDomTheory_Click(object sender, EventArgs e)
 		{
 			this.tbELDomainTheory.ReadOnly = !this.tbELDomainTheory.ReadOnly;
-			//TODO: show approp. message
-			//if (this.tbELDomainTheory.ReadOnly == false)
-				//MessageBox.Show("Po zmianie definicji przestrzeni konceptualnej "
-					//+ "wymagany jest reset algorytmu za pomocą przycisku w prawej dolnej części okna",
-					//"Wymagany reset algorytmu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
+			//previous was not yet used, readonly set before
+			if (ELAlgo.previous == null && !this.tbELDomainTheory.ReadOnly)
+				ELAlgo.previous = this.tbELDomainTheory.Text;
 		}
 
 	}
